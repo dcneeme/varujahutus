@@ -1,0 +1,18 @@
+
+ 330 ' SUB read and average analogue inputs  ######## kaivitab timer1  iga 1 s tagant
+  ' keskmistame SlidingWindowSize viimast vaartust  eemisega sobivas vahekorras
+  ' arvesta, et adc uus vaartus tekib vaid 3 x sekundis!
+   
+    for timertemp=1 to 4 'an kanalid, see muutuja ainult siin sest ootamatult voib kasutus toimuda
+    if or(VoltageAvgRaw[timertemp] =0, SlidingWindowSize = 0, SlidingWindowSize = 1) then ' jatame keskmistamise vahele
+        syslog "sub 330: no averaging, winsize="+str$(SlidingWindowSize),5
+        VoltageAvgRaw[timertemp]=iostate(500+timertemp)
+    else ' win size <>0 ja eelmine vaartus olemas ning ei ole 0
+        syslog "sub 330: averaging active, sli_win_size="+str$(SlidingWindowSize),5
+        VoltageAvgRaw[timertemp]=(iostate(500+timertemp)+(SlidingWindowSize-1)*VoltageAvgRaw[timertemp])/SlidingWindowSize ' averaging
+    endif
+    
+    next timertemp
+    
+ 
+ return

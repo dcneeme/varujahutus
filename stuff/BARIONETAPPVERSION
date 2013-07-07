@@ -1,0 +1,20 @@
+0230
+/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+Vers  Date     Who  What
+01.00 01.02.07 PK - initial revision based on v202_20061008
+02.02 17.08.07 KS - the actual version V02.02 20061008 with following files updated:
+                    index.html, uiconfig.html, uigconf.gif, uiglogo.gif, uigstat.gif, uihio.html,
+                    uihserial.html, uimenu.html, uimenu0.html, 
+                    Barionet.MIB, Barionet_MIB.zip 
+      20.11.07 KS   Barionet.MIB, Barionet_MIB.zip Correct versions of mib added                 
+02.25 27.02.09 DB - removed version information from the main page
+                  - added DHCP hostname help
+                  - added "TCP protocol subscriptions"
+                  - added data.txt
+02.30 19.01.10 JP - added security tab in configuration for password
+                  - added password protection in all configuration pages (except TEMP)
+               DB - added logout button in all configuration pages (except TEMP)
+                  - added link to temperature sensor ID's page
+02.30 15.03.10 DB - added production test files rdipt.bas, rdipt.tok, errors.hlp
+                  - replaced corrected MIB files Barionet.MIB, Barionet_MIB.zip
+*/

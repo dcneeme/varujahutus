@@ -1,0 +1,23 @@
+ 55000 ' sub reboot_enable.bcl - lubame ja keelame setup.cgi - st veebiseadistuse ja rebootimise veebist
+ 
+  if TEHA$="RENA" then
+    if RENA=0 then 
+        RENA=1:lock 0,1024
+        syslog "sub 55000: setup.cgi enabled due to RENA command from the web interface",2
+    else
+        syslog "sub 55000: got RENA command from the web interface, but setup.cgi is already enabled",2
+    endif
+  endif
+  
+  if TEHA$="RDIS" then
+    if RENA=1 then 
+        RENA=0:lock 1,1024
+        syslog "sub 55000: setup.cgi disabled due to RDIS command from the web interface or recent reboot",2
+    else
+        syslog "sub 55000: got RDIS command from the web interface, but setup.cgi is already disabled",2
+    endif
+  endif
+  
+  TEHA$=""
+ 
+ return

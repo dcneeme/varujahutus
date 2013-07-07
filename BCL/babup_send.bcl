@@ -1,0 +1,22 @@
+ 25300 'sub babup_msg.bcl - create and send babup message - miks me seda ei kasuta?? ?? ??
+ sub$="babup_read: " 
+ mats$="id: "
+  25310 
+  if connected(0) then 
+	if filesize(0)>10 then
+		read 0,ss$,0,mats$
+		syslog "got: "+ss$
+	endif
+	goto 25310
+  else
+    syslog "connection closed"
+  endif
+ 
+  ' got something
+  if val(ss$)=d_id then
+	syslog sub$+"got valid ack for last msg",4
+  endif
+ return
+ 
+ 
+ 

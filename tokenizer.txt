@@ -1,0 +1,1667 @@
+BARIX BCL Tokenizer, V1.5, 2013/07/05 23:11:38
+
+Preprocessor: Start
+
+Preprocessor: First pass for collecting code by #include
+- Source file is included in target BAS file: <./BCL/main.bcl>
+- Source file is included in target BAS file: <./BCL/define.bcl>
+- Source file is included in target BAS file: <./BCL/read_app_setup.bcl>
+- Source file is included in target BAS file: <./BCL/udpreceive.bcl>
+- Source file is included in target BAS file: <./BCL/remsetup145.bcl>
+- Source file is included in target BAS file: <./BCL/m_udpsend.bcl>
+- Source file is included in target BAS file: <./BCL/timed_events.bcl>
+- Source file is included in target BAS file: <./BCL/ai_330.bcl>
+- Source file is included in target BAS file: <./BCL/io12modbus.bcl>
+- Source file is included in target BAS file: <./BCL/io12conf.bcl>
+- Source file is included in target BAS file: <./BCL/bit2B_f.bcl>
+- Source file is included in target BAS file: <./BCL/chd_tegu.bcl>
+- Source file is included in target BAS file: <./BCL/crontabreset.bcl>
+- Source file is included in target BAS file: <./BCL/di_event.bcl>
+- Source file is included in target BAS file: <./BCL/getmonvalue.bcl>
+- Source file is included in target BAS file: <./BCL/save_counters.bcl>
+- Source file is included in target BAS file: <./BCL/mon_msg.bcl>
+- Source file is included in target BAS file: <./BCL/babup_msg.bcl>
+- Source file is included in target BAS file: <./BCL/babup_read.bcl>
+- Source file is included in target BAS file: <./BCL/appmain.bcl>
+
+Preprocessor: Second pass for replacement of macros by #define
+- SYSTIME --> _TMR_(0) 
+  - Macro SYSTIME in pos [25-31] -> 		if and(mbsta(mba)<>0, SYSTIME>mbts(mba)+1000) then 
+  <- 		if and(mbsta(mba)<>0, SYSTIME>mbts(mba)+1000) then 
+  -> 		if and(mbsta(mba)<>0, _TMR_(0) >mbts(mba)+1000) then 
+  - Macro SYSTIME in pos [96-102] -> 		' syslog "sub 1000: got "+str$(mlen)+" bytes before crc from mba "+str$(mba)+" (delay "+str$(SYSTIME-MBTS)+" ms from send)",4
+  <- 		' syslog "sub 1000: got "+str$(mlen)+" bytes before crc from mba "+str$(mba)+" (delay "+str$(SYSTIME-MBTS)+" ms from send)",4
+  -> 		' syslog "sub 1000: got "+str$(mlen)+" bytes before crc from mba "+str$(mba)+" (delay "+str$(_TMR_(0) -MBTS)+" ms from send)",4
+  - Macro SYSTIME in pos [13-19] ->     mbts(0)=SYSTIME ' store send timestamp - aga vastus edu nyyd iga mba jaoks eraldi edu ts! 01.01.11
+  <-     mbts(0)=SYSTIME ' store send timestamp - aga vastus edu nyyd iga mba jaoks eraldi edu ts! 01.01.11
+  ->     mbts(0)=_TMR_(0)  ' store send timestamp - aga vastus edu nyyd iga mba jaoks eraldi edu ts! 01.01.11
+  - Macro SYSTIME in pos [9-15] ->      if SYSTIME < MBTS(0) + 1000 then delay 10:goto 1702   ' no timeout yet
+  <-      if SYSTIME < MBTS(0) + 1000 then delay 10:goto 1702   ' no timeout yet
+  ->      if _TMR_(0)  < MBTS(0) + 1000 then delay 10:goto 1702   ' no timeout yet
+  - Macro SYSTIME in pos [36-42] ->             mbsta(mba)=0:mbts(mba)=SYSTIME 'edu korral ts meelde
+  <-             mbsta(mba)=0:mbts(mba)=SYSTIME 'edu korral ts meelde
+  ->             mbsta(mba)=0:mbts(mba)=_TMR_(0)  'edu korral ts meelde
+  - Macro SYSTIME in pos [11-17] ->     ts(2)=SYSTIME ' take SYSTIME timestamp 
+  <-     ts(2)=SYSTIME ' take SYSTIME timestamp 
+  ->     ts(2)=_TMR_(0)  ' take SYSTIME timestamp 
+  - Macro SYSTIME in pos [28-34] ->     ts(2)=_TMR_(0)  ' take SYSTIME timestamp 
+  <-     ts(2)=_TMR_(0)  ' take SYSTIME timestamp 
+  ->     ts(2)=_TMR_(0)  ' take _TMR_(0)  timestamp 
+  - Macro SYSTIME in pos [24-30] ->         if ts(2)+3000 <SYSTIME then 
+  <-         if ts(2)+3000 <SYSTIME then 
+  ->         if ts(2)+3000 <_TMR_(0)  then 
+  - Macro SYSTIME in pos [9-15] -> 		ts(2)=SYSTIME 'viimane info saabumine meelde
+  <- 		ts(2)=SYSTIME 'viimane info saabumine meelde
+  -> 		ts(2)=_TMR_(0)  'viimane info saabumine meelde
+  - Macro SYSTIME in pos [20-26] -> 			if ts(1)+1000 > SYSTIME then ' kuni sekund lubame info saabumises pausi, ts(2) siin uuendatud
+  <- 			if ts(1)+1000 > SYSTIME then ' kuni sekund lubame info saabumises pausi, ts(2) siin uuendatud
+  -> 			if ts(1)+1000 > _TMR_(0)  then ' kuni sekund lubame info saabumises pausi, ts(2) siin uuendatud
+  - Macro SYSTIME in pos [20-26] -> 			if ts(2)+4500 > SYSTIME then ' ootame veel
+  <- 			if ts(2)+4500 > SYSTIME then ' ootame veel
+  -> 			if ts(2)+4500 > _TMR_(0)  then ' ootame veel
+  - Macro SYSTIME in pos [19-25] -> 	if ts(2)+10000 < SYSTIME then ' igaks juhuks handle 0 sulgemine
+  <- 	if ts(2)+10000 < SYSTIME then ' igaks juhuks handle 0 sulgemine
+  -> 	if ts(2)+10000 < _TMR_(0)  then ' igaks juhuks handle 0 sulgemine
+- SecondTS --> ts(9)  
+  - Macro SecondTS in pos [7-14] ->   'if SecondTS>0 then ' varu gw peal 'siin vorrelda B12... ja SecondGW vaartusi! loe ka system setup sisse osaliselt!
+  <-   'if SecondTS>0 then ' varu gw peal 'siin vorrelda B12... ja SecondGW vaartusi! loe ka system setup sisse osaliselt!
+  ->   'if ts(9)  >0 then ' varu gw peal 'siin vorrelda B12... ja SecondGW vaartusi! loe ka system setup sisse osaliselt!
+  - Macro SecondTS in pos [12-19] ->         if SecondTS = 0 then SecondTS=up(0) ' siit edasi kasvab 10 min kaupa kuni pohiside taastub
+  <-         if SecondTS = 0 then SecondTS=up(0) ' siit edasi kasvab 10 min kaupa kuni pohiside taastub
+  ->         if ts(9)   = 0 then SecondTS=up(0) ' siit edasi kasvab 10 min kaupa kuni pohiside taastub
+  - Macro SecondTS in pos [29-36] ->         if ts(9)   = 0 then SecondTS=up(0) ' siit edasi kasvab 10 min kaupa kuni pohiside taastub
+  <-         if ts(9)   = 0 then SecondTS=up(0) ' siit edasi kasvab 10 min kaupa kuni pohiside taastub
+  ->         if ts(9)   = 0 then ts(9)  =up(0) ' siit edasi kasvab 10 min kaupa kuni pohiside taastub
+  - Macro SecondTS in pos [18-25] ->         if up(0)>SecondTS+3600 then 'aeg tagasi lylituda 60 min parast, kui LAN gw vastab ########## tagasilylitumise viide / AEG
+  <-         if up(0)>SecondTS+3600 then 'aeg tagasi lylituda 60 min parast, kui LAN gw vastab ########## tagasilylitumise viide / AEG
+  ->         if up(0)>ts(9)  +3600 then 'aeg tagasi lylituda 60 min parast, kui LAN gw vastab ########## tagasilylitumise viide / AEG
+  - Macro SecondTS in pos [17-24] ->                 SecondTS=SecondTS + 600 '10 min jarel proovime uuesti
+  <-                 SecondTS=SecondTS + 600 '10 min jarel proovime uuesti
+  ->                 ts(9)  =SecondTS + 600 '10 min jarel proovime uuesti
+  - Macro SecondTS in pos [25-32] ->                 ts(9)  =SecondTS + 600 '10 min jarel proovime uuesti
+  <-                 ts(9)  =SecondTS + 600 '10 min jarel proovime uuesti
+  ->                 ts(9)  =ts(9)   + 600 '10 min jarel proovime uuesti
+- CommBreak= --> ioctl 1, 
+  - Macro CommBreak= in pos [9-18] ->         CommBreak=50 ' 5 sek paus AINULT gprs ruuterile... kui juba 2 tundi sideta, siis ka kontrollerile
+  <-         CommBreak=50 ' 5 sek paus AINULT gprs ruuterile... kui juba 2 tundi sideta, siis ka kontrollerile
+  ->         ioctl 1, 50 ' 5 sek paus AINULT gprs ruuterile... kui juba 2 tundi sideta, siis ka kontrollerile
+  - Macro CommBreak= in pos [6-15] ->      CommBreak=20 '2 s gprs toite pausi
+  <-      CommBreak=20 '2 s gprs toite pausi
+  ->      ioctl 1, 20 '2 s gprs toite pausi
+- CommBreak --> iostate(1)
+- CommLed= --> ioctl 103, 
+  - Macro CommLed= in pos [2-9] ->  CommLed=1 'algseisus side puudumine, las poleb
+  <-  CommLed=1 'algseisus side puudumine, las poleb
+  ->  ioctl 103, 1 'algseisus side puudumine, las poleb
+  - Macro CommLed= in pos [5-12] -> 				CommLed=0 ' OUT(3)=0 ' kustutame SIDE tule, mis udp send ajal syydati ILMA ID KONTROLLITA!
+  <- 				CommLed=0 ' OUT(3)=0 ' kustutame SIDE tule, mis udp send ajal syydati ILMA ID KONTROLLITA!
+  -> 				ioctl 103, 0 ' OUT(3)=0 ' kustutame SIDE tule, mis udp send ajal syydati ILMA ID KONTROLLITA!
+  - Macro CommLed= in pos [13-20] ->  	MonComm=1:CommLed=1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+  <-  	MonComm=1:CommLed=1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+  ->  	MonComm=1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+  - Macro CommLed= in pos [12-19] -> 	BupComm=1:CommLed=1 'LED jaoks yks osa infost
+  <- 	BupComm=1:CommLed=1 'LED jaoks yks osa infost
+  -> 	BupComm=1:ioctl 103, 1 'LED jaoks yks osa infost
+  - Macro CommLed= in pos [3-10] -> 		CommLed=0 'LED kustutamine babup teate poolest, ei huvita kas parool oli oige vms
+  <- 		CommLed=0 'LED kustutamine babup teate poolest, ei huvita kas parool oli oige vms
+  -> 		ioctl 103, 0 'LED kustutamine babup teate poolest, ei huvita kas parool oli oige vms
+  - Macro CommLed= in pos [7-14] ->     ' CommLed=BupComm ' CommLed=or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  <-     ' CommLed=BupComm ' CommLed=or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  ->     ' ioctl 103, BupComm ' CommLed=or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  - Macro CommLed= in pos [28-35] ->     ' ioctl 103, BupComm ' CommLed=or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  <-     ' ioctl 103, BupComm ' CommLed=or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  ->     ' ioctl 103, BupComm ' ioctl 103, or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
+- CommLed --> iostate(103)
+- MonComm= --> ioctl 326,  
+  - Macro MonComm= in pos [13-20] ->  'BupComm=1:MonComm=1:
+  <-  'BupComm=1:MonComm=1:
+  ->  'BupComm=1:ioctl 326,  1:
+  - Macro MonComm= in pos [3-10] ->  	MonComm=1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+  <-  	MonComm=1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+  ->  	ioctl 326,  1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+- MonComm --> iostate(326)
+  - Macro MonComm in pos [21-27] -> 		", moncomm "+str$(MonComm)+", bupcomm "+str$(BupComm),5 ' ajutine
+  <- 		", moncomm "+str$(MonComm)+", bupcomm "+str$(BupComm),5 ' ajutine
+  -> 		", moncomm "+str$(iostate(326))+", bupcomm "+str$(BupComm),5 ' ajutine
+  - Macro MonComm in pos [42-48] ->     ' ioctl 103, BupComm ' ioctl 103, or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  <-     ' ioctl 103, BupComm ' ioctl 103, or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  ->     ' ioctl 103, BupComm ' ioctl 103, or(iostate(326), BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  - Macro MonComm in pos [183-189] -> 	'syslog "appmain: inword "+sprintf$("%x04",bit2B(311+icnt(1),311+icnt(1)+icnt(2)))+" "+sprintf$("%x02",bit2B(311,311+icnt(1)))+" "+sprintf$("%x02",bit2B(351,358))+", moncomm "+str$(MonComm)+", bupcomm "+str$(BupComm),4 ' ajutine abi
+  <- 	'syslog "appmain: inword "+sprintf$("%x04",bit2B(311+icnt(1),311+icnt(1)+icnt(2)))+" "+sprintf$("%x02",bit2B(311,311+icnt(1)))+" "+sprintf$("%x02",bit2B(351,358))+", moncomm "+str$(MonComm)+", bupcomm "+str$(BupComm),4 ' ajutine abi
+  -> 	'syslog "appmain: inword "+sprintf$("%x04",bit2B(311+icnt(1),311+icnt(1)+icnt(2)))+" "+sprintf$("%x02",bit2B(311,311+icnt(1)))+" "+sprintf$("%x02",bit2B(351,358))+", moncomm "+str$(iostate(326))+", bupcomm "+str$(BupComm),4 ' ajutine abi
+- BupComm= --> ioctl 327,  
+  - Macro BupComm= in pos [3-10] ->  'BupComm=1:ioctl 326,  1:
+  <-  'BupComm=1:ioctl 326,  1:
+  ->  'ioctl 327,  1:ioctl 326,  1:
+  - Macro BupComm= in pos [2-9] -> 	BupComm=1:ioctl 103, 1 'LED jaoks yks osa infost
+  <- 	BupComm=1:ioctl 103, 1 'LED jaoks yks osa infost
+  -> 	ioctl 327,  1:ioctl 103, 1 'LED jaoks yks osa infost
+  - Macro BupComm= in pos [4-11] -> 			BupComm=0 'jaab 1, kui ei olnud 200 ok
+  <- 			BupComm=0 'jaab 1, kui ei olnud 200 ok
+  -> 			ioctl 327,  0 'jaab 1, kui ei olnud 200 ok
+- BupComm --> iostate(327)
+  - Macro BupComm in pos [53-59] -> 		", moncomm "+str$(iostate(326))+", bupcomm "+str$(BupComm),5 ' ajutine
+  <- 		", moncomm "+str$(iostate(326))+", bupcomm "+str$(BupComm),5 ' ajutine
+  -> 		", moncomm "+str$(iostate(326))+", bupcomm "+str$(iostate(327)),5 ' ajutine
+  - Macro BupComm in pos [18-24] ->     ' ioctl 103, BupComm ' ioctl 103, or(iostate(326), BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  <-     ' ioctl 103, BupComm ' ioctl 103, or(iostate(326), BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  ->     ' ioctl 103, iostate(327) ' ioctl 103, or(iostate(326), BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  - Macro BupComm in pos [61-67] ->     ' ioctl 103, iostate(327) ' ioctl 103, or(iostate(326), BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  <-     ' ioctl 103, iostate(327) ' ioctl 103, or(iostate(326), BupComm) ' punane led kuni molemad on mingi vastuse saanud
+  ->     ' ioctl 103, iostate(327) ' ioctl 103, or(iostate(326), iostate(327)) ' punane led kuni molemad on mingi vastuse saanud
+  - Macro BupComm in pos [215-221] -> 	'syslog "appmain: inword "+sprintf$("%x04",bit2B(311+icnt(1),311+icnt(1)+icnt(2)))+" "+sprintf$("%x02",bit2B(311,311+icnt(1)))+" "+sprintf$("%x02",bit2B(351,358))+", moncomm "+str$(iostate(326))+", bupcomm "+str$(BupComm),4 ' ajutine abi
+  <- 	'syslog "appmain: inword "+sprintf$("%x04",bit2B(311+icnt(1),311+icnt(1)+icnt(2)))+" "+sprintf$("%x02",bit2B(311,311+icnt(1)))+" "+sprintf$("%x02",bit2B(351,358))+", moncomm "+str$(iostate(326))+", bupcomm "+str$(BupComm),4 ' ajutine abi
+  -> 	'syslog "appmain: inword "+sprintf$("%x04",bit2B(311+icnt(1),311+icnt(1)+icnt(2)))+" "+sprintf$("%x02",bit2B(311,311+icnt(1)))+" "+sprintf$("%x02",bit2B(351,358))+", moncomm "+str$(iostate(326))+", bupcomm "+str$(iostate(327)),4 ' ajutine abi
+- PowerLost= --> ioctl 329,  
+  - Macro PowerLost= in pos [80-89] ->    ' if and(PowerLost = 0, iostate(318) = 1, up(0)> ts(8)+PowerLossDelay) then PowerLost=1:ms$=ms$+"PWS:2\n":gosub 270  ' kohe teatamine
+  <-    ' if and(PowerLost = 0, iostate(318) = 1, up(0)> ts(8)+PowerLossDelay) then PowerLost=1:ms$=ms$+"PWS:2\n":gosub 270  ' kohe teatamine
+  ->    ' if and(PowerLost = 0, iostate(318) = 1, up(0)> ts(8)+PowerLossDelay) then ioctl 329,  1:ms$=ms$+"PWS:2\n":gosub 270  ' kohe teatamine
+- PowerLost --> iostate(329)
+  - Macro PowerLost in pos [13-21] ->    ' if and(PowerLost = 0, iostate(318) = 1, up(0)> ts(8)+PowerLossDelay) then ioctl 329,  1:ms$=ms$+"PWS:2\n":gosub 270  ' kohe teatamine
+  <-    ' if and(PowerLost = 0, iostate(318) = 1, up(0)> ts(8)+PowerLossDelay) then ioctl 329,  1:ms$=ms$+"PWS:2\n":gosub 270  ' kohe teatamine
+  ->    ' if and(iostate(329) = 0, iostate(318) = 1, up(0)> ts(8)+PowerLossDelay) then ioctl 329,  1:ms$=ms$+"PWS:2\n":gosub 270  ' kohe teatamine
+- LoBatt= --> ioctl 330,  
+  - Macro LoBatt= in pos [3-9] -> 		LoBatt=1:syslog "sub 10000: lobatt start",4
+  <- 		LoBatt=1:syslog "sub 10000: lobatt start",4
+  -> 		ioctl 330,  1:syslog "sub 10000: lobatt start",4
+  - Macro LoBatt= in pos [3-9] -> 		LoBatt=0:syslog "sub 10000: lobatt end",4
+  <- 		LoBatt=0:syslog "sub 10000: lobatt end",4
+  -> 		ioctl 330,  0:syslog "sub 10000: lobatt end",4
+- LoBatt --> iostate(330)
+  - Macro LoBatt in pos [11-16] ->    if and(LoBatt = 0, BattVoltage < VoltLoLimit - 10) then 
+  <-    if and(LoBatt = 0, BattVoltage < VoltLoLimit - 10) then 
+  ->    if and(iostate(330) = 0, BattVoltage < VoltLoLimit - 10) then 
+  - Macro LoBatt in pos [9-14] -> 	if and(LoBatt = 1, BattVoltage > VoltLoLimit + 10) then 
+  <- 	if and(LoBatt = 1, BattVoltage > VoltLoLimit + 10) then 
+  -> 	if and(iostate(330) = 1, BattVoltage > VoltLoLimit + 10) then 
+- HiBatt= --> ioctl 331,  
+  - Macro HiBatt= in pos [3-9] -> 		HiBatt=1:syslog "sub 10000: hibatt start",4
+  <- 		HiBatt=1:syslog "sub 10000: hibatt start",4
+  -> 		ioctl 331,  1:syslog "sub 10000: hibatt start",4
+  - Macro HiBatt= in pos [3-9] -> 		HiBatt=0:syslog "sub 10000: hibatt end",4
+  <- 		HiBatt=0:syslog "sub 10000: hibatt end",4
+  -> 		ioctl 331,  0:syslog "sub 10000: hibatt end",4
+- HiBatt --> iostate(331)
+  - Macro HiBatt in pos [9-14] -> 	if and(HiBatt = 0, BattVoltage > VoltHiLimit + 10) then 
+  <- 	if and(HiBatt = 0, BattVoltage > VoltHiLimit + 10) then 
+  -> 	if and(iostate(331) = 0, BattVoltage > VoltHiLimit + 10) then 
+  - Macro HiBatt in pos [9-14] -> 	if and(HiBatt = 1, BattVoltage < VoltHiLimit - 10) then 
+  <- 	if and(HiBatt = 1, BattVoltage < VoltHiLimit - 10) then 
+  -> 	if and(iostate(331) = 1, BattVoltage < VoltHiLimit - 10) then 
+- ChanType[]= --> ioctl 700+, 
+  - Macro ChanType[]= in pos [2-16] -> 	ChanType[chan]=1 'di alati
+  <- 	ChanType[chan]=1 'di alati
+  -> 	ioctl 700+chan, 1 'di alati
+  - Macro ChanType[]= in pos [2-16] -> 	ChanType[chan]=6 ' temp
+  <- 	ChanType[chan]=6 ' temp
+  -> 	ioctl 700+chan, 6 ' temp
+  - Macro ChanType[]= in pos [3-17] -> 		ChanType[chan]=6 'koikidele, aga palju neid juba on? vt define varuga... 82 tk?
+  <- 		ChanType[chan]=6 'koikidele, aga palju neid juba on? vt define varuga... 82 tk?
+  -> 		ioctl 700+chan, 6 'koikidele, aga palju neid juba on? vt define varuga... 82 tk?
+- ChanType[] --> iostate(700+) 
+  - Macro ChanType[] in pos [57-70] -> 	syslog "rd_stp: mb chan "+str$(chan)+" chantype="+str$(ChanType[chan]),4 
+  <- 	syslog "rd_stp: mb chan "+str$(chan)+" chantype="+str$(ChanType[chan]),4 
+  -> 	syslog "rd_stp: mb chan "+str$(chan)+" chantype="+str$(iostate(700+chan) ),4 
+  - Macro ChanType[] in pos [75-88] -> 		syslog "rd_stp: mb chan "+str$(chan)+", chname "+uss$+" chantype="+str$(ChanType[chan])+", jj "+str$(jj),4 
+  <- 		syslog "rd_stp: mb chan "+str$(chan)+", chname "+uss$+" chantype="+str$(ChanType[chan])+", jj "+str$(jj),4 
+  -> 		syslog "rd_stp: mb chan "+str$(chan)+", chname "+uss$+" chantype="+str$(iostate(700+chan) )+", jj "+str$(jj),4 
+  - Macro ChanType[] in pos [76-89] -> 	syslog "chan "+str$(chan)+":"+uss$+" "+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4 'ajutine 
+  <- 	syslog "chan "+str$(chan)+":"+uss$+" "+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4 'ajutine 
+  -> 	syslog "chan "+str$(chan)+":"+uss$+" "+str$(chn(chan))+", chantype="+str$(iostate(700+chan) ),4 'ajutine 
+  - Macro ChanType[] in pos [81-94] -> 	syslog "temp chan "+str$(chan)+":"+uss$+" "+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4  
+  <- 	syslog "temp chan "+str$(chan)+":"+uss$+" "+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4  
+  -> 	syslog "temp chan "+str$(chan)+":"+uss$+" "+str$(chn(chan))+", chantype="+str$(iostate(700+chan) ),4  
+  - Macro ChanType[] in pos [9-22] -> 		if or(ChanType[chan] =4, ChanType[chan] =5) then ' counter raw or unit
+  <- 		if or(ChanType[chan] =4, ChanType[chan] =5) then ' counter raw or unit
+  -> 		if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' counter raw or unit
+  - Macro ChanType[] in pos [32-45] -> 		if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' counter raw or unit
+  <- 		if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' counter raw or unit
+  -> 		if or(iostate(700+chan)  =4, iostate(700+chan)  =5) then ' counter raw or unit
+  - Macro ChanType[] in pos [6-19] -> 		if ChanType[chan] =2 then ' ai
+  <- 		if ChanType[chan] =2 then ' ai
+  -> 		if iostate(700+chan)  =2 then ' ai
+  - Macro ChanType[] in pos [6-19] -> 		if ChanType[chan] =1 then ' di, 1 on 201
+  <- 		if ChanType[chan] =1 then ' di, 1 on 201
+  -> 		if iostate(700+chan)  =1 then ' di, 1 on 201
+  - Macro ChanType[] in pos [9-22] -> 		if or(ChanType[chan] =11, ChanType[chan] =12) then ' dekodeerime di1,di2 ai2 alusel
+  <- 		if or(ChanType[chan] =11, ChanType[chan] =12) then ' dekodeerime di1,di2 ai2 alusel
+  -> 		if or(iostate(700+chan)  =11, ChanType[chan] =12) then ' dekodeerime di1,di2 ai2 alusel
+  - Macro ChanType[] in pos [33-46] -> 		if or(iostate(700+chan)  =11, ChanType[chan] =12) then ' dekodeerime di1,di2 ai2 alusel
+  <- 		if or(iostate(700+chan)  =11, ChanType[chan] =12) then ' dekodeerime di1,di2 ai2 alusel
+  -> 		if or(iostate(700+chan)  =11, iostate(700+chan)  =12) then ' dekodeerime di1,di2 ai2 alusel
+  - Macro ChanType[] in pos [9-22] -> 		if or(ChanType[chan] =13, ChanType[chan] =14) then ' dekodeerime di1,di2 ai2 alusel
+  <- 		if or(ChanType[chan] =13, ChanType[chan] =14) then ' dekodeerime di1,di2 ai2 alusel
+  -> 		if or(iostate(700+chan)  =13, ChanType[chan] =14) then ' dekodeerime di1,di2 ai2 alusel
+  - Macro ChanType[] in pos [33-46] -> 		if or(iostate(700+chan)  =13, ChanType[chan] =14) then ' dekodeerime di1,di2 ai2 alusel
+  <- 		if or(iostate(700+chan)  =13, ChanType[chan] =14) then ' dekodeerime di1,di2 ai2 alusel
+  -> 		if or(iostate(700+chan)  =13, iostate(700+chan)  =14) then ' dekodeerime di1,di2 ai2 alusel
+  - Macro ChanType[] in pos [9-22] -> 		if or(ChanType[chan] =4, ChanType[chan] =5) then ' counter raw or unit
+  <- 		if or(ChanType[chan] =4, ChanType[chan] =5) then ' counter raw or unit
+  -> 		if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' counter raw or unit
+  - Macro ChanType[] in pos [32-45] -> 		if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' counter raw or unit
+  <- 		if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' counter raw or unit
+  -> 		if or(iostate(700+chan)  =4, iostate(700+chan)  =5) then ' counter raw or unit
+  - Macro ChanType[] in pos [6-19] -> 		if ChanType[chan] =1 then ' di, 1 on 201
+  <- 		if ChanType[chan] =1 then ' di, 1 on 201
+  -> 		if iostate(700+chan)  =1 then ' di, 1 on 201
+  - Macro ChanType[] in pos [6-19] -> 		if ChanType[chan] =15 then ' di based on di1
+  <- 		if ChanType[chan] =15 then ' di based on di1
+  -> 		if iostate(700+chan)  =15 then ' di based on di1
+  - Macro ChanType[] in pos [6-19] -> 		if ChanType[chan] =16 then ' ai
+  <- 		if ChanType[chan] =16 then ' ai
+  -> 		if iostate(700+chan)  =16 then ' ai
+  - Macro ChanType[] in pos [6-19] -> 		if ChanType[chan] =17 then ' di based on di3
+  <- 		if ChanType[chan] =17 then ' di based on di3
+  -> 		if iostate(700+chan)  =17 then ' di based on di3
+  - Macro ChanType[] in pos [6-19] -> 		if ChanType[chan] =18 then ' ai
+  <- 		if ChanType[chan] =18 then ' ai
+  -> 		if iostate(700+chan)  =18 then ' ai
+  - Macro ChanType[] in pos [9-22] -> 		if or(ChanType[chan] =4, ChanType[chan] =5) then ' counter raw or unit
+  <- 		if or(ChanType[chan] =4, ChanType[chan] =5) then ' counter raw or unit
+  -> 		if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' counter raw or unit
+  - Macro ChanType[] in pos [32-45] -> 		if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' counter raw or unit
+  <- 		if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' counter raw or unit
+  -> 		if or(iostate(700+chan)  =4, iostate(700+chan)  =5) then ' counter raw or unit
+  - Macro ChanType[] in pos [6-19] -> 		if ChanType[chan] =1 then ' di, 1 on 201
+  <- 		if ChanType[chan] =1 then ' di, 1 on 201
+  -> 		if iostate(700+chan)  =1 then ' di, 1 on 201
+  - Macro ChanType[] in pos [14-25] ->         ' if ChanType[jj] = 1 then 'DI PEAB olema setupist pandud / ei ole oluline
+  <-         ' if ChanType[jj] = 1 then 'DI PEAB olema setupist pandud / ei ole oluline
+  ->         ' if iostate(700+jj)  = 1 then 'DI PEAB olema setupist pandud / ei ole oluline
+  - Macro ChanType[] in pos [86-99] -> 		' syslog sub$+"chan="+str$(chan)+", chn(chan)="+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4
+  <- 		' syslog sub$+"chan="+str$(chan)+", chn(chan)="+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4
+  -> 		' syslog sub$+"chan="+str$(chan)+", chn(chan)="+str$(chn(chan))+", chantype="+str$(iostate(700+chan) ),4
+  - Macro ChanType[] in pos [10-23] -> 		if and(ChanType[chan]>0, chn(chan)>0) then ' kanal aktiivne ja nimi olemas
+  <- 		if and(ChanType[chan]>0, chn(chan)>0) then ' kanal aktiivne ja nimi olemas
+  -> 		if and(iostate(700+chan) >0, chn(chan)>0) then ' kanal aktiivne ja nimi olemas
+  - Macro ChanType[] in pos [11-24] -> 			if and(ChanType[chan] = 6, chd(chan)>999) then goto 25050 ' seda temperatuuri ei saada, vigane tulemus #########################
+  <- 			if and(ChanType[chan] = 6, chd(chan)>999) then goto 25050 ' seda temperatuuri ei saada, vigane tulemus #########################
+  -> 			if and(iostate(700+chan)  = 6, chd(chan)>999) then goto 25050 ' seda temperatuuri ei saada, vigane tulemus #########################
+  - Macro ChanType[] in pos [10-23] -> 			if or(ChanType[chan] =2, ChanType[chan] =6) then ' ai voi termo
+  <- 			if or(ChanType[chan] =2, ChanType[chan] =6) then ' ai voi termo
+  -> 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
+  - Macro ChanType[] in pos [33-46] -> 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
+  <- 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
+  -> 			if or(iostate(700+chan)  =2, iostate(700+chan)  =6) then ' ai voi termo
+  - Macro ChanType[] in pos [8-21] -> 				if ChanType[chan] =2 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.2F",chd(chan)),5 'ai
+  <- 				if ChanType[chan] =2 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.2F",chd(chan)),5 'ai
+  -> 				if iostate(700+chan)  =2 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.2F",chd(chan)),5 'ai
+  - Macro ChanType[] in pos [8-21] -> 				if ChanType[chan] =6 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.1F",chd(chan)),5 'termo, nait olgu alla 100deg
+  <- 				if ChanType[chan] =6 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.1F",chd(chan)),5 'termo, nait olgu alla 100deg
+  -> 				if iostate(700+chan)  =6 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.1F",chd(chan)),5 'termo, nait olgu alla 100deg
+  - Macro ChanType[] in pos [10-23] -> 			if or(ChanType[chan] =2, ChanType[chan] =6) then ' ai voi termo
+  <- 			if or(ChanType[chan] =2, ChanType[chan] =6) then ' ai voi termo
+  -> 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
+  - Macro ChanType[] in pos [33-46] -> 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
+  <- 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
+  -> 			if or(iostate(700+chan)  =2, iostate(700+chan)  =6) then ' ai voi termo
+  - Macro ChanType[] in pos [8-21] -> 				if ChanType[chan] =2 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.2F",chd(chan)) 'ai
+  <- 				if ChanType[chan] =2 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.2F",chd(chan)) 'ai
+  -> 				if iostate(700+chan)  =2 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.2F",chd(chan)) 'ai
+  - Macro ChanType[] in pos [8-21] -> 				if ChanType[chan] =6 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.1F",chd(chan)) ' temp norm nait olemas
+  <- 				if ChanType[chan] =6 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.1F",chd(chan)) ' temp norm nait olemas
+  -> 				if iostate(700+chan)  =6 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.1F",chd(chan)) ' temp norm nait olemas
+  - Macro ChanType[] in pos [11-24] -> 				if or(ChanType[chan] =4, ChanType[chan] =5) then ' raw or unit counter
+  <- 				if or(ChanType[chan] =4, ChanType[chan] =5) then ' raw or unit counter
+  -> 				if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' raw or unit counter
+  - Macro ChanType[] in pos [34-47] -> 				if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' raw or unit counter
+  <- 				if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' raw or unit counter
+  -> 				if or(iostate(700+chan)  =4, iostate(700+chan)  =5) then ' raw or unit counter
+  - Macro ChanType[] in pos [132-145] -> 			syslog sub$+"chan "+str$(chan)+" skipped from message due to missing name or type, chn() "+str$(chn(chan))+", chantype[] "+str$(ChanType[chan]),5 'ajutine
+  <- 			syslog sub$+"chan "+str$(chan)+" skipped from message due to missing name or type, chn() "+str$(chn(chan))+", chantype[] "+str$(ChanType[chan]),5 'ajutine
+  -> 			syslog sub$+"chan "+str$(chan)+" skipped from message due to missing name or type, chn() "+str$(chn(chan))+", chantype[] "+str$(iostate(700+chan) ),5 'ajutine
+- StpAddr= --> ioctl 791,  
+  - Macro StpAddr= in pos [4-11] -> 			StpAddr=FlashAddr+1 
+  <- 			StpAddr=FlashAddr+1 
+  -> 			ioctl 791,  FlashAddr+1 
+  - Macro StpAddr= in pos [4-11] -> 			StpAddr=FlashAddr-511
+  <- 			StpAddr=FlashAddr-511
+  -> 			ioctl 791,  FlashAddr-511
+  - Macro StpAddr= in pos [28-35] ->             COM$="STP:768":StpAddr=FlashAddr-767
+  <-             COM$="STP:768":StpAddr=FlashAddr-767
+  ->             COM$="STP:768":ioctl 791,  FlashAddr-767
+- StpAddr --> iostate(791) 
+  - Macro StpAddr in pos [25-31] ->             MIDCPY SET$,StpAddr,len(mval$)+1,mval$ 
+  <-             MIDCPY SET$,StpAddr,len(mval$)+1,mval$ 
+  ->             MIDCPY SET$,iostate(791) ,len(mval$)+1,mval$ 
+  - Macro StpAddr in pos [17-23] -> 			if mid$(set$,StpAddr,len(mval$)) = mval$ then syslog "sub 145: setup string "+mreg$+":"+mval$+" accepted",4 else syslog "midcpy fail!",2
+  <- 			if mid$(set$,StpAddr,len(mval$)) = mval$ then syslog "sub 145: setup string "+mreg$+":"+mval$+" accepted",4 else syslog "midcpy fail!",2
+  -> 			if mid$(set$,iostate(791) ,len(mval$)) = mval$ then syslog "sub 145: setup string "+mreg$+":"+mval$+" accepted",4 else syslog "midcpy fail!",2
+  - Macro StpAddr in pos [25-31] ->             MIDSET SET$,StpAddr,1,val(mval$)
+  <-             MIDSET SET$,StpAddr,1,val(mval$)
+  ->             MIDSET SET$,iostate(791) ,1,val(mval$)
+  - Macro StpAddr in pos [25-31] ->             MIDSET SET$,StpAddr,2,val(mval$)
+  <-             MIDSET SET$,StpAddr,2,val(mval$)
+  ->             MIDSET SET$,iostate(791) ,2,val(mval$)
+- FlashAddr= --> ioctl 792,  
+  - Macro FlashAddr= in pos [9-18] ->         FlashAddr=val(mid$(mreg$,2,len(mreg$)-1)):syslog "sub 145: Flash_Addr to write is "+str$(FlashAddr),4 ' vahemikus 0...1023, muuta alasse 1...256 igas veerandis!
+  <-         FlashAddr=val(mid$(mreg$,2,len(mreg$)-1)):syslog "sub 145: Flash_Addr to write is "+str$(FlashAddr),4 ' vahemikus 0...1023, muuta alasse 1...256 igas veerandis!
+  ->         ioctl 792,  val(mid$(mreg$,2,len(mreg$)-1)):syslog "sub 145: Flash_Addr to write is "+str$(FlashAddr),4 ' vahemikus 0...1023, muuta alasse 1...256 igas veerandis!
+- FlashAddr --> iostate(792) 
+  - Macro FlashAddr in pos [100-108] ->         ioctl 792,  val(mid$(mreg$,2,len(mreg$)-1)):syslog "sub 145: Flash_Addr to write is "+str$(FlashAddr),4 ' vahemikus 0...1023, muuta alasse 1...256 igas veerandis!
+  <-         ioctl 792,  val(mid$(mreg$,2,len(mreg$)-1)):syslog "sub 145: Flash_Addr to write is "+str$(FlashAddr),4 ' vahemikus 0...1023, muuta alasse 1...256 igas veerandis!
+  ->         ioctl 792,  val(mid$(mreg$,2,len(mreg$)-1)):syslog "sub 145: Flash_Addr to write is "+str$(iostate(792) ),4 ' vahemikus 0...1023, muuta alasse 1...256 igas veerandis!
+  - Macro FlashAddr in pos [15-23] ->         if or(FlashAddr<0, FlashAddr>1023) then ' 
+  <-         if or(FlashAddr<0, FlashAddr>1023) then ' 
+  ->         if or(iostate(792) <0, FlashAddr>1023) then ' 
+  - Macro FlashAddr in pos [32-40] ->         if or(iostate(792) <0, FlashAddr>1023) then ' 
+  <-         if or(iostate(792) <0, FlashAddr>1023) then ' 
+  ->         if or(iostate(792) <0, iostate(792) >1023) then ' 
+  - Macro FlashAddr in pos [114-122] -> 			syslog "sub 145: illegal setup variable (address out of setup variable range 1..255 after conversion): "+str$(FlashAddr)+" from "+mreg$,4
+  <- 			syslog "sub 145: illegal setup variable (address out of setup variable range 1..255 after conversion): "+str$(FlashAddr)+" from "+mreg$,4
+  -> 			syslog "sub 145: illegal setup variable (address out of setup variable range 1..255 after conversion): "+str$(iostate(792) )+" from "+mreg$,4
+  - Macro FlashAddr in pos [12-20] ->         if FlashAddr<256 then ' system setup, uisystem.html
+  <-         if FlashAddr<256 then ' system setup, uisystem.html
+  ->         if iostate(792) <256 then ' system setup, uisystem.html
+  - Macro FlashAddr in pos [16-24] -> 			ioctl 791,  FlashAddr+1 
+  <- 			ioctl 791,  FlashAddr+1 
+  -> 			ioctl 791,  iostate(792) +1 
+  - Macro FlashAddr in pos [16-24] ->         if and(FlashAddr>511,FlashAddr<768) then 'app setup part1
+  <-         if and(FlashAddr>511,FlashAddr<768) then 'app setup part1
+  ->         if and(iostate(792) >511,FlashAddr<768) then 'app setup part1
+  - Macro FlashAddr in pos [34-42] ->         if and(iostate(792) >511,FlashAddr<768) then 'app setup part1
+  <-         if and(iostate(792) >511,FlashAddr<768) then 'app setup part1
+  ->         if and(iostate(792) >511,iostate(792) <768) then 'app setup part1
+  - Macro FlashAddr in pos [16-24] -> 			ioctl 791,  FlashAddr-511
+  <- 			ioctl 791,  FlashAddr-511
+  -> 			ioctl 791,  iostate(792) -511
+  - Macro FlashAddr in pos [10-18] -> 		if and(FlashAddr>767,FlashAddr<1024) then 'app setup part2
+  <- 		if and(FlashAddr>767,FlashAddr<1024) then 'app setup part2
+  -> 		if and(iostate(792) >767,FlashAddr<1024) then 'app setup part2
+  - Macro FlashAddr in pos [28-36] -> 		if and(iostate(792) >767,FlashAddr<1024) then 'app setup part2
+  <- 		if and(iostate(792) >767,FlashAddr<1024) then 'app setup part2
+  -> 		if and(iostate(792) >767,iostate(792) <1024) then 'app setup part2
+  - Macro FlashAddr in pos [40-48] ->             COM$="STP:768":ioctl 791,  FlashAddr-767
+  <-             COM$="STP:768":ioctl 791,  FlashAddr-767
+  ->             COM$="STP:768":ioctl 791,  iostate(792) -767
+- RegNum= --> ioctl 793,  
+  - Macro RegNum= in pos [11-17] ->    pos=0  RegNum=0 ' list$ ja lispt$ siduv pointer  ning listi liikmete arv (kui seda vaja on)
+  <-    pos=0  RegNum=0 ' list$ ja lispt$ siduv pointer  ning listi liikmete arv (kui seda vaja on)
+  ->    pos=0  ioctl 793,  0 ' list$ ja lispt$ siduv pointer  ning listi liikmete arv (kui seda vaja on)
+  - Macro RegNum= in pos [26-32] ->                pos=pos+1:RegNum=RegNum+1
+  <-                pos=pos+1:RegNum=RegNum+1
+  ->                pos=pos+1:ioctl 793,  RegNum+1
+- RegNum --> iostate(793)
+  - Macro RegNum in pos [15-20] ->  for pos=1 to RegNum ' len(listp$) ' see jamas ' pointer registritejorus
+  <-  for pos=1 to RegNum ' len(listp$) ' see jamas ' pointer registritejorus
+  ->  for pos=1 to iostate(793) ' len(listp$) ' see jamas ' pointer registritejorus
+  - Macro RegNum in pos [90-95] ->         gosub 13000:syslog "sub 145: proccesing list_pos "+str$(pos)+" from total "+str$(RegNum)+", pair "+mreg$+":"+mval$,4 ' processing this value
+  <-         gosub 13000:syslog "sub 145: proccesing list_pos "+str$(pos)+" from total "+str$(RegNum)+", pair "+mreg$+":"+mval$,4 ' processing this value
+  ->         gosub 13000:syslog "sub 145: proccesing list_pos "+str$(pos)+" from total "+str$(iostate(793))+", pair "+mreg$+":"+mval$,4 ' processing this value
+  - Macro RegNum in pos [61-66] ->    ' syslog "sub 11000: got list: "+list$+" liikmete arvuga RegNum:"+str$(RegNum)+", sub lopus uku:"+str$(uku)+" ukk:"+str$(ukk),5
+  <-    ' syslog "sub 11000: got list: "+list$+" liikmete arvuga RegNum:"+str$(RegNum)+", sub lopus uku:"+str$(uku)+" ukk:"+str$(ukk),5
+  ->    ' syslog "sub 11000: got list: "+list$+" liikmete arvuga iostate(793):"+str$(RegNum)+", sub lopus uku:"+str$(uku)+" ukk:"+str$(ukk),5
+  - Macro RegNum in pos [81-86] ->    ' syslog "sub 11000: got list: "+list$+" liikmete arvuga iostate(793):"+str$(RegNum)+", sub lopus uku:"+str$(uku)+" ukk:"+str$(ukk),5
+  <-    ' syslog "sub 11000: got list: "+list$+" liikmete arvuga iostate(793):"+str$(RegNum)+", sub lopus uku:"+str$(uku)+" ukk:"+str$(ukk),5
+  ->    ' syslog "sub 11000: got list: "+list$+" liikmete arvuga iostate(793):"+str$(iostate(793))+", sub lopus uku:"+str$(uku)+" ukk:"+str$(ukk),5
+  - Macro RegNum in pos [38-43] ->                pos=pos+1:ioctl 793,  RegNum+1
+  <-                pos=pos+1:ioctl 793,  RegNum+1
+  ->                pos=pos+1:ioctl 793,  iostate(793)+1
+- RegPos= --> ioctl 794,  
+  - Macro RegPos= in pos [2-8] ->  RegPos=1    ' registrite joru index, korraga voime saada erinevaid registreid nii setup kui app, teeme setup yhekorraga
+  <-  RegPos=1    ' registrite joru index, korraga voime saada erinevaid registreid nii setup kui app, teeme setup yhekorraga
+  ->  ioctl 794,  1    ' registrite joru index, korraga voime saada erinevaid registreid nii setup kui app, teeme setup yhekorraga
+  - Macro RegPos= in pos [5-11] ->     RegPos=RegPos+RegLen
+  <-     RegPos=RegPos+RegLen
+  ->     ioctl 794,  RegPos+RegLen
+- RegPos --> iostate(794)
+  - Macro RegPos in pos [22-27] ->     mreg$=mid$(list$,RegPos,RegLen)
+  <-     mreg$=mid$(list$,RegPos,RegLen)
+  ->     mreg$=mid$(list$,iostate(794),RegLen)
+  - Macro RegPos in pos [17-22] ->     ioctl 794,  RegPos+RegLen
+  <-     ioctl 794,  RegPos+RegLen
+  ->     ioctl 794,  iostate(794)+RegLen
+  - Macro RegPos in pos [75-80] ->     ' syslog "sub 145 - mreg$="+mreg$+" mval$ = "+mval$+", reg_pos="+str$(RegPos)+", list_pos="+str$(pos)+", Reg_Len "+str$(RegLen),4
+  <-     ' syslog "sub 145 - mreg$="+mreg$+" mval$ = "+mval$+", reg_pos="+str$(RegPos)+", list_pos="+str$(pos)+", Reg_Len "+str$(RegLen),4
+  ->     ' syslog "sub 145 - mreg$="+mreg$+" mval$ = "+mval$+", reg_pos="+str$(iostate(794))+", list_pos="+str$(pos)+", Reg_Len "+str$(RegLen),4
+- RegLen= --> ioctl 795,  
+  - Macro RegLen= in pos [5-11] ->     RegLen=midget(listp$,pos,1)
+  <-     RegLen=midget(listp$,pos,1)
+  ->     ioctl 795,  midget(listp$,pos,1)
+- RegLen --> iostate(795)
+  - Macro RegLen in pos [35-40] ->     mreg$=mid$(list$,iostate(794),RegLen)
+  <-     mreg$=mid$(list$,iostate(794),RegLen)
+  ->     mreg$=mid$(list$,iostate(794),iostate(795))
+  - Macro RegLen in pos [30-35] ->     ioctl 794,  iostate(794)+RegLen
+  <-     ioctl 794,  iostate(794)+RegLen
+  ->     ioctl 794,  iostate(794)+iostate(795)
+  - Macro RegLen in pos [131-136] ->     ' syslog "sub 145 - mreg$="+mreg$+" mval$ = "+mval$+", reg_pos="+str$(iostate(794))+", list_pos="+str$(pos)+", Reg_Len "+str$(RegLen),4
+  <-     ' syslog "sub 145 - mreg$="+mreg$+" mval$ = "+mval$+", reg_pos="+str$(iostate(794))+", list_pos="+str$(pos)+", Reg_Len "+str$(RegLen),4
+  ->     ' syslog "sub 145 - mreg$="+mreg$+" mval$ = "+mval$+", reg_pos="+str$(iostate(794))+", list_pos="+str$(pos)+", Reg_Len "+str$(iostate(795)),4
+- VoltageRaw= --> ioctl 796,  
+- VoltageRaw --> iostate(796)
+- TempLoLimit= --> ioctl 798,  
+- TempLoLimit --> iostate(798)
+- TempHiLimit= --> ioctl 799,  
+- TempHiLimit --> iostate(799)
+- VoltLoLimit= --> ioctl 809,  
+  - Macro VoltLoLimit= in pos [9-20] ->  jj=580:VoltLoLimit=MIDGET(set$,jj-511,2):gosub 21020 
+  <-  jj=580:VoltLoLimit=MIDGET(set$,jj-511,2):gosub 21020 
+  ->  jj=580:ioctl 809,  MIDGET(set$,jj-511,2):gosub 21020 
+- VoltLoLimit --> iostate(809)
+  - Macro VoltLoLimit in pos [43-53] ->    if and(iostate(330) = 0, BattVoltage < VoltLoLimit - 10) then 
+  <-    if and(iostate(330) = 0, BattVoltage < VoltLoLimit - 10) then 
+  ->    if and(iostate(330) = 0, BattVoltage < iostate(809) - 10) then 
+  - Macro VoltLoLimit in pos [41-51] -> 	if and(iostate(330) = 1, BattVoltage > VoltLoLimit + 10) then 
+  <- 	if and(iostate(330) = 1, BattVoltage > VoltLoLimit + 10) then 
+  -> 	if and(iostate(330) = 1, BattVoltage > iostate(809) + 10) then 
+- VoltHiLimit= --> ioctl 810,  
+  - Macro VoltHiLimit= in pos [9-20] ->  jj=582:VoltHiLimit=MIDGET(set$,jj-511,2):gosub 21020
+  <-  jj=582:VoltHiLimit=MIDGET(set$,jj-511,2):gosub 21020
+  ->  jj=582:ioctl 810,  MIDGET(set$,jj-511,2):gosub 21020
+- VoltHiLimit --> iostate(810)
+  - Macro VoltHiLimit in pos [41-51] -> 	if and(iostate(331) = 0, BattVoltage > VoltHiLimit + 10) then 
+  <- 	if and(iostate(331) = 0, BattVoltage > VoltHiLimit + 10) then 
+  -> 	if and(iostate(331) = 0, BattVoltage > iostate(810) + 10) then 
+  - Macro VoltHiLimit in pos [41-51] -> 	if and(iostate(331) = 1, BattVoltage < VoltHiLimit - 10) then 
+  <- 	if and(iostate(331) = 1, BattVoltage < VoltHiLimit - 10) then 
+  -> 	if and(iostate(331) = 1, BattVoltage < iostate(810) - 10) then 
+- VoltageAvgRaw[]= --> ioctl 810+, 
+  - Macro VoltageAvgRaw[]= in pos [9-33] ->         VoltageAvgRaw[timertemp]=iostate(500+timertemp)
+  <-         VoltageAvgRaw[timertemp]=iostate(500+timertemp)
+  ->         ioctl 810+timertemp, iostate(500+timertemp)
+  - Macro VoltageAvgRaw[]= in pos [9-33] ->         VoltageAvgRaw[timertemp]=(iostate(500+timertemp)+(SlidingWindowSize-1)*VoltageAvgRaw[timertemp])/SlidingWindowSize ' averaging
+  <-         VoltageAvgRaw[timertemp]=(iostate(500+timertemp)+(SlidingWindowSize-1)*VoltageAvgRaw[timertemp])/SlidingWindowSize ' averaging
+  ->         ioctl 810+timertemp, (iostate(500+timertemp)+(SlidingWindowSize-1)*VoltageAvgRaw[timertemp])/SlidingWindowSize ' averaging
+- VoltageAvgRaw[] --> iostate(810+)
+  - Macro VoltageAvgRaw[] in pos [11-34] ->     if or(VoltageAvgRaw[timertemp] =0, SlidingWindowSize = 0, SlidingWindowSize = 1) then ' jatame keskmistamise vahele
+  <-     if or(VoltageAvgRaw[timertemp] =0, SlidingWindowSize = 0, SlidingWindowSize = 1) then ' jatame keskmistamise vahele
+  ->     if or(iostate(810+timertemp) =0, SlidingWindowSize = 0, SlidingWindowSize = 1) then ' jatame keskmistamise vahele
+  - Macro VoltageAvgRaw[] in pos [76-99] ->         ioctl 810+timertemp, (iostate(500+timertemp)+(SlidingWindowSize-1)*VoltageAvgRaw[timertemp])/SlidingWindowSize ' averaging
+  <-         ioctl 810+timertemp, (iostate(500+timertemp)+(SlidingWindowSize-1)*VoltageAvgRaw[timertemp])/SlidingWindowSize ' averaging
+  ->         ioctl 810+timertemp, (iostate(500+timertemp)+(SlidingWindowSize-1)*iostate(810+timertemp))/SlidingWindowSize ' averaging
+- VoltCoeff= --> ioctl 818,  
+  - Macro VoltCoeff= in pos [9-18] ->  jj=578:VoltCoeff=MIDGET(set$,jj-511,2):gosub 21020 ' batt voltage calc coeff
+  <-  jj=578:VoltCoeff=MIDGET(set$,jj-511,2):gosub 21020 ' batt voltage calc coeff
+  ->  jj=578:ioctl 818,  MIDGET(set$,jj-511,2):gosub 21020 ' batt voltage calc coeff
+- VoltCoeff --> iostate(818)
+  - Macro VoltCoeff in pos [35-43] -> 				BattVoltage=iostate(810+chan)*VoltCoeff/200
+  <- 				BattVoltage=iostate(810+chan)*VoltCoeff/200
+  -> 				BattVoltage=iostate(810+chan)*iostate(818)/200
+  - Macro VoltCoeff in pos [30-38] -> 				BattVoltage=iostate(501)*VoltCoeff/200 ' peaks keskmistama...
+  <- 				BattVoltage=iostate(501)*VoltCoeff/200 ' peaks keskmistama...
+  -> 				BattVoltage=iostate(501)*iostate(818)/200 ' peaks keskmistama...
+  - Macro VoltCoeff in pos [30-38] -> 				BattVoltage=iostate(813)*VoltCoeff/200
+  <- 				BattVoltage=iostate(813)*VoltCoeff/200
+  -> 				BattVoltage=iostate(813)*iostate(818)/200
+- BattVoltage= --> ioctl 819,  
+  - Macro BattVoltage= in pos [5-16] -> 				BattVoltage=iostate(810+chan)*iostate(818)/200
+  <- 				BattVoltage=iostate(810+chan)*iostate(818)/200
+  -> 				ioctl 819,  iostate(810+chan)*iostate(818)/200
+  - Macro BattVoltage= in pos [5-16] -> 				BattVoltage=iostate(501)*iostate(818)/200 ' peaks keskmistama...
+  <- 				BattVoltage=iostate(501)*iostate(818)/200 ' peaks keskmistama...
+  -> 				ioctl 819,  iostate(501)*iostate(818)/200 ' peaks keskmistama...
+  - Macro BattVoltage= in pos [5-16] -> 				BattVoltage=iostate(813)*iostate(818)/200
+  <- 				BattVoltage=iostate(813)*iostate(818)/200
+  -> 				ioctl 819,  iostate(813)*iostate(818)/200
+- BattVoltage --> iostate(819)
+  - Macro BattVoltage in pos [43-53] -> 				'syslog "chd_tegu: battvoltage "+str$(BattVoltage)+" on ai"+str$(chan),4 ' mV
+  <- 				'syslog "chd_tegu: battvoltage "+str$(BattVoltage)+" on ai"+str$(chan),4 ' mV
+  -> 				'syslog "chd_tegu: battvoltage "+str$(iostate(819))+" on ai"+str$(chan),4 ' mV
+  - Macro BattVoltage in pos [15-25] -> 				chd(chan)=BattVoltage/10 ' averaged BTV, saatmisel sprintf$("%l.2F",chd(chan)) 
+  <- 				chd(chan)=BattVoltage/10 ' averaged BTV, saatmisel sprintf$("%l.2F",chd(chan)) 
+  -> 				chd(chan)=iostate(819)/10 ' averaged BTV, saatmisel sprintf$("%l.2F",chd(chan)) 
+  - Macro BattVoltage in pos [41-51] -> 				syslog "appmain: battvoltage "+str$(BattVoltage)+" on ai"+str$(chan),5 ' mV
+  <- 				syslog "appmain: battvoltage "+str$(BattVoltage)+" on ai"+str$(chan),5 ' mV
+  -> 				syslog "appmain: battvoltage "+str$(iostate(819))+" on ai"+str$(chan),5 ' mV
+  - Macro BattVoltage in pos [15-25] -> 				chd(chan)=BattVoltage/10 ' averaged BTV, udpmon jaoks pane oige jagaja.. bup saatmisel sprintf$("%l.2F",chd(chan)) 
+  <- 				chd(chan)=BattVoltage/10 ' averaged BTV, udpmon jaoks pane oige jagaja.. bup saatmisel sprintf$("%l.2F",chd(chan)) 
+  -> 				chd(chan)=iostate(819)/10 ' averaged BTV, udpmon jaoks pane oige jagaja.. bup saatmisel sprintf$("%l.2F",chd(chan)) 
+  - Macro BattVoltage in pos [41-51] -> 				syslog "appmain: battvoltage "+str$(BattVoltage)+" on ai"+str$(chan),5 ' mV
+  <- 				syslog "appmain: battvoltage "+str$(BattVoltage)+" on ai"+str$(chan),5 ' mV
+  -> 				syslog "appmain: battvoltage "+str$(iostate(819))+" on ai"+str$(chan),5 ' mV
+  - Macro BattVoltage in pos [15-25] -> 				chd(chan)=BattVoltage/10 ' averaged BTV, saatmisel sprintf$("%l.2F",chd(chan)) 
+  <- 				chd(chan)=BattVoltage/10 ' averaged BTV, saatmisel sprintf$("%l.2F",chd(chan)) 
+  -> 				chd(chan)=iostate(819)/10 ' averaged BTV, saatmisel sprintf$("%l.2F",chd(chan)) 
+  - Macro BattVoltage in pos [29-39] ->    if and(iostate(330) = 0, BattVoltage < iostate(809) - 10) then 
+  <-    if and(iostate(330) = 0, BattVoltage < iostate(809) - 10) then 
+  ->    if and(iostate(330) = 0, iostate(819) < iostate(809) - 10) then 
+  - Macro BattVoltage in pos [27-37] -> 	if and(iostate(330) = 1, BattVoltage > iostate(809) + 10) then 
+  <- 	if and(iostate(330) = 1, BattVoltage > iostate(809) + 10) then 
+  -> 	if and(iostate(330) = 1, iostate(819) > iostate(809) + 10) then 
+  - Macro BattVoltage in pos [27-37] -> 	if and(iostate(331) = 0, BattVoltage > iostate(810) + 10) then 
+  <- 	if and(iostate(331) = 0, BattVoltage > iostate(810) + 10) then 
+  -> 	if and(iostate(331) = 0, iostate(819) > iostate(810) + 10) then 
+  - Macro BattVoltage in pos [27-37] -> 	if and(iostate(331) = 1, BattVoltage < iostate(810) - 10) then 
+  <- 	if and(iostate(331) = 1, BattVoltage < iostate(810) - 10) then 
+  -> 	if and(iostate(331) = 1, iostate(819) < iostate(810) - 10) then 
+- PowerLossDelay= --> ioctl 820, 
+  - Macro PowerLossDelay= in pos [9-23] ->  jj=766:PowerLossDelay=MIDGET(set$,jj-511,1):gosub 21010 ' voolukatkestuse teatamise viide
+  <-  jj=766:PowerLossDelay=MIDGET(set$,jj-511,1):gosub 21010 ' voolukatkestuse teatamise viide
+  ->  jj=766:ioctl 820, MIDGET(set$,jj-511,1):gosub 21010 ' voolukatkestuse teatamise viide
+- PowerLossDelay --> iostate(820)
+  - Macro PowerLossDelay in pos [62-75] ->    ' if and(iostate(329) = 0, iostate(318) = 1, up(0)> ts(8)+PowerLossDelay) then ioctl 329,  1:ms$=ms$+"PWS:2\n":gosub 270  ' kohe teatamine
+  <-    ' if and(iostate(329) = 0, iostate(318) = 1, up(0)> ts(8)+PowerLossDelay) then ioctl 329,  1:ms$=ms$+"PWS:2\n":gosub 270  ' kohe teatamine
+  ->    ' if and(iostate(329) = 0, iostate(318) = 1, up(0)> ts(8)+iostate(820)) then ioctl 329,  1:ms$=ms$+"PWS:2\n":gosub 270  ' kohe teatamine
+- SlidingWindowSize= --> ioctl 821, 
+  - Macro SlidingWindowSize= in pos [9-26] ->  jj=767:SlidingWindowSize=MIDGET(set$,jj-511,1):gosub 21010 ' keskmistamise tugevus
+  <-  jj=767:SlidingWindowSize=MIDGET(set$,jj-511,1):gosub 21010 ' keskmistamise tugevus
+  ->  jj=767:ioctl 821, MIDGET(set$,jj-511,1):gosub 21010 ' keskmistamise tugevus
+- SlidingWindowSize --> iostate(821)
+  - Macro SlidingWindowSize in pos [17-33] ->   ' keskmistame SlidingWindowSize viimast vaartust  eemisega sobivas vahekorras
+  <-   ' keskmistame SlidingWindowSize viimast vaartust  eemisega sobivas vahekorras
+  ->   ' keskmistame iostate(821) viimast vaartust  eemisega sobivas vahekorras
+  - Macro SlidingWindowSize in pos [38-54] ->     if or(iostate(810+timertemp) =0, SlidingWindowSize = 0, SlidingWindowSize = 1) then ' jatame keskmistamise vahele
+  <-     if or(iostate(810+timertemp) =0, SlidingWindowSize = 0, SlidingWindowSize = 1) then ' jatame keskmistamise vahele
+  ->     if or(iostate(810+timertemp) =0, iostate(821) = 0, SlidingWindowSize = 1) then ' jatame keskmistamise vahele
+  - Macro SlidingWindowSize in pos [56-72] ->     if or(iostate(810+timertemp) =0, iostate(821) = 0, SlidingWindowSize = 1) then ' jatame keskmistamise vahele
+  <-     if or(iostate(810+timertemp) =0, iostate(821) = 0, SlidingWindowSize = 1) then ' jatame keskmistamise vahele
+  ->     if or(iostate(810+timertemp) =0, iostate(821) = 0, iostate(821) = 1) then ' jatame keskmistamise vahele
+  - Macro SlidingWindowSize in pos [55-71] ->         syslog "sub 330: no averaging, winsize="+str$(SlidingWindowSize),5
+  <-         syslog "sub 330: no averaging, winsize="+str$(SlidingWindowSize),5
+  ->         syslog "sub 330: no averaging, winsize="+str$(iostate(821)),5
+  - Macro SlidingWindowSize in pos [64-80] ->         syslog "sub 330: averaging active, sli_win_size="+str$(SlidingWindowSize),5
+  <-         syslog "sub 330: averaging active, sli_win_size="+str$(SlidingWindowSize),5
+  ->         syslog "sub 330: averaging active, sli_win_size="+str$(iostate(821)),5
+  - Macro SlidingWindowSize in pos [55-71] ->         ioctl 810+timertemp, (iostate(500+timertemp)+(SlidingWindowSize-1)*iostate(810+timertemp))/SlidingWindowSize ' averaging
+  <-         ioctl 810+timertemp, (iostate(500+timertemp)+(SlidingWindowSize-1)*iostate(810+timertemp))/SlidingWindowSize ' averaging
+  ->         ioctl 810+timertemp, (iostate(500+timertemp)+(iostate(821)-1)*iostate(810+timertemp))/SlidingWindowSize ' averaging
+  - Macro SlidingWindowSize in pos [95-111] ->         ioctl 810+timertemp, (iostate(500+timertemp)+(iostate(821)-1)*iostate(810+timertemp))/SlidingWindowSize ' averaging
+  <-         ioctl 810+timertemp, (iostate(500+timertemp)+(iostate(821)-1)*iostate(810+timertemp))/SlidingWindowSize ' averaging
+  ->         ioctl 810+timertemp, (iostate(500+timertemp)+(iostate(821)-1)*iostate(810+timertemp))/iostate(821) ' averaging
+- Data1IP[]= --> ioctl 822+, 
+  - Macro Data1IP[]= in pos [5-20] ->     Data1IP[jj-567]=MIDGET(set$,jj-511,1):gosub 21010 
+  <-     Data1IP[jj-567]=MIDGET(set$,jj-511,1):gosub 21010 
+  ->     ioctl 822+jj-567, MIDGET(set$,jj-511,1):gosub 21010 
+- Data1IP[] --> iostate(822+)
+  - Macro Data1IP[] in pos [15-24] ->  if ping(str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]),3000) > 0 then
+  <-  if ping(str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]),3000) > 0 then
+  ->  if ping(str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]),3000) > 0 then
+  - Macro Data1IP[] in pos [40-49] ->  if ping(str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]),3000) > 0 then
+  <-  if ping(str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]),3000) > 0 then
+  ->  if ping(str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]),3000) > 0 then
+  - Macro Data1IP[] in pos [65-74] ->  if ping(str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]),3000) > 0 then
+  <-  if ping(str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]),3000) > 0 then
+  ->  if ping(str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4]),3000) > 0 then
+  - Macro Data1IP[] in pos [90-99] ->  if ping(str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4]),3000) > 0 then
+  <-  if ping(str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4]),3000) > 0 then
+  ->  if ping(str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(iostate(822+4)),3000) > 0 then
+  - Macro Data1IP[] in pos [14-23] -> 	syslog str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+"  OK",4
+  <- 	syslog str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+"  OK",4
+  -> 	syslog str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+"  OK",4
+  - Macro Data1IP[] in pos [39-48] -> 	syslog str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+"  OK",4
+  <- 	syslog str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+"  OK",4
+  -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+"  OK",4
+  - Macro Data1IP[] in pos [64-73] -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+"  OK",4
+  <- 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+"  OK",4
+  -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4])+"  OK",4
+  - Macro Data1IP[] in pos [89-98] -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4])+"  OK",4
+  <- 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4])+"  OK",4
+  -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(iostate(822+4))+"  OK",4
+  - Macro Data1IP[] in pos [14-23] -> 	syslog str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+" no response in 3 s",4
+  <- 	syslog str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+" no response in 3 s",4
+  -> 	syslog str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+" no response in 3 s",4
+  - Macro Data1IP[] in pos [39-48] -> 	syslog str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+" no response in 3 s",4
+  <- 	syslog str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+" no response in 3 s",4
+  -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+" no response in 3 s",4
+  - Macro Data1IP[] in pos [64-73] -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+" no response in 3 s",4
+  <- 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+" no response in 3 s",4
+  -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4])+" no response in 3 s",4
+  - Macro Data1IP[] in pos [89-98] -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4])+" no response in 3 s",4
+  <- 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4])+" no response in 3 s",4
+  -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(iostate(822+4))+" no response in 3 s",4
+  - Macro Data1IP[] in pos [13-22] -> 		web$=str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
+  <- 		web$=str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
+  -> 		web$=str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
+  - Macro Data1IP[] in pos [38-47] -> 		web$=str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
+  <- 		web$=str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
+  -> 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
+  - Macro Data1IP[] in pos [63-72] -> 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
+  <- 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
+  -> 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4]) ' 
+  - Macro Data1IP[] in pos [88-97] -> 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4]) ' 
+  <- 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4]) ' 
+  -> 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(iostate(822+4)) ' 
+- Data2IP[]= --> ioctl 826+, 
+  - Macro Data2IP[]= in pos [5-20] ->     Data2IP[jj-571]=MIDGET(set$,jj-511,1):gosub 21010 
+  <-     Data2IP[jj-571]=MIDGET(set$,jj-511,1):gosub 21010 
+  ->     ioctl 826+jj-571, MIDGET(set$,jj-511,1):gosub 21010 
+- Data2IP[] --> iostate(826+)
+  - Macro Data2IP[] in pos [15-24] ->  if ping(str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]),3000) > 0 then
+  <-  if ping(str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]),3000) > 0 then
+  ->  if ping(str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]),3000) > 0 then
+  - Macro Data2IP[] in pos [40-49] ->  if ping(str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]),3000) > 0 then
+  <-  if ping(str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]),3000) > 0 then
+  ->  if ping(str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]),3000) > 0 then
+  - Macro Data2IP[] in pos [65-74] ->  if ping(str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]),3000) > 0 then
+  <-  if ping(str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]),3000) > 0 then
+  ->  if ping(str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4]),3000) > 0 then
+  - Macro Data2IP[] in pos [90-99] ->  if ping(str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4]),3000) > 0 then
+  <-  if ping(str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4]),3000) > 0 then
+  ->  if ping(str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(iostate(826+4)),3000) > 0 then
+  - Macro Data2IP[] in pos [14-23] -> 	syslog str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+"  OK",4
+  <- 	syslog str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+"  OK",4
+  -> 	syslog str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+"  OK",4
+  - Macro Data2IP[] in pos [39-48] -> 	syslog str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+"  OK",4
+  <- 	syslog str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+"  OK",4
+  -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+"  OK",4
+  - Macro Data2IP[] in pos [64-73] -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+"  OK",4
+  <- 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+"  OK",4
+  -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4])+"  OK",4
+  - Macro Data2IP[] in pos [89-98] -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4])+"  OK",4
+  <- 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4])+"  OK",4
+  -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(iostate(826+4))+"  OK",4
+  - Macro Data2IP[] in pos [14-23] -> 	syslog str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+" no response in 3 s",4
+  <- 	syslog str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+" no response in 3 s",4
+  -> 	syslog str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+" no response in 3 s",4
+  - Macro Data2IP[] in pos [39-48] -> 	syslog str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+" no response in 3 s",4
+  <- 	syslog str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+" no response in 3 s",4
+  -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+" no response in 3 s",4
+  - Macro Data2IP[] in pos [64-73] -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+" no response in 3 s",4
+  <- 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+" no response in 3 s",4
+  -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4])+" no response in 3 s",4
+  - Macro Data2IP[] in pos [89-98] -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4])+" no response in 3 s",4
+  <- 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4])+" no response in 3 s",4
+  -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(iostate(826+4))+" no response in 3 s",4
+  - Macro Data2IP[] in pos [13-22] -> 		web$=str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
+  <- 		web$=str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
+  -> 		web$=str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
+  - Macro Data2IP[] in pos [38-47] -> 		web$=str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
+  <- 		web$=str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
+  -> 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
+  - Macro Data2IP[] in pos [63-72] -> 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
+  <- 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
+  -> 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4]) ' 
+  - Macro Data2IP[] in pos [88-97] -> 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4]) ' 
+  <- 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4]) ' 
+  -> 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(iostate(826+4)) ' 
+- Mon1IP[]= --> ioctl 830+, 
+  - Macro Mon1IP[]= in pos [5-19] ->     Mon1IP[jj-555]=MIDGET(set$,jj-511,1):gosub 21010
+  <-     Mon1IP[jj-555]=MIDGET(set$,jj-511,1):gosub 21010
+  ->     ioctl 830+jj-555, MIDGET(set$,jj-511,1):gosub 21010
+- Mon1IP[] --> iostate(830+)
+  - Macro Mon1IP[] in pos [20-33] -> 		mip1$=mip1$+str$(Mon1IP[jj-555])
+  <- 		mip1$=mip1$+str$(Mon1IP[jj-555])
+  -> 		mip1$=mip1$+str$(iostate(830+jj-555))
+  - Macro Mon1IP[] in pos [19-32] -> 	mip2$=mip2$+str$(Mon1IP[jj-555])
+  <- 	mip2$=mip2$+str$(Mon1IP[jj-555])
+  -> 	mip2$=mip2$+str$(iostate(830+jj-555))
+  - Macro Mon1IP[] in pos [22-30] ->     web$=mip1$ 'str$(Mon1IP[1])+"."+str$(Mon1IP[2])+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
+  <-     web$=mip1$ 'str$(Mon1IP[1])+"."+str$(Mon1IP[2])+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
+  ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(Mon1IP[2])+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
+  - Macro Mon1IP[] in pos [47-55] ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(Mon1IP[2])+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
+  <-     web$=mip1$ 'str$(iostate(830+1))+"."+str$(Mon1IP[2])+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
+  ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
+  - Macro Mon1IP[] in pos [72-80] ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
+  <-     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
+  ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(iostate(830+3))+"."+str$(Mon1IP[4]) ' 
+  - Macro Mon1IP[] in pos [97-105] ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(iostate(830+3))+"."+str$(Mon1IP[4]) ' 
+  <-     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(iostate(830+3))+"."+str$(Mon1IP[4]) ' 
+  ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(iostate(830+3))+"."+str$(iostate(830+4)) ' 
+- Mon2IP[]= --> ioctl 834+, 
+  - Macro Mon2IP[]= in pos [5-19] ->     Mon2IP[jj-559]=MIDGET(set$,jj-511,1):gosub 21010 
+  <-     Mon2IP[jj-559]=MIDGET(set$,jj-511,1):gosub 21010 
+  ->     ioctl 834+jj-559, MIDGET(set$,jj-511,1):gosub 21010 
+- Mon2IP[] --> iostate(834+)
+- DataPort= --> ioctl 839, 
+  - Macro DataPort= in pos [9-17] ->  jj=576:DataPort=MIDGET(set$,jj-511,2)
+  <-  jj=576:DataPort=MIDGET(set$,jj-511,2)
+  ->  jj=576:ioctl 839, MIDGET(set$,jj-511,2)
+  - Macro DataPort= in pos [22-30] ->  if DataPort =0 then DataPort=80
+  <-  if DataPort =0 then DataPort=80
+  ->  if DataPort =0 then ioctl 839, 80
+- DataPort --> iostate(839)
+  - Macro DataPort in pos [5-12] ->  if DataPort =0 then ioctl 839, 80
+  <-  if DataPort =0 then ioctl 839, 80
+  ->  if iostate(839) =0 then ioctl 839, 80
+  - Macro DataPort in pos [39-46] -> 	' COM$="TCN:"+web$+":"+sprintf$("%u",DataPort) ' non-blocking open, checking connected below
+  <- 	' COM$="TCN:"+web$+":"+sprintf$("%u",DataPort) ' non-blocking open, checking connected below
+  -> 	' COM$="TCN:"+web$+":"+sprintf$("%u",iostate(839)) ' non-blocking open, checking connected below
+  - Macro DataPort in pos [37-44] -> 	COM$="TCP:"+web$+":"+sprintf$("%u",DataPort) ' blocking open, checking connected below
+  <- 	COM$="TCP:"+web$+":"+sprintf$("%u",DataPort) ' blocking open, checking connected below
+  -> 	COM$="TCP:"+web$+":"+sprintf$("%u",iostate(839)) ' blocking open, checking connected below
+  - Macro DataPort in pos [59-66] -> 	' WRITE 0,ss$,0 ' tcp korral adr ja porti ei anna! ,web$,DataPort:UP(4)=UP(0)' 
+  <- 	' WRITE 0,ss$,0 ' tcp korral adr ja porti ei anna! ,web$,DataPort:UP(4)=UP(0)' 
+  -> 	' WRITE 0,ss$,0 ' tcp korral adr ja porti ei anna! ,web$,iostate(839):UP(4)=UP(0)' 
+- MonPort= --> ioctl 840, 
+  - Macro MonPort= in pos [2-9] ->  MonPort=44445 'esialgu, enne veebist lugemist
+  <-  MonPort=44445 'esialgu, enne veebist lugemist
+  ->  ioctl 840, 44445 'esialgu, enne veebist lugemist
+  - Macro MonPort= in pos [10-17] ->   jj=564:MonPort=MIDGET(set$,jj-511,2)
+  <-   jj=564:MonPort=MIDGET(set$,jj-511,2)
+  ->   jj=564:ioctl 840, MIDGET(set$,jj-511,2)
+  - Macro MonPort= in pos [22-29] ->   if MonPort =0 then MonPort=44445
+  <-   if MonPort =0 then MonPort=44445
+  ->   if MonPort =0 then ioctl 840, 44445
+- MonPort --> iostate(840)
+  - Macro MonPort in pos [27-33] ->  COM$="UDP:0.0.0.0:"+str$(MonPort) '  keep monitoring udp port open
+  <-  COM$="UDP:0.0.0.0:"+str$(MonPort) '  keep monitoring udp port open
+  ->  COM$="UDP:0.0.0.0:"+str$(iostate(840)) '  keep monitoring udp port open
+  - Macro MonPort in pos [48-54] ->  syslog "init: opened udp port "+sprintf$("%u",MonPort)+" to listen monitoring responses",4 ' kasuta sprintf$ str$ ASEMEL 
+  <-  syslog "init: opened udp port "+sprintf$("%u",MonPort)+" to listen monitoring responses",4 ' kasuta sprintf$ str$ ASEMEL 
+  ->  syslog "init: opened udp port "+sprintf$("%u",iostate(840))+" to listen monitoring responses",4 ' kasuta sprintf$ str$ ASEMEL 
+  - Macro MonPort in pos [5-11] ->  if MonPort<>44445 then 'monport muutus setupi kaudu!!
+  <-  if MonPort<>44445 then 'monport muutus setupi kaudu!!
+  ->  if iostate(840)<>44445 then 'monport muutus setupi kaudu!!
+  - Macro MonPort in pos [36-42] -> 	COM$="UDP:0.0.0.0:"+sprintf$("%u",MonPort) ' keep monitoring udp port open
+  <- 	COM$="UDP:0.0.0.0:"+sprintf$("%u",MonPort) ' keep monitoring udp port open
+  -> 	COM$="UDP:0.0.0.0:"+sprintf$("%u",iostate(840)) ' keep monitoring udp port open
+  - Macro MonPort in pos [50-56] -> 	syslog "init: reopened udp port "+sprintf$("%u",MonPort)+" due to changed monport",4
+  <- 	syslog "init: reopened udp port "+sprintf$("%u",MonPort)+" due to changed monport",4
+  -> 	syslog "init: reopened udp port "+sprintf$("%u",iostate(840))+" due to changed monport",4
+  - Macro MonPort in pos [6-12] ->   if MonPort =0 then ioctl 840, 44445
+  <-   if MonPort =0 then ioctl 840, 44445
+  ->   if iostate(840) =0 then ioctl 840, 44445
+  - Macro MonPort in pos [24-30] ->     WRITE 1,ms$,0,web$,MonPort:UP(4)=UP(0)
+  <-     WRITE 1,ms$,0,web$,MonPort:UP(4)=UP(0)
+  ->     WRITE 1,ms$,0,web$,iostate(840):UP(4)=UP(0)
+  - Macro MonPort in pos [55-61] ->     syslog "sub 270: sent to "+web$+":"+sprintf$("%u",MonPort)+": "+ms$,4
+  <-     syslog "sub 270: sent to "+web$+":"+sprintf$("%u",MonPort)+": "+ms$,4
+  ->     syslog "sub 270: sent to "+web$+":"+sprintf$("%u",iostate(840))+": "+ms$,4
+- DataInterval= --> ioctl 841, 
+  - Macro DataInterval= in pos [9-21] ->  jj=764:DataInterval=MIDGET(set$,jj-511,2):gosub 21020 ' max data intervall
+  <-  jj=764:DataInterval=MIDGET(set$,jj-511,2):gosub 21020 ' max data intervall
+  ->  jj=764:ioctl 841, MIDGET(set$,jj-511,2):gosub 21020 ' max data intervall
+- DataInterval --> iostate(841)
+- MonInterval= --> ioctl 842, 
+  - Macro MonInterval= in pos [9-20] ->  jj=762:MonInterval=MIDGET(set$,jj-511,2):gosub 21020 ' max mon intervall
+  <-  jj=762:MonInterval=MIDGET(set$,jj-511,2):gosub 21020 ' max mon intervall
+  ->  jj=762:ioctl 842, MIDGET(set$,jj-511,2):gosub 21020 ' max mon intervall
+- MonInterval --> iostate(842)
+  - Macro MonInterval in pos [42-52] ->     'if or(and(up(0)>30, up(8)=0), up(8)+MonInterval < up(0), d_id = 0) then 'saadaks midagi
+  <-     'if or(and(up(0)>30, up(8)=0), up(8)+MonInterval < up(0), d_id = 0) then 'saadaks midagi
+  ->     'if or(and(up(0)>30, up(8)=0), up(8)+iostate(842) < up(0), d_id = 0) then 'saadaks midagi
+  - Macro MonInterval in pos [41-51] ->     if or(and(up(0)>30, up(8)=0), up(8)+MonInterval < up(0)) then ' esimene saatmine peale restarti    
+  <-     if or(and(up(0)>30, up(8)=0), up(8)+MonInterval < up(0)) then ' esimene saatmine peale restarti    
+  ->     if or(and(up(0)>30, up(8)=0), up(8)+iostate(842) < up(0)) then ' esimene saatmine peale restarti    
+- CommFailDelay= --> ioctl 843, 
+  - Macro CommFailDelay= in pos [9-22] ->  jj=566:CommFailDelay=60*MIDGET(set$,jj-511,1):gosub 21010 ' sisestada minutites, kasutada sekundites
+  <-  jj=566:CommFailDelay=60*MIDGET(set$,jj-511,1):gosub 21010 ' sisestada minutites, kasutada sekundites
+  ->  jj=566:ioctl 843, 60*MIDGET(set$,jj-511,1):gosub 21010 ' sisestada minutites, kasutada sekundites
+  - Macro CommFailDelay= in pos [30-43] ->  if CommFailDelay<  180 then CommFailDelay=180
+  <-  if CommFailDelay<  180 then CommFailDelay=180
+  ->  if CommFailDelay<  180 then ioctl 843, 180
+- CommFailDelay --> iostate(843)
+  - Macro CommFailDelay in pos [75-87] ->     ' syslog "main: gprsuptime "+str$(GprsUptime)+", commfaildelay "+str$(CommFailDelay)+", uptime "+str$(up(0)),4 'ajutine
+  <-     ' syslog "main: gprsuptime "+str$(GprsUptime)+", commfaildelay "+str$(CommFailDelay)+", uptime "+str$(up(0)),4 'ajutine
+  ->     ' syslog "main: gprsuptime "+str$(GprsUptime)+", commfaildelay "+str$(iostate(843))+", uptime "+str$(up(0)),4 'ajutine
+  - Macro CommFailDelay in pos [24-36] ->     'if and(GprsUptime>CommFailDelay, up(0)>LastCommTS+CommFailDelay) then ' udp saabumisi pole olnud
+  <-     'if and(GprsUptime>CommFailDelay, up(0)>LastCommTS+CommFailDelay) then ' udp saabumisi pole olnud
+  ->     'if and(GprsUptime>iostate(843), up(0)>LastCommTS+CommFailDelay) then ' udp saabumisi pole olnud
+  - Macro CommFailDelay in pos [55-67] ->     'if and(GprsUptime>iostate(843), up(0)>LastCommTS+CommFailDelay) then ' udp saabumisi pole olnud
+  <-     'if and(GprsUptime>iostate(843), up(0)>LastCommTS+CommFailDelay) then ' udp saabumisi pole olnud
+  ->     'if and(GprsUptime>iostate(843), up(0)>LastCommTS+iostate(843)) then ' udp saabumisi pole olnud
+  - Macro CommFailDelay in pos [19-31] ->     if and(up(14)>CommFailDelay, up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+  <-     if and(up(14)>CommFailDelay, up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+  ->     if and(up(14)>iostate(843), up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+  - Macro CommFailDelay in pos [45-57] ->     if and(up(14)>iostate(843), up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+  <-     if and(up(14)>iostate(843), up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+  ->     if and(up(14)>iostate(843), up(0)>up(5)+iostate(843)) then ' udp saabumisi pole olnud
+  - Macro CommFailDelay in pos [76-88] ->         syslog "main: GPRS power break due to comm loss longer than "+str$(CommFailDelay)+" s!",4
+  <-         syslog "main: GPRS power break due to comm loss longer than "+str$(CommFailDelay)+" s!",4
+  ->         syslog "main: GPRS power break due to comm loss longer than "+str$(iostate(843))+" s!",4
+  - Macro CommFailDelay in pos [45-57] ->     if and(up(0)>UptimeDelay, up(0)>up(5)+3*CommFailDelay+120) then '  voib rebooti teha, kolmanda gprs restardi jarel andes enne 120s aega gprs kaivitumiseks
+  <-     if and(up(0)>UptimeDelay, up(0)>up(5)+3*CommFailDelay+120) then '  voib rebooti teha, kolmanda gprs restardi jarel andes enne 120s aega gprs kaivitumiseks
+  ->     if and(up(0)>UptimeDelay, up(0)>up(5)+3*iostate(843)+120) then '  voib rebooti teha, kolmanda gprs restardi jarel andes enne 120s aega gprs kaivitumiseks
+  - Macro CommFailDelay in pos [19-31] ->     if and(up(14)>CommFailDelay, up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+  <-     if and(up(14)>CommFailDelay, up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+  ->     if and(up(14)>iostate(843), up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+  - Macro CommFailDelay in pos [45-57] ->     if and(up(14)>iostate(843), up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+  <-     if and(up(14)>iostate(843), up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+  ->     if and(up(14)>iostate(843), up(0)>up(5)+iostate(843)) then ' udp saabumisi pole olnud
+  - Macro CommFailDelay in pos [88-100] ->             syslog "main: changing default gateway due to comm loss longer than "+str$(CommFailDelay)+" s!",4 ' vahetada B12..B15
+  <-             syslog "main: changing default gateway due to comm loss longer than "+str$(CommFailDelay)+" s!",4 ' vahetada B12..B15
+  ->             syslog "main: changing default gateway due to comm loss longer than "+str$(iostate(843))+" s!",4 ' vahetada B12..B15
+  - Macro CommFailDelay in pos [5-17] ->  if CommFailDelay<  180 then ioctl 843, 180
+  <-  if CommFailDelay<  180 then ioctl 843, 180
+  ->  if iostate(843)<  180 then ioctl 843, 180
+- CommFailReaction= --> ioctl 844, 
+  - Macro CommFailReaction= in pos [9-25] ->  jj=555:CommFailReaction=MIDGET(set$,jj-511,1):gosub 21010
+  <-  jj=555:CommFailReaction=MIDGET(set$,jj-511,1):gosub 21010
+  ->  jj=555:ioctl 844, MIDGET(set$,jj-511,1):gosub 21010
+- CommFailReaction --> iostate(844)
+  - Macro CommFailReaction in pos [42-57] ->   ' syslog "main:commfailreaction="+str$(CommFailReaction),4 ' ajutine
+  <-   ' syslog "main:commfailreaction="+str$(CommFailReaction),4 ' ajutine
+  ->   ' syslog "main:commfailreaction="+str$(iostate(844)),4 ' ajutine
+  - Macro CommFailReaction in pos [12-27] ->   if and(1,CommFailReaction) = 1 then ' gprs toitekatkestus on lubatud
+  <-   if and(1,CommFailReaction) = 1 then ' gprs toitekatkestus on lubatud
+  ->   if and(1,iostate(844)) = 1 then ' gprs toitekatkestus on lubatud
+  - Macro CommFailReaction in pos [12-27] ->   if and(2,CommFailReaction) = 2 then ' reboot sidekatkestuse korral on lubatud, 3 x pikem katkestus vajalik kui gprs resetiks!
+  <-   if and(2,CommFailReaction) = 2 then ' reboot sidekatkestuse korral on lubatud, 3 x pikem katkestus vajalik kui gprs resetiks!
+  ->   if and(2,iostate(844)) = 2 then ' reboot sidekatkestuse korral on lubatud, 3 x pikem katkestus vajalik kui gprs resetiks!
+  - Macro CommFailReaction in pos [12-27] ->   if and(8,CommFailReaction) then ' varulyysi kasutus on lubatud, side kontroll udp alusel. peaks kaasama ka tcp...
+  <-   if and(8,CommFailReaction) then ' varulyysi kasutus on lubatud, side kontroll udp alusel. peaks kaasama ka tcp...
+  ->   if and(8,iostate(844)) then ' varulyysi kasutus on lubatud, side kontroll udp alusel. peaks kaasama ka tcp...
+- UptimeDelay= --> ioctl 845, 
+  - Macro UptimeDelay= in pos [9-20] ->  jj=567:UptimeDelay=3600*MIDGET(set$,jj-511,1):gosub 21010 ' sisestada minutites, kasutada tundides
+  <-  jj=567:UptimeDelay=3600*MIDGET(set$,jj-511,1):gosub 21010 ' sisestada minutites, kasutada tundides
+  ->  jj=567:ioctl 845, 3600*MIDGET(set$,jj-511,1):gosub 21010 ' sisestada minutites, kasutada tundides
+- UptimeDelay --> iostate(845)
+  - Macro UptimeDelay in pos [39-49] ->     'syslog "main: uptimedelay "+str$(UptimeDelay)+", uptime "+str$(up(0))+", lastcommTS "+str$(LastCommTS),4 'ajutine
+  <-     'syslog "main: uptimedelay "+str$(UptimeDelay)+", uptime "+str$(up(0))+", lastcommTS "+str$(LastCommTS),4 'ajutine
+  ->     'syslog "main: uptimedelay "+str$(iostate(845))+", uptime "+str$(up(0))+", lastcommTS "+str$(LastCommTS),4 'ajutine
+  - Macro UptimeDelay in pos [18-28] ->     if and(up(0)>UptimeDelay, up(0)>up(5)+3*iostate(843)+120) then '  voib rebooti teha, kolmanda gprs restardi jarel andes enne 120s aega gprs kaivitumiseks
+  <-     if and(up(0)>UptimeDelay, up(0)>up(5)+3*iostate(843)+120) then '  voib rebooti teha, kolmanda gprs restardi jarel andes enne 120s aega gprs kaivitumiseks
+  ->     if and(up(0)>iostate(845), up(0)>up(5)+3*iostate(843)+120) then '  voib rebooti teha, kolmanda gprs restardi jarel andes enne 120s aega gprs kaivitumiseks
+- PrimGW[]= --> ioctl 845+, 
+  - Macro PrimGW[]= in pos [5-19] ->     PrimGW[jj-911]=MIDGET(set$,jj-767,1):gosub 21010
+  <-     PrimGW[jj-911]=MIDGET(set$,jj-767,1):gosub 21010
+  ->     ioctl 845+jj-911, MIDGET(set$,jj-767,1):gosub 21010
+- PrimGW[] --> iostate(845+)
+  - Macro PrimGW[] in pos [25-33] ->            if ping(str$(PrimGW[1])+"."+str$(PrimGW[2])+"."+str$(PrimGW[3])+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  <-            if ping(str$(PrimGW[1])+"."+str$(PrimGW[2])+"."+str$(PrimGW[3])+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  ->            if ping(str$(iostate(845+1))+"."+str$(PrimGW[2])+"."+str$(PrimGW[3])+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  - Macro PrimGW[] in pos [50-58] ->            if ping(str$(iostate(845+1))+"."+str$(PrimGW[2])+"."+str$(PrimGW[3])+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  <-            if ping(str$(iostate(845+1))+"."+str$(PrimGW[2])+"."+str$(PrimGW[3])+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  ->            if ping(str$(iostate(845+1))+"."+str$(iostate(845+2))+"."+str$(PrimGW[3])+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  - Macro PrimGW[] in pos [75-83] ->            if ping(str$(iostate(845+1))+"."+str$(iostate(845+2))+"."+str$(PrimGW[3])+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  <-            if ping(str$(iostate(845+1))+"."+str$(iostate(845+2))+"."+str$(PrimGW[3])+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  ->            if ping(str$(iostate(845+1))+"."+str$(iostate(845+2))+"."+str$(iostate(845+3))+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  - Macro PrimGW[] in pos [100-108] ->            if ping(str$(iostate(845+1))+"."+str$(iostate(845+2))+"."+str$(iostate(845+3))+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  <-            if ping(str$(iostate(845+1))+"."+str$(iostate(845+2))+"."+str$(iostate(845+3))+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  ->            if ping(str$(iostate(845+1))+"."+str$(iostate(845+2))+"."+str$(iostate(845+3))+"."+str$(iostate(845+4)),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+  - Macro PrimGW[] in pos [46-54] ->                 mr$="id:"+mac$+"\nB12:"+str$(PrimGW[1])+"\nB13:"+str$(PrimGW[2])+"\nB14:"+str$(PrimGW[3])+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+  <-                 mr$="id:"+mac$+"\nB12:"+str$(PrimGW[1])+"\nB13:"+str$(PrimGW[2])+"\nB14:"+str$(PrimGW[3])+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+  ->                 mr$="id:"+mac$+"\nB12:"+str$(iostate(845+1))+"\nB13:"+str$(PrimGW[2])+"\nB14:"+str$(PrimGW[3])+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+  - Macro PrimGW[] in pos [76-84] ->                 mr$="id:"+mac$+"\nB12:"+str$(iostate(845+1))+"\nB13:"+str$(PrimGW[2])+"\nB14:"+str$(PrimGW[3])+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+  <-                 mr$="id:"+mac$+"\nB12:"+str$(iostate(845+1))+"\nB13:"+str$(PrimGW[2])+"\nB14:"+str$(PrimGW[3])+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+  ->                 mr$="id:"+mac$+"\nB12:"+str$(iostate(845+1))+"\nB13:"+str$(iostate(845+2))+"\nB14:"+str$(PrimGW[3])+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+  - Macro PrimGW[] in pos [106-114] ->                 mr$="id:"+mac$+"\nB12:"+str$(iostate(845+1))+"\nB13:"+str$(iostate(845+2))+"\nB14:"+str$(PrimGW[3])+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+  <-                 mr$="id:"+mac$+"\nB12:"+str$(iostate(845+1))+"\nB13:"+str$(iostate(845+2))+"\nB14:"+str$(PrimGW[3])+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+  ->                 mr$="id:"+mac$+"\nB12:"+str$(iostate(845+1))+"\nB13:"+str$(iostate(845+2))+"\nB14:"+str$(iostate(845+3))+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+  - Macro PrimGW[] in pos [136-144] ->                 mr$="id:"+mac$+"\nB12:"+str$(iostate(845+1))+"\nB13:"+str$(iostate(845+2))+"\nB14:"+str$(iostate(845+3))+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+  <-                 mr$="id:"+mac$+"\nB12:"+str$(iostate(845+1))+"\nB13:"+str$(iostate(845+2))+"\nB14:"+str$(iostate(845+3))+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+  ->                 mr$="id:"+mac$+"\nB12:"+str$(iostate(845+1))+"\nB13:"+str$(iostate(845+2))+"\nB14:"+str$(iostate(845+3))+"\nB15:"+str$(iostate(845+4))+"\n":gosub 142:gosub 145
+- SecondGW[]= --> ioctl 850+, 
+  - Macro SecondGW[]= in pos [5-21] ->     SecondGW[jj-857]=MIDGET(set$,jj-767,1):gosub 21010
+  <-     SecondGW[jj-857]=MIDGET(set$,jj-767,1):gosub 21010
+  ->     ioctl 850+jj-857, MIDGET(set$,jj-767,1):gosub 21010
+- SecondGW[] --> iostate(850+)
+  - Macro SecondGW[] in pos [62-72] ->         syslog "main: need to change gw to secondary! "+str$(SecondGW[1])+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),4
+  <-         syslog "main: need to change gw to secondary! "+str$(SecondGW[1])+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),4
+  ->         syslog "main: need to change gw to secondary! "+str$(iostate(850+1))+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),4
+  - Macro SecondGW[] in pos [87-97] ->         syslog "main: need to change gw to secondary! "+str$(iostate(850+1))+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),4
+  <-         syslog "main: need to change gw to secondary! "+str$(iostate(850+1))+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),4
+  ->         syslog "main: need to change gw to secondary! "+str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),4
+  - Macro SecondGW[] in pos [112-122] ->         syslog "main: need to change gw to secondary! "+str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),4
+  <-         syslog "main: need to change gw to secondary! "+str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),4
+  ->         syslog "main: need to change gw to secondary! "+str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(iostate(850+3))+"."+str$(SecondGW[4]),4
+  - Macro SecondGW[] in pos [137-147] ->         syslog "main: need to change gw to secondary! "+str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(iostate(850+3))+"."+str$(SecondGW[4]),4
+  <-         syslog "main: need to change gw to secondary! "+str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(iostate(850+3))+"."+str$(SecondGW[4]),4
+  ->         syslog "main: need to change gw to secondary! "+str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(iostate(850+3))+"."+str$(iostate(850+4)),4
+  - Macro SecondGW[] in pos [22-32] ->         if ping(str$(SecondGW[1])+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  <-         if ping(str$(SecondGW[1])+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  ->         if ping(str$(iostate(850+1))+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  - Macro SecondGW[] in pos [47-57] ->         if ping(str$(iostate(850+1))+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  <-         if ping(str$(iostate(850+1))+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  ->         if ping(str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  - Macro SecondGW[] in pos [72-82] ->         if ping(str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  <-         if ping(str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  ->         if ping(str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(iostate(850+3))+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  - Macro SecondGW[] in pos [97-107] ->         if ping(str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(iostate(850+3))+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  <-         if ping(str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(iostate(850+3))+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  ->         if ping(str$(iostate(850+1))+"."+str$(iostate(850+2))+"."+str$(iostate(850+3))+"."+str$(iostate(850+4)),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+  - Macro SecondGW[] in pos [42-52] ->             mr$="id:"+mac$+"\nB12:"+str$(SecondGW[1])+"\nB13:"+str$(SecondGW[2])+"\nB14:"+str$(SecondGW[3])+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+  <-             mr$="id:"+mac$+"\nB12:"+str$(SecondGW[1])+"\nB13:"+str$(SecondGW[2])+"\nB14:"+str$(SecondGW[3])+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+  ->             mr$="id:"+mac$+"\nB12:"+str$(iostate(850+1))+"\nB13:"+str$(SecondGW[2])+"\nB14:"+str$(SecondGW[3])+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+  - Macro SecondGW[] in pos [72-82] ->             mr$="id:"+mac$+"\nB12:"+str$(iostate(850+1))+"\nB13:"+str$(SecondGW[2])+"\nB14:"+str$(SecondGW[3])+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+  <-             mr$="id:"+mac$+"\nB12:"+str$(iostate(850+1))+"\nB13:"+str$(SecondGW[2])+"\nB14:"+str$(SecondGW[3])+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+  ->             mr$="id:"+mac$+"\nB12:"+str$(iostate(850+1))+"\nB13:"+str$(iostate(850+2))+"\nB14:"+str$(SecondGW[3])+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+  - Macro SecondGW[] in pos [102-112] ->             mr$="id:"+mac$+"\nB12:"+str$(iostate(850+1))+"\nB13:"+str$(iostate(850+2))+"\nB14:"+str$(SecondGW[3])+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+  <-             mr$="id:"+mac$+"\nB12:"+str$(iostate(850+1))+"\nB13:"+str$(iostate(850+2))+"\nB14:"+str$(SecondGW[3])+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+  ->             mr$="id:"+mac$+"\nB12:"+str$(iostate(850+1))+"\nB13:"+str$(iostate(850+2))+"\nB14:"+str$(iostate(850+3))+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+  - Macro SecondGW[] in pos [132-142] ->             mr$="id:"+mac$+"\nB12:"+str$(iostate(850+1))+"\nB13:"+str$(iostate(850+2))+"\nB14:"+str$(iostate(850+3))+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+  <-             mr$="id:"+mac$+"\nB12:"+str$(iostate(850+1))+"\nB13:"+str$(iostate(850+2))+"\nB14:"+str$(iostate(850+3))+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+  ->             mr$="id:"+mac$+"\nB12:"+str$(iostate(850+1))+"\nB13:"+str$(iostate(850+2))+"\nB14:"+str$(iostate(850+3))+"\nB15:"+str$(iostate(850+4))+"\n":gosub 142:gosub 145
+  - Macro SecondGW[] in pos [10-20] ->   if and(SecondGW[1] = gw(0), SecondGW[2] = gw(1), SecondGW[3] = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+  <-   if and(SecondGW[1] = gw(0), SecondGW[2] = gw(1), SecondGW[3] = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+  ->   if and(iostate(850+1) = gw(0), SecondGW[2] = gw(1), SecondGW[3] = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+  - Macro SecondGW[] in pos [34-44] ->   if and(iostate(850+1) = gw(0), SecondGW[2] = gw(1), SecondGW[3] = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+  <-   if and(iostate(850+1) = gw(0), SecondGW[2] = gw(1), SecondGW[3] = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+  ->   if and(iostate(850+1) = gw(0), iostate(850+2) = gw(1), SecondGW[3] = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+  - Macro SecondGW[] in pos [58-68] ->   if and(iostate(850+1) = gw(0), iostate(850+2) = gw(1), SecondGW[3] = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+  <-   if and(iostate(850+1) = gw(0), iostate(850+2) = gw(1), SecondGW[3] = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+  ->   if and(iostate(850+1) = gw(0), iostate(850+2) = gw(1), iostate(850+3) = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+  - Macro SecondGW[] in pos [82-92] ->   if and(iostate(850+1) = gw(0), iostate(850+2) = gw(1), iostate(850+3) = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+  <-   if and(iostate(850+1) = gw(0), iostate(850+2) = gw(1), iostate(850+3) = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+  ->   if and(iostate(850+1) = gw(0), iostate(850+2) = gw(1), iostate(850+3) = gw(2), iostate(850+4) = gw(3)) then '  kehtiv def gw on varuaadress!
+- ReturnCode= --> ioctl 883, 
+  - Macro ReturnCode= in pos [6-16] -> 					ReturnCode=0
+  <- 					ReturnCode=0
+  -> 					ioctl 883, 0
+  - Macro ReturnCode= in pos [6-16] -> 					ReturnCode=1 ' invalid id in ack
+  <- 					ReturnCode=1 ' invalid id in ack
+  -> 					ioctl 883, 1 ' invalid id in ack
+  - Macro ReturnCode= in pos [5-15] -> 				ReturnCode=1
+  <- 				ReturnCode=1
+  -> 				ioctl 883, 1
+- ReturnCode --> iostate(883)
+- InOldWd[]= --> ioctl 940+,
+  - Macro InOldWd[]= in pos [4-16] -> 			InOldWd[mba]=InWd ' vana meelde
+  <- 			InOldWd[mba]=InWd ' vana meelde
+  -> 			ioctl 940+mba,InWd ' vana meelde
+  - Macro InOldWd[]= in pos [2-12] -> 	InOldWd[0]=InWd 'jatame meelde
+  <- 	InOldWd[0]=InWd 'jatame meelde
+  -> 	ioctl 940+0,InWd 'jatame meelde
+- InOldWd[] --> iostate(940+)
+  - Macro InOldWd[] in pos [22-33] -> 		ichg(mba)=xor(InWd,InOldWd[mba]) ' mis muutus? mask, kui muutust pole, siis ichg() = 0
+  <- 		ichg(mba)=xor(InWd,InOldWd[mba]) ' mis muutus? mask, kui muutust pole, siis ichg() = 0
+  -> 		ichg(mba)=xor(InWd,iostate(940+mba)) ' mis muutus? mask, kui muutust pole, siis ichg() = 0
+  - Macro InOldWd[] in pos [12-23] -> 		if InWd<>InOldWd[mba] then ' input change. tegelikult peaks kontrollima vaid maskile vastavate bittide muutust...
+  <- 		if InWd<>InOldWd[mba] then ' input change. tegelikult peaks kontrollima vaid maskile vastavate bittide muutust...
+  -> 		if InWd<>iostate(940+mba) then ' input change. tegelikult peaks kontrollima vaid maskile vastavate bittide muutust...
+  - Macro InOldWd[] in pos [20-29] -> 	ichg(0)=xor(InWd, InOldWd[0]) 'mis muutus
+  <- 	ichg(0)=xor(InWd, InOldWd[0]) 'mis muutus
+  -> 	ichg(0)=xor(InWd, iostate(940+0)) 'mis muutus
+  - Macro InOldWd[] in pos [84-93] -> 	syslog "chd_tegu: bn InWd "+sprintf$("%06x",InWd)+", inoldwd[0] "+sprintf$("%06x",InOldWd[0]),5 'ajutine
+  <- 	syslog "chd_tegu: bn InWd "+sprintf$("%06x",InWd)+", inoldwd[0] "+sprintf$("%06x",InOldWd[0]),5 'ajutine
+  -> 	syslog "chd_tegu: bn InWd "+sprintf$("%06x",InWd)+", inoldwd[0] "+sprintf$("%06x",iostate(940+0)),5 'ajutine
+- OutOldWd[]= --> ioctl 950+,
+  - Macro OutOldWd[]= in pos [3-16] -> 		OutOldWd[mba]=OutWd ' jatame valjundi meelde
+  <- 		OutOldWd[mba]=OutWd ' jatame valjundi meelde
+  -> 		ioctl 950+mba,OutWd ' jatame valjundi meelde
+- OutOldWd[] --> iostate(950+)
+  - Macro OutOldWd[] in pos [17-29] -> 		' if OutWd <> OutOldWd[mba] then ' on toimunud valjundi virt reg muudatus, teeme mb jaoks baidid 
+  <- 		' if OutWd <> OutOldWd[mba] then ' on toimunud valjundi virt reg muudatus, teeme mb jaoks baidid 
+  -> 		' if OutWd <> iostate(950+mba) then ' on toimunud valjundi virt reg muudatus, teeme mb jaoks baidid 
+  - Macro OutOldWd[] in pos [19-31] -> 			ochg=xor(OutWd,OutOldWd[mba]) ' mis muutus? kuid see on muutus jrk sees, mitte modbus registrites!! SEE EI HUVITA!
+  <- 			ochg=xor(OutWd,OutOldWd[mba]) ' mis muutus? kuid see on muutus jrk sees, mitte modbus registrites!! SEE EI HUVITA!
+  -> 			ochg=xor(OutWd,iostate(950+mba)) ' mis muutus? kuid see on muutus jrk sees, mitte modbus registrites!! SEE EI HUVITA!
+
+Preprocessor: Finish
+
+Tokenization: Start
+
+Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
+    Statement Label
+        GOSUB 5000
+        GOSUB 15000
+        GOSUB 9900
+        GOSUB 110
+        GOSUB 270
+        GOSUB 330
+        GOSUB 21000
+        GOSUB 20100
+        GOSUB 142
+        GOSUB 145
+        GOSUB 110
+        GOSUB 22000
+        GOSUB 150
+        GOSUB 270
+        GOSUB 270
+        GOSUB 32000
+        GOSUB 270
+        GOSUB 270
+        GOSUB 142
+        GOSUB 145
+        GOSUB 142
+        GOSUB 145
+        GOSUB 5950
+        GOSUB 270
+         GOTO 100
+        GOSUB 270
+        GOSUB 109
+        GOSUB 109
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21020
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21020
+        GOSUB 109
+        GOSUB 21020
+        GOSUB 21020
+        GOSUB 21020
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21020
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21020
+        GOSUB 21020
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 109
+        GOSUB 109
+        GOSUB 109
+        GOSUB 115
+        GOSUB 115
+        GOSUB 109
+        GOSUB 115
+        GOSUB 109
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 270
+        GOSUB 109
+        GOSUB 109
+        GOSUB 109
+        GOSUB 13000
+        GOSUB 13000
+        GOSUB 13000
+        GOSUB 13000
+        GOSUB 270
+        GOSUB 11000
+        GOSUB 270
+        GOSUB 13000
+         GOTO 149
+         GOTO 148
+         GOTO 148
+        GOSUB 109
+        GOSUB 109
+        GOSUB 109
+         GOTO 149
+         GOTO 149
+         GOTO 149
+        GOSUB 270
+        GOSUB 270
+        GOSUB 1800
+        GOSUB 1200
+        GOSUB 1150
+        GOSUB 1700
+        GOSUB 1150
+         GOTO 1020
+        GOSUB 1600
+         GOTO 1020
+        GOSUB 1050
+        GOSUB 1200
+        GOSUB 1150
+        GOSUB 1700
+        GOSUB 1150
+         GOTO 1020
+        GOSUB 109
+        GOSUB 1250
+         GOTO 1705
+         GOTO 1702
+        GOSUB 1250
+        GOSUB 1150
+        GOSUB 1200
+        GOSUB 1150
+        GOSUB 1700
+        GOSUB 1150
+        GOSUB 1200
+        GOSUB 1150
+        GOSUB 1700
+        GOSUB 1150
+        GOSUB 1200
+        GOSUB 1150
+        GOSUB 1700
+        GOSUB 1150
+        GOSUB 1200
+        GOSUB 1150
+        GOSUB 1700
+        GOSUB 1150
+        GOSUB 5250
+        GOSUB 5250
+        GOSUB 5250
+        GOSUB 5250
+        GOSUB 5250
+         GOTO 5252
+        GOSUB 11200
+         GOTO 11003
+        GOSUB 11200
+         GOTO 11001
+        GOSUB 11100
+         GOTO 13001
+        GOSUB 142
+        GOSUB 142
+        GOSUB 142
+        GOSUB 145
+        GOSUB 270
+        GOSUB 270
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21020
+        GOSUB 21010
+        GOSUB 21020
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21020
+        GOSUB 21010
+        GOSUB 21020
+        GOSUB 21020
+        GOSUB 21020
+        GOSUB 21020
+        GOSUB 21020
+        GOSUB 21010
+        GOSUB 21020
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 21010
+        GOSUB 270
+        GOSUB 109
+        GOSUB 109
+        GOSUB 270
+        GOSUB 109
+         GOTO 25020
+         GOTO 25010
+        GOSUB 5250
+         GOTO 25050
+        GOSUB 24000
+        GOSUB 270
+        GOSUB 25500
+        GOSUB 25400
+         GOTO 25420
+         GOTO 25420
+         GOTO 25420
+        GOSUB 140
+        GOSUB 110
+        GOSUB 142
+        GOSUB 145
+        GOSUB 13300
+        GOSUB 13500
+        GOSUB 1000
+        GOSUB 10000
+        GOSUB 270
+        GOSUB 270
+        GOSUB 270
+        GOSUB 270
+        GOSUB 135
+        GOSUB 134
+        GOSUB 270
+        GOSUB 5200
+        GOSUB 270
+
+Tokenization: Second pass for main tokenization
+Warning: DIM _TMR_(4) is already fulfiled by tokenizer itself
+Warning: this name is used by default without DIM declaration (MBMAX)
+Label=100,offset=0x742
+Warning: this name is used by default without DIM declaration (OIN)
+Warning: this name is used by default without DIM declaration (COMMFAILFELAY)
+Label=109,offset=0xe68
+Warning: this name is used by default without DIM declaration (NFRAG)
+Label=110,offset=0xefb
+Warning: this name is used by default without DIM declaration (JJ)
+Warning: this name is used by default without DIM declaration (MONMODE)
+Warning: this name is used by default without DIM declaration (MBAX)
+Warning: this name is used by default without DIM declaration (THYST)
+Warning: this name is used by default without DIM declaration (THERMOINTERVAL)
+Warning: this name is used by default without DIM declaration (CHAN)
+Warning: this name is used by default without DIM declaration (AILEVEL)
+Warning: this name is used by default without DIM declaration (KH)
+Warning: this name is used by default without DIM declaration (KL)
+Label=115,offset=0x1de5
+Warning: this name is used by default without DIM declaration (UK)
+Label=134,offset=0x1e49
+Label=135,offset=0x1e59
+Label=136,offset=0x0
+Label=140,offset=0x1e7e
+Label=142,offset=0x2000
+Label=145,offset=0x2507
+Warning: this name is used by default without DIM declaration (POS)
+Label=147,offset=0x0
+Label=148,offset=0x2a65
+Label=149,offset=0x2cff
+Label=150,offset=0x2dc9
+Warning: this name is used by default without DIM declaration (_DTS_)
+Warning: this name is used by default without DIM declaration (MONTHNUMBER)
+Warning: this name is used by default without DIM declaration (DAYOFMONTH)
+Warning: this name is used by default without DIM declaration (HOUROFDAY)
+Warning: this name is used by default without DIM declaration (WEEKDAY)
+Warning: this name is used by default without DIM declaration (TIMEZONE)
+Warning: this name is used by default without DIM declaration (NMIN)
+Warning: this name is used by default without DIM declaration (NHOUR)
+Warning: this name is used by default without DIM declaration (NWDAY)
+Label=270,offset=0x3032
+Warning: this name is used by default without DIM declaration (M_ID)
+Label=300,offset=0x0
+Label=330,offset=0x31cc
+Warning: this name is used by default without DIM declaration (TIMERTEMP)
+Label=1000,offset=0x32be
+Warning: this name is used by default without DIM declaration (IJRK)
+Warning: this name is used by default without DIM declaration (OJRK)
+Warning: this name is used by default without DIM declaration (MBA)
+Warning: this name is used by default without DIM declaration (MLEN)
+Warning: this name is used by default without DIM declaration (EXPLEN)
+Warning: this name is used by default without DIM declaration (FBWD)
+Warning: this name is used by default without DIM declaration (INHI)
+Warning: this name is used by default without DIM declaration (INLO)
+Warning: this name is used by default without DIM declaration (INWD)
+Warning: this name is used by default without DIM declaration (IHII)
+Label=1010,offset=0x0
+Warning: this name is used by default without DIM declaration (OUTWD)
+Warning: this name is used by default without DIM declaration (ABIOUT)
+Warning: this name is used by default without DIM declaration (OCHG)
+Warning: this name is used by default without DIM declaration (OUTLO)
+Warning: this name is used by default without DIM declaration (OUTHI)
+Label=1020,offset=0x3bc5
+Label=1022,offset=0x0
+Warning: this name is used by default without DIM declaration (OMAX)
+Label=1050,offset=0x3d34
+Label=1100,offset=0x0
+Label=1150,offset=0x3dd7
+Warning: this name is used by default without DIM declaration (Y)
+Label=1200,offset=0x3e45
+Warning: this name is used by default without DIM declaration (TMP$)
+Warning: this name is used by default without DIM declaration (CRC)
+Label=1250,offset=0x3efc
+Warning: this name is used by default without DIM declaration (K)
+Label=1600,offset=0x3f6a
+Label=1700,offset=0x3fab
+Label=1702,offset=0x3fad
+Label=1705,offset=0x408c
+Label=1800,offset=0x4174
+Label=5000,offset=0x4b24
+Label=5200,offset=0x4bae
+Label=5250,offset=0x54ca
+Warning: this name is used by default without DIM declaration (TMP)
+Label=5252,offset=0x54df
+Label=5950,offset=0x5517
+Warning: this name is used by default without DIM declaration (OMIN)
+Label=9900,offset=0x55a3
+Label=10000,offset=0x564c
+Label=11000,offset=0x5788
+Label=11001,offset=0x57d0
+Label=11003,offset=0x584d
+Label=11100,offset=0x5858
+Warning: this name is used by default without DIM declaration (EXIT)
+Label=11200,offset=0x59d2
+Label=13000,offset=0x5a6d
+Label=13001,offset=0x5b1e
+Label=13300,offset=0x5bb4
+Label=13500,offset=0x5c95
+Label=15000,offset=0x601e
+Warning: this name is used by default without DIM declaration (_ERR_)
+Warning: this name is used by default without DIM declaration (_ERL_)
+Label=20100,offset=0x614d
+Warning: this name is used by default without DIM declaration (NUM)
+Label=21000,offset=0x62de
+Warning: this name is used by default without DIM declaration (JK)
+Label=21010,offset=0x6452
+Label=21020,offset=0x64ed
+Label=22000,offset=0x6583
+Label=24000,offset=0x65f0
+Label=25000,offset=0x0
+Warning: this name is used by default without DIM declaration (D_ID)
+Label=25010,offset=0x67d8
+Label=25020,offset=0x68de
+Label=25050,offset=0x6b7d
+Label=25500,offset=0x6c4a
+Label=25400,offset=0x6d6f
+Label=25420,offset=0x6d72
+Label=32000,offset=0x7231
+Warning: this name is used by default without DIM declaration (TMPSTATUS)
+Code tokenized, size=0x7f75
+
+Tokenization: Third pass for label offsets used in GOTO/GOSUB/RETURN
+    Statement Label --> Offset in tokenized code
+        GOSUB 15000 --> 0x601E (24606 bytes)
+        GOSUB 9900  --> 0x55A3 (21923 bytes)
+        GOSUB 110   --> 0x0EFB ( 3835 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 330   --> 0x31CC (12748 bytes)
+        GOSUB 21000 --> 0x62DE (25310 bytes)
+        GOSUB 20100 --> 0x614D (24909 bytes)
+        GOSUB 142   --> 0x2000 ( 8192 bytes)
+        GOSUB 145   --> 0x2507 ( 9479 bytes)
+        GOSUB 110   --> 0x0EFB ( 3835 bytes)
+        GOSUB 22000 --> 0x6583 (25987 bytes)
+        GOSUB 150   --> 0x2DC9 (11721 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 32000 --> 0x7231 (29233 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 142   --> 0x2000 ( 8192 bytes)
+        GOSUB 145   --> 0x2507 ( 9479 bytes)
+        GOSUB 142   --> 0x2000 ( 8192 bytes)
+        GOSUB 145   --> 0x2507 ( 9479 bytes)
+        GOSUB 5950  --> 0x5517 (21783 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+         GOTO 100   --> 0x0742 ( 1858 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 115   --> 0x1DE5 ( 7653 bytes)
+        GOSUB 115   --> 0x1DE5 ( 7653 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 115   --> 0x1DE5 ( 7653 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 13000 --> 0x5A6D (23149 bytes)
+        GOSUB 13000 --> 0x5A6D (23149 bytes)
+        GOSUB 13000 --> 0x5A6D (23149 bytes)
+        GOSUB 13000 --> 0x5A6D (23149 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 11000 --> 0x5788 (22408 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 13000 --> 0x5A6D (23149 bytes)
+         GOTO 149   --> 0x2CFF (11519 bytes)
+         GOTO 148   --> 0x2A65 (10853 bytes)
+         GOTO 148   --> 0x2A65 (10853 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+         GOTO 149   --> 0x2CFF (11519 bytes)
+         GOTO 149   --> 0x2CFF (11519 bytes)
+         GOTO 149   --> 0x2CFF (11519 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 1800  --> 0x4174 (16756 bytes)
+        GOSUB 1200  --> 0x3E45 (15941 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+        GOSUB 1700  --> 0x3FAB (16299 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+         GOTO 1020  --> 0x3BC5 (15301 bytes)
+        GOSUB 1600  --> 0x3F6A (16234 bytes)
+         GOTO 1020  --> 0x3BC5 (15301 bytes)
+        GOSUB 1050  --> 0x3D34 (15668 bytes)
+        GOSUB 1200  --> 0x3E45 (15941 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+        GOSUB 1700  --> 0x3FAB (16299 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+         GOTO 1020  --> 0x3BC5 (15301 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 1250  --> 0x3EFC (16124 bytes)
+         GOTO 1705  --> 0x408C (16524 bytes)
+         GOTO 1702  --> 0x3FAD (16301 bytes)
+        GOSUB 1250  --> 0x3EFC (16124 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+        GOSUB 1200  --> 0x3E45 (15941 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+        GOSUB 1700  --> 0x3FAB (16299 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+        GOSUB 1200  --> 0x3E45 (15941 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+        GOSUB 1700  --> 0x3FAB (16299 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+        GOSUB 1200  --> 0x3E45 (15941 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+        GOSUB 1700  --> 0x3FAB (16299 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+        GOSUB 1200  --> 0x3E45 (15941 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+        GOSUB 1700  --> 0x3FAB (16299 bytes)
+        GOSUB 1150  --> 0x3DD7 (15831 bytes)
+        GOSUB 5250  --> 0x54CA (21706 bytes)
+        GOSUB 5250  --> 0x54CA (21706 bytes)
+        GOSUB 5250  --> 0x54CA (21706 bytes)
+        GOSUB 5250  --> 0x54CA (21706 bytes)
+        GOSUB 5250  --> 0x54CA (21706 bytes)
+         GOTO 5252  --> 0x54DF (21727 bytes)
+        GOSUB 11200 --> 0x59D2 (22994 bytes)
+         GOTO 11003 --> 0x584D (22605 bytes)
+        GOSUB 11200 --> 0x59D2 (22994 bytes)
+         GOTO 11001 --> 0x57D0 (22480 bytes)
+        GOSUB 11100 --> 0x5858 (22616 bytes)
+         GOTO 13001 --> 0x5B1E (23326 bytes)
+        GOSUB 142   --> 0x2000 ( 8192 bytes)
+        GOSUB 142   --> 0x2000 ( 8192 bytes)
+        GOSUB 142   --> 0x2000 ( 8192 bytes)
+        GOSUB 145   --> 0x2507 ( 9479 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21020 --> 0x64ED (25837 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 21010 --> 0x6452 (25682 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 109   --> 0x0E68 ( 3688 bytes)
+         GOTO 25020 --> 0x68DE (26846 bytes)
+         GOTO 25010 --> 0x67D8 (26584 bytes)
+        GOSUB 5250  --> 0x54CA (21706 bytes)
+         GOTO 25050 --> 0x6B7D (27517 bytes)
+        GOSUB 24000 --> 0x65F0 (26096 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 25500 --> 0x6C4A (27722 bytes)
+        GOSUB 25400 --> 0x6D6F (28015 bytes)
+         GOTO 25420 --> 0x6D72 (28018 bytes)
+         GOTO 25420 --> 0x6D72 (28018 bytes)
+         GOTO 25420 --> 0x6D72 (28018 bytes)
+        GOSUB 140   --> 0x1E7E ( 7806 bytes)
+        GOSUB 110   --> 0x0EFB ( 3835 bytes)
+        GOSUB 142   --> 0x2000 ( 8192 bytes)
+        GOSUB 145   --> 0x2507 ( 9479 bytes)
+        GOSUB 13300 --> 0x5BB4 (23476 bytes)
+        GOSUB 13500 --> 0x5C95 (23701 bytes)
+        GOSUB 1000  --> 0x32BE (12990 bytes)
+        GOSUB 10000 --> 0x564C (22092 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 135   --> 0x1E59 ( 7769 bytes)
+        GOSUB 134   --> 0x1E49 ( 7753 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 5200  --> 0x4BAE (19374 bytes)
+        GOSUB 270   --> 0x3032 (12338 bytes)
+        GOSUB 5000  --> 0x4B24 (19236 bytes) : FUNCTION BIT2B()
+
+Tokenization: Fourth pass for checking multiline IF...ENDIF
+
+Tokenization: Fifth pass for compiling 
+Updating jump offsets in IF...THEN...ELSE...ENDIF
+
+Tokenization: Finish
+
+Memory allocation after tokenization 32629:, 004DA1B9 004D2244,start=004D0020
+
+Memory allocation after tokenization:
+
+Table of already allocated long variables or arrays:
+----------------------------------------------------------------
+ N (Row_M,Col_M)  Size Offset in data area DIM Source name
+----------------------------------------------------------------
+ 1 (    4,    0)    20 0x0000 (    0 bytes)  + _TMR_
+ 2 (    0,    0)     4 0x010C (  268 bytes)  + UKU
+ 3 (    0,    0)     4 0x0110 (  272 bytes)  + UKK
+ 4 (    0,    0)     4 0x0114 (  276 bytes)  + I
+ 5 (    0,    0)     4 0x0118 (  280 bytes)  + KI
+ 6 (    0,    0)     4 0x011C (  284 bytes)  + J
+ 7 (    0,    0)     4 0x0120 (  288 bytes)  + N
+ 8 (    0,    0)     4 0x0124 (  292 bytes)  + RK
+ 9 (   15,    0)    64 0x035A (  858 bytes)  + UP
+10 (    9,    0)    40 0x039A (  922 bytes)  + TS
+11 (    4,    0)    20 0x0894 ( 2196 bytes)  + TRAFFIC
+12 (    7,    0)    32 0x0CAD ( 3245 bytes)  + DEL
+13 (   50,    0)   204 0x0CF7 ( 3319 bytes)  + CHN
+14 (   50,    0)   204 0x0DC3 ( 3523 bytes)  + CHD
+15 (    4,    0)    20 0x0E8F ( 3727 bytes)  + MBSTA
+16 (    4,    0)    20 0x0EA3 ( 3747 bytes)  + MBTS
+17 (    4,    0)    20 0x0FE3 ( 4067 bytes)  + IMASK
+18 (    4,    0)    20 0x0FF7 ( 4087 bytes)  + ICHG
+19 (    4,    0)    20 0x100B ( 4107 bytes)  + OMASK
+20 (    4,    0)    20 0x101F ( 4127 bytes)  + ESER1
+21 (    4,    0)    20 0x1033 ( 4147 bytes)  + ESER2
+22 (    4,    0)    20 0x1047 ( 4167 bytes)  + ICNT
+23 (    4,    0)    20 0x105B ( 4187 bytes)  + OCNT
+24 (    4,    0)    20 0x106F ( 4207 bytes)  + PREF
+25 (    4,    0)    20 0x1083 ( 4227 bytes)  + SUFF
+26 (   10,    0)    44 0x1097 ( 4247 bytes)  + MB
+27 (    8,    0)    36 0x10C3 ( 4291 bytes)  + ADATA
+28 (    8,    0)    36 0x10E7 ( 4327 bytes)  + TMASK
+29 (    4,    0)    20 0x110B ( 4363 bytes)  + MBCHFROM
+30 (    4,    0)    20 0x111F ( 4383 bytes)  + EXTENSIONTYPE
+31 (    3,    0)    16 0x1133 ( 4403 bytes)  + TSET
+32 (    3,    0)    16 0x1143 ( 4419 bytes)  + TACTUAL
+33 (    3,    0)    16 0x1153 ( 4435 bytes)  + TMAX
+34 (    3,    0)    16 0x1163 ( 4451 bytes)  + TSENSNO
+35 (    3,    0)    16 0x1173 ( 4467 bytes)  + TSETNORM
+36 (    3,    0)    16 0x1183 ( 4483 bytes)  + ZONEHI
+37 (    3,    0)    16 0x1193 ( 4499 bytes)  + ZONEHITS
+38 (    3,    0)    16 0x11A3 ( 4515 bytes)  + COOLING
+39 (    0,    0)     4 0x11B3 ( 4531 bytes)  + ZONE
+40 (    0,    0)     4 0x11B7 ( 4535 bytes)  + TSETADD
+41 (    0,    0)     4 0x11BB ( 4539 bytes)  + TSETHILEN
+42 (    3,    0)    16 0x11BF ( 4543 bytes)  + THRE
+43 (    3,    0)    16 0x11CF ( 4559 bytes)  + GW
+44 (    0,    0)     4 0x11DF ( 4575 bytes)  * BIT2B
+45 (    0,    0)     4 0x11E3 ( 4579 bytes)  - MBMAX
+46 (    0,    0)     4 0x11E7 ( 4583 bytes)  - OIN
+47 (    0,    0)     4 0x11EB ( 4587 bytes)  - COMMFAILFELAY
+48 (    0,    0)     4 0x11EF ( 4591 bytes)  - NFRAG
+49 (    0,    0)     4 0x11F3 ( 4595 bytes)  - JJ
+50 (    0,    0)     4 0x11F7 ( 4599 bytes)  - MONMODE
+51 (    0,    0)     4 0x11FB ( 4603 bytes)  - MBAX
+52 (    0,    0)     4 0x11FF ( 4607 bytes)  - THYST
+53 (    0,    0)     4 0x1203 ( 4611 bytes)  - THERMOINTERVAL
+54 (    0,    0)     4 0x1207 ( 4615 bytes)  - CHAN
+55 (    0,    0)     4 0x120B ( 4619 bytes)  - AILEVEL
+56 (    0,    0)     4 0x120F ( 4623 bytes)  - KH
+57 (    0,    0)     4 0x1213 ( 4627 bytes)  - KL
+58 (    0,    0)     4 0x1217 ( 4631 bytes)  - UK
+59 (    0,    0)     4 0x121B ( 4635 bytes)  - POS
+60 (    0,    0)     4 0x121F ( 4639 bytes)  - _DTS_
+61 (    0,    0)     4 0x1223 ( 4643 bytes)  - MONTHNUMBER
+62 (    0,    0)     4 0x1227 ( 4647 bytes)  - DAYOFMONTH
+63 (    0,    0)     4 0x122B ( 4651 bytes)  - HOUROFDAY
+64 (    0,    0)     4 0x122F ( 4655 bytes)  - WEEKDAY
+65 (    0,    0)     4 0x1233 ( 4659 bytes)  - TIMEZONE
+66 (    0,    0)     4 0x1237 ( 4663 bytes)  - NMIN
+67 (    0,    0)     4 0x123B ( 4667 bytes)  - NHOUR
+68 (    0,    0)     4 0x123F ( 4671 bytes)  - NWDAY
+69 (    0,    0)     4 0x1243 ( 4675 bytes)  - M_ID
+70 (    0,    0)     4 0x1247 ( 4679 bytes)  - TIMERTEMP
+71 (    0,    0)     4 0x124B ( 4683 bytes)  - IJRK
+72 (    0,    0)     4 0x124F ( 4687 bytes)  - OJRK
+73 (    0,    0)     4 0x1253 ( 4691 bytes)  - MBA
+74 (    0,    0)     4 0x1257 ( 4695 bytes)  - MLEN
+75 (    0,    0)     4 0x125B ( 4699 bytes)  - EXPLEN
+76 (    0,    0)     4 0x125F ( 4703 bytes)  - FBWD
+77 (    0,    0)     4 0x1263 ( 4707 bytes)  - INHI
+78 (    0,    0)     4 0x1267 ( 4711 bytes)  - INLO
+79 (    0,    0)     4 0x126B ( 4715 bytes)  - INWD
+80 (    0,    0)     4 0x126F ( 4719 bytes)  - IHII
+81 (    0,    0)     4 0x1273 ( 4723 bytes)  - OUTWD
+82 (    0,    0)     4 0x1277 ( 4727 bytes)  - ABIOUT
+83 (    0,    0)     4 0x127B ( 4731 bytes)  - OCHG
+84 (    0,    0)     4 0x127F ( 4735 bytes)  - OUTLO
+85 (    0,    0)     4 0x1283 ( 4739 bytes)  - OUTHI
+86 (    0,    0)     4 0x1287 ( 4743 bytes)  - OMAX
+87 (    0,    0)     4 0x128B ( 4747 bytes)  - Y
+88 (    0,    0)     4 0x138F ( 5007 bytes)  - CRC
+89 (    0,    0)     4 0x1393 ( 5011 bytes)  - K
+90 (    0,    0)     4 0xFFFF (   -1 bytes)  + NV11
+91 (    0,    0)     4 0xFFFB (   -5 bytes)  + NV12
+92 (    0,    0)     4 0xFFF7 (   -9 bytes)  + NV13
+93 (    0,    0)     4 0xFFF3 (  -13 bytes)  + NV14
+94 (    0,    0)     4 0xFFEF (  -17 bytes)  + NV15
+95 (    0,    0)     4 0x1397 ( 5015 bytes)  - TMP
+96 (    0,    0)     4 0x139B ( 5019 bytes)  - OMIN
+97 (    0,    0)     4 0x139F ( 5023 bytes)  - EXIT
+98 (    0,    0)     4 0x13A3 ( 5027 bytes)  - _ERR_
+99 (    0,    0)     4 0x13A7 ( 5031 bytes)  - _ERL_
+100 (    0,    0)     4 0x13AB ( 5035 bytes)  - NUM
+101 (    0,    0)     4 0x13AF ( 5039 bytes)  - JK
+102 (    0,    0)     4 0x13B3 ( 5043 bytes)  - D_ID
+103 (    0,    0)     4 0x13B7 ( 5047 bytes)  - TMPSTATUS
+
+Number of Integer Variables:103
+
+Table of already allocated string variables:
+----------------------------------------------------------------
+ N Size Offset in data area DIM Source name
+----------------------------------------------------------------
+ 1   30 0x0014 (   20 bytes)  + APVER$
+ 2   20 0x0032 (   50 bytes)  + _CGI_$
+ 3   25 0x0046 (   70 bytes)  + WEB$
+ 4   20 0x005F (   95 bytes)  + AK$
+ 5   61 0x0073 (  115 bytes)  + LIST$
+ 6   12 0x00B0 (  176 bytes)  + LISTP$
+ 7   20 0x00BC (  188 bytes)  + REG$
+ 8   10 0x00D0 (  208 bytes)  + MREG$
+ 9   50 0x00DA (  218 bytes)  + MVAL$
+10  256 0x0128 (  296 bytes)  + SET$
+11  256 0x0228 (  552 bytes)  + STP$
+12   15 0x0328 (  808 bytes)  + MAC$
+13   35 0x0337 (  823 bytes)  + COM$
+14    2 0x03C2 (  962 bytes)  + OMST$
+15    2 0x03C4 (  964 bytes)  + MST$
+16    2 0x03C6 (  966 bytes)  + MCHG$
+17   60 0x03C8 (  968 bytes)  + MSD$
+18   60 0x0404 ( 1028 bytes)  + OMSD$
+19 1024 0x0440 ( 1088 bytes)  + TXT$
+20   30 0x0840 ( 2112 bytes)  + SUB$
+21   30 0x085E ( 2142 bytes)  + HEX$
+22   24 0x087C ( 2172 bytes)  + SITE$
+23  100 0x08A8 ( 2216 bytes)  + USS$
+24  100 0x090C ( 2316 bytes)  + SR$
+25   50 0x0970 ( 2416 bytes)  + SER$
+26  256 0x09A2 ( 2466 bytes)  + MR$
+27  350 0x0AA2 ( 2722 bytes)  + MS$
+28   53 0x0C00 ( 3072 bytes)  + SVREG$
+29   10 0x0C35 ( 3125 bytes)  + MATS$
+30   20 0x0C3F ( 3135 bytes)  + IP$
+31   20 0x0C53 ( 3155 bytes)  + MIP1$
+32   20 0x0C67 ( 3175 bytes)  + MIP2$
+33   10 0x0C7B ( 3195 bytes)  + MTEE$
+34   10 0x0C85 ( 3205 bytes)  + TEHA$
+35   10 0x0C8F ( 3215 bytes)  + EVNT$
+36   20 0x0C99 ( 3225 bytes)  + KORR$
+37   11 0x0CCD ( 3277 bytes)  + USER$
+38   31 0x0CD8 ( 3288 bytes)  + USPA$
+39  100 0x0EB7 ( 3767 bytes)  + MBS$
+40  200 0x0F1B ( 3867 bytes)  + MBSL$
+41  256 0x128F ( 4751 bytes)  - TMP$
+
+Number of String Variables:41
+
+Warning: temporary string size was increased up to 1024 bytes!
+
+Final memory allocation map (area sizes) during run-time for target barionet100:
+- Data area for allocated variables: 0x13BB ( 5051 bytes)
+- Data area for temporary variables: 0x444F (17487 bytes)
+- Tables and tokenized code area   : 0x87F6 (34806 bytes)
+Program start offet=0x558

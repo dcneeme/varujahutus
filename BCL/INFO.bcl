@@ -1,0 +1,52 @@
+ 4000 ' sub 4000 HEX vaartused INF$ teadeteks ja vastupidi
+ ' tegelikult peaks selle nimi olema KORRALDUS
+
+    ' syslog " sub 4000: INF$="+INF$+", HINF$="+hINF$,4
+    
+    IF or(hINF$ = "0", hINF$ = "") then ' tahame hex HINF$ txt INF$ alusel
+        if INF$ = "" then syslog "sub 4000: needed variable INF$ is empty!",3:goto 4050
+        INFV$=INF$
+        for si=1 to 14
+            if si<10 then
+                hINF$=str$(si)
+            else
+                if si = 10 then hINF$="A"
+                if si = 11 then hINF$="B"
+                if si = 12 then hINF$="C"
+                if si = 13 then hINF$="D"
+                if si = 14 then hINF$="E"
+                if si = 15 then hINF$="F"
+            endif
+            gosub 4100:if INF$ = INFV$ then goto 4050 ' hINF$ praegune vaartus ongi vastus   
+        next si
+        hINF$="0" ' kui siia joudis siis ei leidnud otsitavat
+
+    else ' tahame INF$ hex hINF$ alusel
+        gosub 4100
+    endif
+ 4050 ' syslog "sub 4000: hINF$:"+hINF$+", INF$:"+INF$,4
+ return
+  
+  
+  
+  4100 ' sub nimi num alusel
+    
+    if hINF$ = "1" then INF$="SAABUS"
+    if hINF$ = "2" then INF$="LAHKUS"
+    if hINF$ = "3" then INF$="KOHAL"
+    if hINF$ = "4" then INF$="PUUDUB"
+    if hINF$ = "5" then INF$="KINNI" ' io 0
+    if hINF$ = "6" then INF$="LAHTI" ' io 1
+    if hINF$ = "7" then INF$="MADALAKS"
+    if hINF$ = "8" then INF$="KORGEKS"
+    if hINF$ = "9" then INF$="MADAL"
+    if hINF$ = "A" then INF$="KORGE"
+    if hINF$ = "B" then INF$="PUNANE"
+    if hINF$ = "C" then INF$="ROHELINE"
+    if hINF$ = "D" then INF$="KUSTUNUD"
+    if hINF$ = "E" then INF$="PIDEVLAHTI"
+    ' if hINF$ = "F" then INF$="SEADMEVIGA" ' ei muuda vaid jatame selle INF$ mis oli lisainfoks antud
+    
+ return
+
+

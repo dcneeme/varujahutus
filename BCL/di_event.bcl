@@ -1,0 +1,37 @@
+ 10000 ' sub di_event.bcl, kaivitus appmain loop kaudu bn100 enda omad
+ ' kaivitame nupuvajutuste alusel tostetud temperatuuriga ajavahemiku alates tshi(zone) kuni tshi(zone)+tsethilen (viimane on globaalne)
+ ' korduvajutus tyhistab tostetud etteande!  tset(zone) = tsetnorm(zone) + tsetadd  (viimane on globaalne)
+ ' zone olek on zonehi()  1 voi 0
+        
+    ms$="" ' igaks juhuks tyhjaks mon string
+    
+    ' vanad sisendite olekud meelde ja uued sisse
+    
+    for jj=5 to 8 ' kahendsisendid, loeme loogilisi, mitte elektrilisi sisendeid! pane setupis oige aktiivsuse tase!
+        ' if ChanType[jj] = 1 then 'DI PEAB olema setupist pandud / ei ole oluline
+        ioctl 300+jj,iostate(350+jj)  ' praegune seis eelmisena meelde
+        ioctl 350+jj,iostate(200+jj)  ' uuenda praegust seisu, otse ei tohi sisendeid suvalisel ajal lugeda! MIKS?
+        ' jj 1...2...3 
+        if iostate(300+jj)<>iostate(350+jj) then 'on toimunud muudatus
+            ichg(0)=1 'muudatuse lipp, kokku tekib mask sest jargmised (laiendusmoodulitest) on 2, 4, 8
+            syslog "sub 10000: change on input "+str$(jj)+": "+str$(iostate(300+jj))+" -> "+str$(iostate(350+jj)),4
+            
+            if and(iostate(350+jj) = 1, iostate(300+jj) = 0) then ' nupuvajutuse algusele reageerime ainult
+                zone=jj-5 '0..3
+                zonehi(zone)=xor(1,zonehi(zone)) ' inversioon. hi tahendab ka led polemist
+            endif
+        else
+            ichg(0)=0
+        endif
+		'endif
+    next jj
+    
+    'if ms$ <> "" then gosub 270 ' koik minema, mis veel pole lainud
+    
+    if ichg(0)>0 then syslog "di_event: ichg(0)="+str$(ichg(0)),4
+	
+ return ' sub 10000
+
+
+
+ 

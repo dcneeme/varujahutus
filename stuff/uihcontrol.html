@@ -1,0 +1,75 @@
+<html>
+<body bgcolor="#CCCCCC">
+<p><b><font face="Arial">Help<br>
+</font></b><br>
+<font size=2 face="Arial"><b>UDP command port<br>
+</b>Define the port on which the device will receive API commands via UDP. To disable set this port number to <em>"0"</em>. Barix uses <em>"12301"</em> on other products.<br>
+Default: <em>"0"</em><br>
+<b><br>TCP command port and Timeout<br>
+</b>Define the port on which the device will receive API commands via TCP. To disable set this port number to <em>"0"</em>. Barix uses <em>"12302"</em> on other products.<br>
+Default: <em>"0"</em><br>
+The timeout defines the time in seconds after which the TCP connection to the port will be closed due to inactivity.<br>
+Enter <em>&quot;0&quot;</em> to disable the Timeout (default).<br>
+Enter <em>&quot;1&quot;</em> to <em>&quot;255&quot;</em> to enable the Timeout.<br>
+<b><br>TCP default subscriptions<br>
+</b>Defines if a change of value for the standard I/O set (Relays, digital inputs, digital outputs) will trigger a "statechange" message (Legacy) or not (None).<br>
+Default: <em>"Legacy"</em><br>
+<b><br>TCP add subscriptions<br>
+</b>Defines if a "getio" command using the TCP control protocol will automatically subscribe for future statechange messages (With getio/setio) or not (None).<br>
+The subscription will be active as long the TCP command connection is established. The disconnection can be forced by the host or by a timeout (see parameter above).<br>
+Default: <em>"None"</em><br>
+<b><br>Modbus/TCP Timeout</b><br>
+Defines the time in seconds after which a Modbus/TCP connection on port 502 will be closed due to inactivity.<br>
+Enter <em>&quot;0&quot;</em> to disable the Timeout (default).<br>
+Enter <em>&quot;1&quot;</em> to <em>&quot;255&quot;</em> to enable the Timeout.<br><br>
+<b>Web server port</b><br>
+Defines the webserver port of the device.<br>
+If set to <em>"0"</em> the default HTTP port (80) is used.<br>
+Default: <em>"0"</em><br><br>
+<b>Lockdown mode</b><br>
+Locks different protocol access to the device (command port, web access etc.). See manual for details. <br>
+If set to <em>"0"</em> all access is granted.<br>
+Default: <em>"0"</em><br><br>
+<b>BCL Program Name</b><br>
+Enter the name (up to 8 characters without extension ".tok") of the BCL application to be started at power on or after reboot.<br>
+If left empty the default BCL application (barionet.tok) is started.<br>
+Default: <em>""</em><br><br>
+<b>UDP info send to<br>
+</b>Input the 4 values of the desired destination IP address where the I/O
+status change information should be sent to using UDP e.g.:<br>
+<em>&quot;0.0.0.0&quot;</em> for no info<br>
+<em>&quot;192.168.0.12&quot;</em> for
+a specific UDP target<br>
+<em>&quot;192.168.0.255&quot;</em> for
+a subnet UDP broadcast<br>
+<b><br>UDP destination port<br>
+</b>Define the port to be used when sending I/O
+status change information<br>
+<b><br>
+UDP interval<br>
+</b>Define the time interval for sending current I/O
+status information in seconds (besides I/O
+status change information).<br>
+<b><br>
+Usage / Status Change<br>
+</b>For input #1 to #4 select the input
+to be either used as analog input and to supress status change info or be digital input and to include status change info<br>
+<br>
+<b>Syslog Server IP Address<br>
+</b>Syslog is a well known reporting application usually using UDP port 514.
+Check the Internet for Syslog deamon freeware.<br>
+Enter the 4 values of the desired Syslog Server IP address e. g.:<br>
+<em>&quot;0.0.0.0&quot;</em> for subnet broadcast of Syslog messages<br>
+<em>&quot;192.168.0.1&quot;</em> for a dedicated Syslog deamon<br>
+<br>
+<b>Syslog Debug Level</b><br>
+Enter the level of Syslog debug information e. g.:<br>
+<em>&quot;0&quot;</em> for no debug information<br>
+<em>&quot;1&quot;</em> for system debug information (default setting)<br>
+<em>&quot;2&quot; to &quot;9&quot;</em> for user defined BCL debug information<br>
+<br>
+<b>Support Mode/Flags</b><br>
+Enter the debug mode here when asked by Barix technical support.<br>
+Leave at <em>&quot;0&quot;</em> for no support debug information
+</body>
+</html>

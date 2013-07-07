@@ -1,0 +1,264 @@
+   
+
+ ' ###################################
+
+ 
+ 110 ' read_app_setup.bcl  ' sub get setup variables ################################
+ syslog "reading setup",1
+ 
+ COM$= "STP:512"
+ if mediatype(5)>0 then close 5 ' igaks juhuks, ehk oli avatud setup file...
+ OPEN COM$ as 5
+ READ 5, set$  ' read all app parameters / 256 tk alates 512
+ Close 5
+
+ ' syslog "stp 512 algus stringina:"+MID$(set$,1,2),4
+ ' syslog "stp 512 algus num:"+str$(MIDGET(set$,1,2)),4
+ 
+ 
+ user$=mid$(set$,512-511,11) ' asukoha nimetus
+ ms$=ms$+"S512:"+user$+"\n":gosub 109
+ 
+ uspa$=mid$(set$,523-511,31) ' user:pass base64
+ ms$=ms$+"S523:"+uspa$+"\n":gosub 109
+
+ jj=555:CommFailReaction=MIDGET(set$,jj-511,1):gosub 21010
+ 
+ mip1$=""
+ for jj=556 to 559 'mon1ip
+    Mon1IP[jj-555]=MIDGET(set$,jj-511,1):gosub 21010
+		mip1$=mip1$+str$(Mon1IP[jj-555])
+		if jj<559 then mip1$=mip1$+"."
+ next jj
+ syslog "read_setup: mip1$ "+mip1$,4
+ 
+ mip2$=""
+ for jj=560 to 563 'mon2ip
+    Mon2IP[jj-559]=MIDGET(set$,jj-511,1):gosub 21010 
+	mip2$=mip2$+str$(Mon1IP[jj-555])
+	if jj<563 then mip2$=mip2$+"."
+ next jj
+ syslog "read_setup: mip2$ "+mip2$,4
+ 
+  jj=564:MonPort=MIDGET(set$,jj-511,2)
+  if MonPort =0 then MonPort=44445
+  gosub 21020 'itvilla mon
+
+ 
+ jj=566:CommFailDelay=60*MIDGET(set$,jj-511,1):gosub 21010 ' sisestada minutites, kasutada sekundites
+ if CommFailDelay<  180 then CommFailDelay=180
+ jj=567:UptimeDelay=3600*MIDGET(set$,jj-511,1):gosub 21010 ' sisestada minutites, kasutada tundides
+ 
+ for jj=568 to 571 'data1ip
+    Data1IP[jj-567]=MIDGET(set$,jj-511,1):gosub 21010 
+ next jj
+ 
+ for jj=572 to 575 'data2ip
+    Data2IP[jj-571]=MIDGET(set$,jj-511,1):gosub 21010 
+ next jj
+ 
+	
+ jj=576:DataPort=MIDGET(set$,jj-511,2)
+ if DataPort =0 then DataPort=80
+ gosub 21020 ' basen port, vaikimisi 80
+ 
+     
+ ms$=ms$+"AVV:"+APVER$+"\nAVS:0\n":gosub 109  ' versioon, kas paarilist on vaja? voi votab mst?
+ 
+ 
+ 
+ jj=578:VoltCoeff=MIDGET(set$,jj-511,2):gosub 21020 ' batt voltage calc coeff
+ jj=580:VoltLoLimit=MIDGET(set$,jj-511,2):gosub 21020 
+ jj=582:VoltHiLimit=MIDGET(set$,jj-511,2):gosub 21020
+ 
+ jj=584:MonMode=MIDGET(set$,jj-511,1):gosub 21010 ' 1 uniscada, 2 mnagios passive
+ 
+ jj=716:mbmax=MIDGET(set$,jj-511,1):gosub 21010 ' io laienduste arv
+ if mbmax>3 then mbax=3 'rohkem ei saa praegu olla
+ 
+ for i=1 to mbmax ' 1 to 0 jaab ise vahele
+	jj=716+i:eser1(i)=MIDGET(set$,jj-511,1):gosub 21010 ' eser1
+	jj=719+i:eser2(i)=MIDGET(set$,jj-511,1):gosub 21010 ' eser2
+	jj=722+i:imask(i)=256*midget(set$,jj-511,1):gosub 21010 ' input mask hi part, 1 active - tegelikult pullup mask!
+    jj=725+i:gosub 21010:imask(i)=imask(i)+midget(set$,jj-511,1) ' add input mask lo part, 1 active
+	
+	jj=728+i:omask(i)=256*midget(set$,jj-511,1):gosub 21010 ' output mask hi part, 1 active - suuna mask!
+	jj=731+i:gosub 21010:omask(i)=omask(i)+midget(set$,jj-511,1) ' add output mask lo part, 1 active
+	
+    syslog "io serial for mba "+str$(i)+": "+str$(eser1(i))+"-"+str$(eser2(i))+", iomask "+sprintf$("%03x",imask(i))+" "+sprintf$("%03x",omask(i)),4
+    
+	icnt(i)=0:ocnt(i)=0
+	for jj=0 to 15 ' leiame kanalite arvu
+		icnt(i)=icnt(i)+and(2^jj,imask(i)) / 2^jj ' sisendid tokkepuust lo byte sees
+		ocnt(i)=ocnt(i)+and(2^jj,omask(i)) / 2^jj ' sisendid tokkepuust lo byte sees
+	next jj
+	syslog "io "+str$(i)+" input count "+str$(icnt(i))+", output count "+str$(ocnt(i)),4
+ next i
+ 
+  
+ 
+ for zone=0 to 3 ' tsoonide seadistused
+    jj=738+zone:tsensno(zone)=MIDGET(set$,jj-511,1):gosub 21010 'anduri jrk nr 1..4
+    jj=746+zone:tsetnorm(zone)=MIDGET(set$,jj-511,1):gosub 21010 ' etteandetemp  ' kuni 749
+    jj=754+2*zone:tmax(zone)=MIDGET(set$,jj-511,2):gosub 21020 ' max limit W
+    syslog "tsensor for zone "+str$(zone+1)+" is "+str$(tsensno(zone))+", tset "+str$(tsetnorm(zone))+", tmax "+str$(tmax(zone)),4
+ next zone
+  
+ jj=750:thyst=MIDGET(set$,jj-511,1):gosub 21010 ' ddegC
+ jj=751:tsetadd=MIDGET(set$,jj-511,1):gosub 21010  ' hi temp increase ddegC
+ jj=752:tsethilen=60*MIDGET(set$,jj-511,1):gosub 21010  'max hitime s
+ jj=753:ThermoInterval=MIDGET(set$,jj-511,1):gosub 21010 ' thermo & control period s
+ syslog "thyst "+str$(thyst)+", tsetadd "+str$(tsetadd)+", tsethilen "+str$(tsethilen)+", thermointerval "+str$(ThermoInterval),4	
+ 
+ jj=762:MonInterval=MIDGET(set$,jj-511,2):gosub 21020 ' max mon intervall
+ jj=764:DataInterval=MIDGET(set$,jj-511,2):gosub 21020 ' max data intervall
+ jj=766:PowerLossDelay=MIDGET(set$,jj-511,1):gosub 21010 ' voolukatkestuse teatamise viide
+ jj=767:SlidingWindowSize=MIDGET(set$,jj-511,1):gosub 21010 ' keskmistamise tugevus
+ 
+ 
+ 
+ delay 1000
+ 
+ for i=1 to icnt(1)+icnt(2)+icnt(3) 'modbus
+	chan=10+i 'alates 11
+	ChanType[chan]=1 'di alati
+	syslog "rd_stp: mb chan "+str$(chan)+" chantype="+str$(ChanType[chan]),4 
+ next i
+ 
+ 'nyyd on chan vaartus sobiv esimese temp jaoks, A...F siia
+ ailevel=chan 'korraks vahesalvestus
+ 'edasi vaata setup2 
+ 
+
+    
+	
+	
+ ' setup part2 now ####################################################
+ COM$= "STP:768"
+ if mediatype(5)>0 then close 5 ' igaks juhuks, ehk oli avatud setup file...
+ OPEN COM$ as 5
+ READ 5, set$  ' read all app parameters / 256 tk alates 512
+ Close 5
+ 
+ ' syslog "stp 768 algus stringina:"+MID$(set$,1,2),4
+ ' syslog "stp 768 algus num:"+str$(MIDGET(set$,1,2)),4
+ 
+ mr$="" 
+ for chan=0 to 7 ' counters di 1..8
+    i=65536*iostate(402+2*chan)+iostate(401+2*chan) ' current counter
+	' syslog "sub 110: chk counter "+str$(chan+1)+", current value="+sprintf$("%lu",i)),4 ' jamab??
+    jj=768+4*chan
+	' tuleb monitooringusse saata S7xx muidu ei saa kaugelt muuta
+	kh=MIDGET(set$,jj-767,2) 'hi word in setup, counter storage
+	ms$=ms$+"S"+str$(jj)+":"+str$(kh)+"\n":gosub 109 ' hi word to monitoring
+	
+	' if chan<4 then thre(chan)=kh 'nivood di sisendite dekodeerimiseks kui analoogkooder - ei funka, ajutiselt main algusesse
+ 	
+	jj=770+4*chan ' lo byte
+	kl=MIDGET(set$,jj-767,2) ' lo word in setup, counter storage
+	ms$=ms$+"S"+str$(jj)+":"+str$(kl)+"\n":gosub 109 ' lo word to monitoring
+	
+	' ki=65536*MIDGET(set$,jj-767,2)+MIDGET(set$,jj-765,2) ' saved value 32 bit
+	ki=65536*kh+kl ' 32bit counter value that is currently saved
+	
+	syslog "saved value for counter "+str$(chan+1)+"="+sprintf$("%lu",ki),4
+
+	if i<ki then ' salvestunud number suurem kui jooksev, suurendame loendit salvestunu vorra
+		ioctl 401+2*chan,(ki+i)%65536 ' LSW  see enne vist! muidu rikub teise!
+		ioctl 402+2*chan,(ki+i)/65536 ' MSW
+		'ioctl 401+2*chan,(ki+i)%65536 ' LSW
+		syslog "counter "+str$(chan+1)+" increased to "+str$((ki+i)/65536)+", lo "+str$((ki+i)%65536),4
+		syslog "restored counter "+str$(chan+1)+" to 32b value "+sprintf$("%lu",ki+i),4
+	else ' taastame jooksva seisu salvestunud ki alusel midagi muutmata
+		ioctl 401+2*chan,(ki)%65536 ' LSW
+		ioctl 402+2*chan,(ki)/65536 ' MSW
+		' ioctl 401+2*chan,(ki)%65536 ' LSW
+		syslog "counter "+str$(chan+1)+" restored to hi "+str$((ki)/65536)+", lo "+str$((ki)%65536),4
+		syslog "restored counter "+str$(chan+1)+" to 32b value "+sprintf$("%lu",ki),4
+	endif ' loenditaastamise lopp
+	' kusagil tuleks ka serverist taastamine teha Sxxx:? nagu tooajaloendiga pumplas...
+ next chan
+ 
+ chan = 10 'modbus algab chan 11
+ for i=1 to mbmax 'laiendused
+    
+	jj=816+5*(i-1):pref(i)=asc(mid$(set$,jj-767,1)) ' algustahe num vaste, nt Z
+	mbchfrom(i)=val(mid$(set$,jj-767+1,2)) 'numbriosa algus, jargmised siit edasi
+	syslog "read_app_setup: mba "+str$(i)+", mbchfrom "+str$(mbchfrom(i)),4
+	ms$=ms$+"S"+str$(816+5*(i-1))+":"+mid$(set$,jj-767,4)+"\n":gosub 109  ' kanalite nimed monitooringusse et edaspidi kaugelt muuta saaks
+			
+	
+	for jj=0 to icnt(i)-1 ' selle mba kanalinimed
+		chan=chan+1 ' jargmine , esimene oli 11
+		uss$=chr$(pref(i))+sprintf$("%02u",mbchfrom(i)+jj)+"S" ' chr$(suff(i))  ' mid$(set$,588-511+5*(chan-1),5) ' nimed selle mba kanalitele
+		gosub 115 '  nime numbriline vaste chn(chan) 4 byte uss$ ja chan alusel
+		syslog "rd_stp: mb chan "+str$(chan)+", chname "+uss$+" chantype="+str$(ChanType[chan])+", jj "+str$(jj),4 
+	next jj
+ next i
+ ailevel=chan+1 'temp andurite jaos chan vaartus meelde siit jargmine chan
+ 
+ 
+ for chan=9 to 10 ' abi ai1,ai3 baasil
+	uss$=mid$(set$,862-767+5*(chan-9),5) 'kanali nimi
+	gosub 115 '  nime numbrilise vaste 4 byte uss$ alusel
+	
+	ms$=ms$+"S"+str$(862+5*(chan-9))+":"+uss$+"\n":gosub 109  ' kanalinimi monitooringusse
+	syslog "rd_stp: S"+str$(862+5*(chan-9))+":"+uss$,4 ' ajutine
+	
+	syslog "chan "+str$(chan)+":"+uss$+" "+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4 'ajutine 
+ next chan
+ 
+ 
+ 'temperatuuriandurite nimed
+ for i=0 to 5
+	chan=ailevel+i 'ailevel voeti modbus osa lopust
+	ChanType[chan]=6 ' temp
+	uss$=mid$(set$,872-767+5*i,5) '
+	gosub 115 '  nime numbrilise vaste 4 byte uss$ alusel
+
+	syslog "temp chan "+str$(chan)+":"+uss$+" "+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4  
+ next i
+ 
+ 
+ site$=mid$(set$,1000-767,11) ' asukoha nimetus max 22 char
+ ms$=ms$+"S1000:"+site$+"\n":gosub 109
+ 
+ for jj=858 to 861 ' alternative def gw / gprs , index 1..4
+    SecondGW[jj-857]=MIDGET(set$,jj-767,1):gosub 21010
+ next jj
+ 
+ for jj=912 to 915 ' primary def gw for restoring , index 1..4
+    PrimGW[jj-911]=MIDGET(set$,jj-767,1):gosub 21010
+ next jj
+ 
+ 
+ traffic(4)=10000000 'elisa bytes hoiatuspiir, 12500000 emt jaoks
+   	syslog "traffic warning on "+sprintf$("%lu",traffic(4))+" bytes",4
+    
+ SYSLOG "AppSetup READ", 2
+
+	
+ if ms$<>"" then gosub 270 ' saadame ara mis veel saatmata 
+
+ return ' sub 110 end (setup read)
+
+
+ 
+ 
+
+ 
+ 115 'abi chn() tegemisel uss$ alusel
+	if len(uss$)>1 then
+		chn(chan)=0 ' channelname numbrilise vaste algseis
+		for uk=1 to len(uss$)
+		    chn(chan)=256*chn(chan)+asc(mid$(uss$,uk,1))	
+        next uk
+		
+		'ajutine test tagasimuundamisega chn kontrolliks?
+		
+ 	else
+		chn(chan)=0
+	endif
+ 
+ return
+ 

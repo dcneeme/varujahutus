@@ -1,0 +1,6 @@
+julf counters Tue Dec 21 04:39:42 EET 2010
+
+ "count51" : "32988", "count52" : "5", 
+ "count61" : "26029", "count62" : "33",
+ "count71" : "33495", "count72" : "4", 
+ 

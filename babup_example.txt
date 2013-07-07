@@ -1,0 +1,78 @@
+15:53:09	10.0.0.181	babup_msg: sent to TCP:82.133.130.193:80: POST /babup/ HTTP/1.0<013>
+Authorization: Basic bWFsbW86TDQ0TnByZA==<013>
+Content-length: 731<013>
+X-Babup-Text: true<013>
+Content-type: text/plain<013>
+<013>
+authentication {
+username: "malmo"
+}
+babupVersion {
+major: 1
+minor: 0
+}
+dataReply {
+id: 1
+data {
+channelName: "BTV"
+value {
+time {
+timeSinceEpoch: 946684865000
+}
+doubleValue: 14.20
+}
+}<013>
+data {
+channelName: "C4V"
+value {
+time {
+timeSinceEpoch: 946684865000
+}
+intValue: 0
+}
+}<013>
+data {
+channelName: "C1V"
+value {
+time {
+timeSinceEpoch: 946684865000
+}
+intValue: 0
+}
+}<013>
+data {
+channelName: "C2V"
+value {
+time {
+timeSinceEpoch: 946684865000
+}
+intValue: 0
+}
+}<013>
+data {
+channelName: "C3V"
+value {
+time {
+timeSinceEpoch: 946684865000
+}
+intValue: 0
+}
+}<013>
+data {
+channelName: "PWR"
+value {
+time {
+timeSinceEpoch: 946684865000
+}
+doubleValue: 0
+}
+}<013>
+data {
+channelName: "T1V"
+value {
+time {
+timeSinceEpoch: 946684865000
+}
+doubleValue: 25.0
+}
+}}

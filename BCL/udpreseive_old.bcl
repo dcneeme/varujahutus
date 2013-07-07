@@ -1,0 +1,38 @@
+ ' #include in_udp.bcl ' sub  140, 142, 145, 11000, 11100, 11200, 12000
+ 140 ' sub 140, handling incoming monitoring or app udp to ANY port. further processing with subroutines  140, 142, 145, 11000, 11100, 11200, 12000
+  ' set the flag about udp for application in buffer and let main loop to handle
+    ' siia tulekuks parem mitte kasutada ON UDP, koormab!
+    'syslog "sub140: rmthost(1) "+rmthost$(1)+", lastlen() "+str$(lastlen(1))+", mediatype() "+str$(mediatype(1)),4 'ajutine
+	
+    if and(or(RMTHOST$(1) = mip1$, RMTHOST$(1) = mip2$), lastlen(1)<0) then ' got new monitoring data from correct host
+        read 1,mr$,0:UP(5)=UP(0) ' SAVING LAST MSG TIME IN UPSECONDS , lastcommts
+        MonComm=0 ' ioctl 864,0:ioctl 863,0 ' seansis lipp 864 ja sidejama 863 
+        syslog "sub 140: got monitoring UDP data, mr$="+mr$,5 'ajutine
+        if mTee$="" then mTee$="I" ' lipp pysti  
+        CommLed=0 ' s
+        traffic(0)=traffic(0)+len(mr$) ' siseneva udp loendus, 12.06.2012
+    endif
+     
+    
+    ' new data len on negatiivne, peale lugemist sailub sama num positiivsena
+    ' if or(mTee$<>"", TEHA$<>"") then syslog "sub140: mTee$ = "+mtee$+", TEHA$ = "+TEHA$,5
+ return
+
+
+
+
+  142 ' sub process udp data from monitoring server in mr$  ### seda kaivitab mTee$="I" main kaudu #####
+    syslog "sub 142: processing mTee$ = "+mTee$+" and mr$="+mr$,5
+	
+    if MTEE$ = "I" then MTEE$=""  ' et ei jaaks tsyklisse aga muud ka ei rikuks
+    mreg$="id":gosub 13000  ' otsime saadute hulgast id - ta PEAB mr$ sees esinema!
+    if mval$<>mac$ then syslog "sub 142: invalid id "+mval$,3:return else syslog "sub 142: valid id "+mval$,5
+	
+    
+    gosub 11000 ' andku listing saadud ja kontrollitud (veebisetupiga vorreldud) registritest ilma id-ta
+    if len(list$) = 0 then return ' nothing in addition to id from server
+    syslog "sub 142: register list$: "+list$,4  
+ 
+
+    if len(list$)>1 then mTEE$="W":syslog "sub 142: going to chg setup (W): "+list$,4
+  return

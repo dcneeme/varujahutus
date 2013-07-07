@@ -1,0 +1,13 @@
+ 300 ' sub timed_events.bcl ####
+
+    nHOUR=val(MID$(SPRINTF$("%0t",0),7,2))
+    nmin=val(mid$(SPRINTF$("%0t",0),9,2))
+
+    ' syslog "time now hour min "+SPRINTF$("%0t",0)+" "+str$(nhour)+" "+str$(nmin),8
+
+  
+
+ return
+
+
+ 

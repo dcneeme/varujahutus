@@ -1,0 +1,97 @@
+ 'fututec versioon. heikki versioonis TEHA kasutusel jms erinevusi
+ 140 ' handling incoming udp with subroutines  140, 142, 145, 11000, 11100, 11200, 12000
+  ' set the flag about udp in buffer and let main loop to handle
+ 
+    if lastlen(1)<0 then ' uus udp info on saabunud
+		'syslog "sub 140: new data in buffer 1",4 'ajutine
+        if  mTee$="" then ' voib lugeda
+			if or(RMTHOST$(1)=mip1$, RMTHOST$(1)=mip2$) then ' from correct server
+				read 1,mr$,0:UP(5)=UP(0) ' SAVING LAST MSG TIME IN UPSECONDS
+				'syslog "sub 140: got UDP: "+mr$,4 'ajutine
+				if len(mr$)>16 then syslog "sub 140: got UDP: "+mr$,4:mTee$="I"  ' reageerime vastustele, kus enam kui id - ajut 16/10
+				CommLed=0 ' OUT(3)=0 ' kustutame SIDE tule, mis udp send ajal syydati ILMA ID KONTROLLITA!
+				'ioctl 863,0 ' side  ok
+			else
+				syslog "sub 140: data in buffer from wrong server "+RMTHOST$(1),4
+				read 1,mr$,0
+                traffic(0)=traffic(0)+len(mr$) 'saabuva udp loendus
+				syslog "sub 140: data from wrong server:"+mr$,4 'saadud infot ei kasuta!
+			endif
+            traffic(0)=traffic(0)+len(mr$)
+		else
+			if mTee$<>"" then 
+				syslog "sub 140: there is data in buffer from "+RMTHOST$(1)+" but cannot read yet due to mTee$="+mTee$,4
+			endif
+		endif
+	endif
+	' new data len on negatiivne, peale lugemist on lastlen sama num positiivne
+ return
+
+
+	
+
+  142 ' sub process udp data in udpr$  ### seda kaivitab mTee="I" main kaudu #####
+    syslog "sub 142: processing UDP data, mr$="+mr$,4
+
+    if mTee$="I" then mTee$=""  ' muid variante ei riku ja et ei jaaks I tsyklisse main abil
+    mreg$="id":gosub 13000  ' otsime saadute hulgast id - ta PEAB mr$ sees esinema!
+    if mval$<>mac$ then syslog "sub 142: got illegal id "+mval$+" instead of "+mac$,4:return
+	
+    mreg$="in":gosub 13000  ' otsime saadute hulgast in - ta PEAB mr$ sees esinema!
+    if val(mval$) = oin then 
+        syslog "sub 142: got ack "+mval$,4:oin=0 ' sellele kordust pole vaja
+    else
+        if val(mval$)>0 then syslog "sub 142: too late for ack "+mval$,4 ' oms$ ja oin on praeguseks juba uuenenud
+    endif
+	
+ 	'koigepealt cmd jm otsing ning siis setup kontroll
+    
+    mreg$="UTW":gosub 13000 'liiklusmahtude taastamine
+    if mval$<>"" then ' saabusid liiklusmahud serverist
+        syslog "sub 142: found key "+mreg$+", traffic() setting",4
+        for uku=0 to 3
+            ukk=instr(1,mval$," ") 'eraldaja asukoht 
+            jj=val(mid$(mval$,1,ukk-1))
+            if jj =0 then
+                syslog "sub 142: traffic("+str$(uku)+") reset, was "+sprintf$("%lu",traffic(uku)),4
+                traffic(uku) = 0 'nullistame
+            else
+                if jj>traffic(uku) then
+                    traffic(uku)=traffic(uku)+jj 'lisame
+                    syslog "sub 142: added/restored traffic("+str$(uku)+") from server, new value "+sprintf$("%lu",traffic(uku)),4
+                else
+                    syslog "sub 142:  traffic("+str$(uku)+") from server less or eq to current value "+sprintf$("%lu",traffic(uku))+", no change",4
+                endif
+            endif
+            if len(mval$)>ukk then mval$=mid$(mval$,ukk+1) ' eraldajast kuni lopuni
+            
+        next uku
+        ms$=ms$+"UTW:"+sprintf$("%lu",traffic(0))+" "+sprintf$("%lu",traffic(1))+" "+sprintf$("%lu",traffic(2))+" "+sprintf$("%lu",traffic(3))+" "+sprintf$("%lu",traffic(4))+"\n" 'vastame
+    endif
+
+    mreg$="cmd":gosub 13000
+	if mval$<>"" then ' tuligi mingi cmd
+		if mval$="REBOOT" then mTee$="R" ' korraga mitu cmd ei saa tulla, newstate unique index!
+		if mval$="VARLIST" then mTee$="V" ' listime seadistuse 
+		syslog "sub 142: received cmd "+mval$,3
+		ms$=ms$+mreg$+":"+mval$+"\n" ' tagastame saadud kasu, et pidevalt saatma ei jaaks
+		if mid$(mreg$,1,6)="update" then 
+			msd$="direct update not supported, use rescue mode for bn100"
+			syslog "sub 142: direct update not supported, use rescue mode for bn100",4
+		endif
+        gosub 270:return 'kohe tegema mida mTee$ ytleb
+	endif
+    
+    ' eemaldatud liiklusmahtude taastamise vastuvott
+    
+    gosub 11000 ' refresh list$ and listp$ due to modified mr$, kuid ainult setup muutujad listiti sisse!
+    
+    if len(list$)>1 then 
+        mTee$="W":syslog "sub 142end: mTee$=W, register list:"+list$,4
+    else    
+        mTee$="":syslog "sub 142end: got empty register list from sub 11000:"+list$,5
+    endif
+    if ms$<>"" then gosub 270 ' saadame mon
+    
+  return
+

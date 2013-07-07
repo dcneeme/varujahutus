@@ -1,0 +1,20 @@
+ 25100 'sub babup_open.bcl - create and send babup message - seda ei kasuta
+ 
+ sub$="babup_open: " 
+
+    d_id=d_id+1
+	if d_id%2 = 0 then
+		web$=str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
+	else
+		web$=str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
+    endif
+	COM$="TCN:"+web$+":"+sprintf$("%u",DataPort) ' non-blocking open, checking connected below
+ 
+    if mediatype(0)<>0 then close 0:syslog sub$+": current handle 0 session canceled",3:delay 1000
+    open COM$ as 0
+    
+	ts(2)=SYSTIME ' take SYSTIME timestamp 
+
+    
+ return
+ 

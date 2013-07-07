@@ -1,0 +1,362 @@
+ ' sub 1000 - io12modbus.bcl - io registers on io12 mapping to the barionet virtual registers
+ ' ============================================================
+ 1000 ' read all inputs from modbus devices to 301..312,313...325 and so on, according to the input mask
+ ' and then write all outputs from 111..123,124..136 to modbus devices and so on according to the output mask
+ ' i, o mask iga mba kohta maarab, millised kanalid on sisendid (ja kui palju neid on)
+  
+   	
+	ijrk=360:ojrk=110 ' algseis enne koikide mba-de labikaimist	' mb sisendite ALGUS! bn100 sis valj alates 350 ja 100
+  
+  
+    if filesize(4) > 0 then ' mingi lugemata jura
+        READ 4,mbs$
+	    syslog "sub 1000: possible rs485 line noise: "+mbs$,4 
+        mbs$=""
+    endif
+  
+  
+    for mba=1 to mbmax ' mb aadress
+		mbsta(0)=mbsta(mba) 'jooksev status meelde muudatuste avastamiseks
+
+		'if mba =1 then ' ajutine inventer, sisendid fix 1i 1o
+		'	syslog "io12modbus: going to deal with drive ",4
+		'	gosub 2000:goto 1022 ' next mba
+		'endif
+			
+	    syslog "sub 1000: regular modbus communication for mba "+str$(mba)+" mbsta "+str$(mbsta(mba)),5
+		if and(mbsta(mba)<>0, SYSTIME>mbts(mba)+1000) then 
+			mbsta(mba)=2
+			ms$="E"+str$(mba)+"S:"+str$(mbsta(mba))+"\n":gosub 270 'saadame kohe ara, enne kui paraneb
+			gosub 1800:delay 100 'et oleks iseparanev kui mba ei vasta yle 1 s
+		endif
+	   
+	    ' koigepealt sisendite lugemine - kui ka neid ei ole, loeme valjundi olekut ikka! esialgu aga alati ka sisendid, kiiret ei ole...
+	    
+		'if icnt(mba) = 0 then
+		'	'syslog "sub 1000: no inputs for mba "+str$(mba),4 'ajutine abi
+		'	goto 1010 ' ainult valjundid selle moodulil ilmselt
+		'endif
+		
+		
+		
+		mb(1)=mba ' modbus address
+		mb(2)=3 ' command to read registers
+		mb(3)=0 ' register to be read address hi
+		mb(4)=0 '1 ' register to be read address lo (di register both for x8 and io12) - loeme ka valjundite seisud, alates 0!
+		mb(5)=0 ' wordcount hi
+		mb(6)=9 ' 1do+1di+7ai ' siin voiks teha soltuvuse sisendite olemasolust
+		mlen=6 ' saadetava stringi pikkus ilma crc-ta. len() ei aita, sest lopetab \0 juures!
+		
+		' x8 ja x12 puhul on di ja do info yhes 16bit registris bitmap kujul, inverteriga iga nr eraldi registris
+		
+		
+		
+		ExpLen=3+mb(6)*2 ' ExpLen=4 ' if imask(mba) > 255 then ExpLen=4 else ExpLen=2 ' io12 voi x8 min vastuse eeldatav pikkus
+		
+		
+		gosub 1200 'send to mb
+	    gosub 1150:syslog "sub 1150: sent to mba "+str$(mba)+": "+mbsl$,5 'ajutine abi
+		gosub 1700 ' send read cmd and read the response
+		if mlen>1 then gosub 1150:syslog "sub 1200: response from mba "+str$(mba)+": "+mbsl$,5 else syslog "no response from mba "+str$(mba),4 'ajutine abi
+		
+		if mbsta(mba)>0 then 'ei saanud normaalset vastust
+			syslog "sub 1000: failed to read mba "+str$(mba)+", skipping also write",4
+			ijrk=ijrk+icnt(mba)
+			' ojrk=ojrk+ocnt(mba) 'see toimub 1020 juures
+			goto 1020 ' jatame vahele ka kirjutamise seekord
+		endif	
+		
+		'gosub 1150:syslog "sub 1000, read mba "+str$(mba)+": "+mbsl$,4 ' ajutine abi
+		
+		' syslog "sub 1000: got "+str$(mlen)+" bytes before crc from mba "+str$(mba)+" (delay "+str$(SYSTIME-MBTS)+" ms from send)",4
+
+		FbWd=MIDGET(mbs$,5,2) ' valjundite oleks kontrolliks
+		syslog "io12modbus: outputs "+sprintf$("%04x",FbWd),5 'ajutine abi
+		
+		
+		
+		
+		if imask(mba) < 256 then InHi=0 else InHi=MIDGET(mbs$,6,1) ' sisendid 9-16, tavaliselt kuni 12
+		InLo=MIDGET(mbs$,7,1) ' sisendid 1-8
+		if icnt(mba)+ocnt(mba)<9 then InLo=and(NOT(InLo),imask(mba)) ' x8 jaoks loetud sisendi inversioon, mask arvesse et FF algusse ei tekiks - MIKS?
+		
+		
+		InWd=256*InHi+InLo ' 2-baidine sisendsona di
+		syslog "sub 1000: mba "+str$(mba)+" input - hi "+sprintf$("%02x",InHi)+", lo "+sprintf$("%02x",InLo)+", inwd "+sprintf$("%04x",InWd)+&
+		", moncomm "+str$(MonComm)+", bupcomm "+str$(BupComm),5 ' ajutine
+
+		
+		
+		for ihii=1 to 7 ' analoogkanalid 2 baiti igayks #################### analoog  ############################
+		'if ExpLen>10 then 'esineb analoogdata ch1 reg 5 
+			adata(ihii)=256*MIDGET(mbs$,2*ihii+6,1)+MIDGET(mbs$,2*ihii+7,1) 
+			'syslog "esmane adata("+str$(ihii)+")="+str$(adata(ihii)),4 ' ajutine
+			if and(tmask(1),2^(ihii-1)) then adata(0)=adata(ihii):gosub 1600:adata(ihii)=adata(0):syslog "temp ch "+str$(ihii),4 '1/10 deg yhikutes tulemus!
+			' syslog "sub 1000: adata("+str$(ihii)+")="+str$(adata(ihii)),4 'ajutine
+		'endif
+		next ihii
+		'delay 100 'ajutine
+		
+		
+		
+		ichg(mba)=xor(InWd,InOldWd[mba]) ' mis muutus? mask, kui muutust pole, siis ichg() = 0
+		if InWd<>InOldWd[mba] then ' input change. tegelikult peaks kontrollima vaid maskile vastavate bittide muutust...
+			syslog "sub 1000: io addr "+str$(mba)+" new input - hi "+sprintf$("%02x",InHi)+", lo "+sprintf$("%02x",InLo),4
+		
+			if ichg(mba)>0 then syslog "sub 1000: input changemask "+sprintf$("%04x",ichg(mba)),4 ' alati muutus
+			for i=0 to icnt(mba)-1 ' sisend bitregistritesse ja valjund bitiregistrist outhi outlo suunas
+				if and(2^i,imask(mba)) / 2^i =1 then ' bitile i vastab jargmine sisend
+					ijrk=ijrk+1 ' sisendid jarjest
+					ioctl ijrk, and(2^i,InWd) / 2^i ' sisendi olek virtuaalregistrisse 300...3xx
+					
+					if and(2^i,ichg(mba)) > 0 then ' oli muudatus
+						syslog "sub 1000: change on mba "+str$(mba)+" input "+str$(i+1),5 '
+						' teeme mon teate sisendi muutuse kohta
+						' ms$=ms$+"K"+sprintf$("%x",mba)+sprintf$("%x",i+1)+"S:"+str$(iostate(ijrk))+"\n":gosub 109 ' AJUTINE
+						' gosub 31000 ' tkk puhul puudub sides sis-valj
+					endif
+				endif ' sisendite lugemise ja registritesse paigutuse lopp
+			next i	' sisendite tootluse lopp
+			' ms$=ms$+"i"+str$(mba)+"X:"+sprintf$("%04x",imask(mba))+","+sprintf$("%04x",InWd)+"\n":gosub 109 'parall ka bitmap
+			' syslog "sub 1000: input registers "+str$(ijrk-icnt(mba)+1)+" to "+str$(ijrk)+" changed to "+sprintf$("%04x",bit2B(ijrk-icnt(mba)+1,ijrk)),3
+		
+			InOldWd[mba]=InWd ' vana meelde
+		
+		else
+			ijrk=ijrk+icnt(mba) ' sisendite pointer edasi! 
+		endif 
+
+		
+		
+		
+	1010 ' valjunditega tegelemine. siin arvesta omaski, sest virt reg bitid jarjest, aga x8 puhul ei pruugi olla jarjest!
+		
+		if ocnt(mba) = 0 then goto 1020 ' valjundeid ilmselt pole sellel moodulil
+				
+		OutWd=Bit2B(ojrk+1,ojrk+ocnt(mba)) ' teeme uue valjundi valmis selle mba jaoks, pikkus vastavalt valjundite arvule!
+		AbiOut=OutWd '*16 'ajutine abi, 4 viimast on valjundid meil siin! ilusam oleks maski arvestada
+		
+		
+		' syslog "sub 1000: mba "+str$(mba)+" output "+sprintf$("%06x",OutWd)+", from "+str$(ojrk+1)+" to "+str$(ojrk+ocnt(mba)),4 ' ajutine abi
+
+		
+		' if OutWd <> OutOldWd[mba] then ' on toimunud valjundi virt reg muudatus, teeme mb jaoks baidid 
+		if AbiOut <> FbWd then ' valjund ei klapi, saadame
+			syslog "sub 1000: mba "+str$(mba)+" output change needed, outwd "+sprintf$("%04x",OutWd)+", abiout "+sprintf$("%04x",AbiOut)+" FbWd "+sprintf$("%04x",FbWd),4
+			ochg=xor(OutWd,OutOldWd[mba]) ' mis muutus? kuid see on muutus jrk sees, mitte modbus registrites!! SEE EI HUVITA!
+			
+			for i=0 to 15 ' valjundID bitiregistritest outhi outlo suunas, modbus registriteks
+				if and(2^(i),omask(mba)) / 2^i =1 then ' see on valjundi kanal-1 
+					ojrk=ojrk+1 ' leidus maskiga lubatud valjund
+					ioctl 381+i, iostate(ojrk) ' abiregistritesse 381..396 valjundsona koostamiseks
+					'i, o paigutus jarjest, aukudeta!
+					if and(2^chan,ochg) > 0 then ' esines valjundi (jarjest) muudatus vorreldes eelmise seisuga, omask arvestamata
+						gosub 1050 'leia chan mba ja ojrk alusel
+						syslog "sub 1000: change on mba "+str$(mba)+" output "+str$(i+1)+", channel "+str$(chan),5 ' 
+						' ms$=ms$+"L"+sprintf$("%x",mba)+sprintf$("%x",chan)+"S:"+str$(iostate(ojrk))+"\n":gosub 109 ' AJUTINE
+					endif
+				
+				else 'ei ole valjundi kanal
+					ioctl 381+i,0 'kasutamata valj reg bitid taidame alati sisuga 0 - siin word, mitte jrk...
+				endif
+			next i
+
+            ' ms$=ms$+"o"+str$(mba)+"X:"+sprintf$("%04x",omask(mba))+","+sprintf$("%04x",OutWd)+"\n":gosub 109 'selle mba jarjest yhine hex
+			' gosub 270 ' saadame mon mis veel saatmata
+			
+			OutLo=Bit2B(381,388) ' jrk mb peal vahetuses!
+			OutHi=Bit2B(389,396)
+			
+			mb(2)=6 ' command to write a single 16 bit register
+			mb(3)=0 ' endiselt 
+			mb(4)=0 ' output register addr is 0 both for x8 and io12! di=1, ai=2
+			mb(5)=OutHi ' output data hi. lsb first
+			mb(6)=OutLo  ' output data lo
+			mlen=6
+			
+			
+			syslog "sub 1000: setting outputs for mba "+str$(mba)+" hi "+sprintf$("%02x",mb(5))+" lo "+sprintf$("%02x",mb(6)),4
+		
+		
+			ExpLen=4 ' if omask(mba) > 255 then ExpLen=4 else ExpLen=2 ' io12 voi x8 - siiski molemal juhul sama!
+			
+			gosub 1200 'saadame
+			gosub 1150:syslog "sub 1000: sent to mba "+str$(mba)+": "+mbsl$,4 'ajutine abi
+			gosub 1700 ' send write cmd and read the response
+			gosub 1150:syslog "sub 1000: ack from mba "+str$(mba)+": "+mbsl$,5 'ajutine abi
+			
+			if mbsta(mba)>0 then ' salvestamise kontroll ebaonnestus
+				syslog "sub 1000: failed to read write ack from mba "+str$(mba)+", retry change next time",4
+				goto 1020 ' jatame seekord vahele Outold salvestamise, korraku jargmine kord
+			endif
+		else
+			ojrk=ojrk+ocnt(mba) ' valjundite jrk pointer edasi alati, kas siis kui selle mba puhul muudatust polnud!		
+		endif ' valjunditega tegelemise ja saatmise lopp
+		
+		OutOldWd[mba]=OutWd ' jatame valjundi meelde
+			
+		
+	1020 	
+    
+		if mbsta(mba)<>mbsta(0) then 'toimus muutus
+			ms$=ms$+"E"+str$(mba)+"S:"+str$(mbsta(mba))+"\n"
+			if mbsta(mba) = 0 then ms$=ms$+"\nmsd:mba "+str$(mba)+" problem cleared\n":syslog "mba "+str$(mba)+" problem cleared",4
+			if mbsta(mba) = 1 then ms$=ms$+"\nmsd:crc error, mba "+str$(mba)+"\n":syslog "sub 1000: crc error, mba "+str$(mba),4
+			if mbsta(mba) = 2 then ms$=ms$+"\nmsd:no response from mba "+str$(mba)+"\n":syslog "no response from mba "+str$(mba),4			
+			gosub 109
+		endif
+	1022 'siia jargmise mba jaoks	
+	next mba
+    
+	' syslog "sub 1000 end, ijrk "+str$(ijrk)+" ojrk "+str$(ojrk),4" ' ajutine abi
+	omax=ojrk 'valjundite koguarv
+    mbs$="" ' tyhjendame
+    
+  delay 100 'ajutine, ehk aitab peale kirjutamist toimuvat lugemise jama valtida
+ return
+ 
+ ' vastavused sis ja valj vahel teha reeglite kaudu, adresseerides globaalse 32 bit aadressi (4 bit per mba) alusel
+ ' muidu ei saa maski muuta ega ajutiselt midagi deaktiveerida.
+ ' ################################
+
+
+ 
+
+
+ 1050 ' arvutame valjundi ja sis chan ojrk ja mba alusel, joostes koik mba-d labi... NII EI SAA!
+    chan=0
+	for jj=1 to mba-1
+		chan=chan+ocnt(jj) 'liidame eelnevad valjundis
+	next jj
+	chan=ojrk-chan 
+ return
+ 
+ 
+
+ 
+ 
+ 1100 ' sub report out + in as hex
+    syslog "sub 1000: mapped io-"+str$(mba)+" outputs "+sprintf$("%04x",bit2B(111,119))+&
+    ", inputs "+sprintf$("%04x",bit2B(ijrk-icnt(mba),ijrk)),4
+            
+ return 
+
+
+
+
+ 1150 ' format hex string of data to transmit (with crc), input string mbs$ and length wo crc mb(6) needed  ############
+    if mlen>0 then
+		mbsl$=""
+		FOR y = 1 TO mlen+2 ' pikkus ette anda, len() ei saa kasutada, 0 voib sisalduda!
+			mbsl$ = mbsl$+sprintf$("%02x",MIDGET(mbs$,y,1)) ' BAIDId HEX KUJULE SL$ YKSTEISE JAREL
+		NEXT y
+	else
+		syslog "sub 1150: mlen invalid: "+str$(mlen),4 ' ainult crc on liiga vahe...
+	endif
+ return
+
+
+
+ 
+
+ '=======================
+ 1200	' send to ONE modbus device command, based on data in mb(1)..mb(10)
+ ' needs mb(0)...mb(mlen) and mlen to be set before coming here. involves crc and sending
+ 
+    read 4,tmp$		 ' clear input buffer
+    if len(tmp$)>0 then syslog "sub 1200: some data in buffer before send!",4
+	
+	mbs$=""
+	for y=1 to mlen
+        ' syslog "sub 1200: mb("+str$(y)+")="+str$(mb(y)),4 'ajutine
+		mbs$=mbs$+"\x00" 'lisa binaarne null, muidu 0 seda yle ei kirjuta! kuigi tegelikult pole vaja, endmark sobib ka...
+		midset mbs$,y,1,mb(y) ' teeme binaarse stringi saatmiseks
+    next y
+	mbs$=mbs$+"\x00\x00" 'crc kohad otsa
+    
+    GoSub 1250 ' crc calc
+    MIDSET mbs$,mlen+1,2,crc	 ' make modbus crc and append to ms$
+
+    
+	' gosub 1150:syslog "sub 1200: going to send to mba "+str$(mba)+": "+mbsl$,4 'ajutine abi
+	Write 4,mbs$,mlen+2        ' send out
+    mbts(0)=SYSTIME ' store send timestamp - aga vastus edu nyyd iga mba jaoks eraldi edu ts! 01.01.11
+ 
+ Return
+
+
+ 
+ 
+ ' ============= modbus crc ====
+
+ 1250 ' Modbus CRC calc, mbs$ needed
+  crc = &HFFFF
+  FOR i = 1 TO mlen
+    crc = XOR(crc, MIDGET(mbs$,i,1))
+    FOR j = 1 TO 8
+      k = AND(crc,1)
+      crc = SHR(crc,1)
+      IF k = 1 THEN crc = XOR(crc,&HA001)
+    NEXT j
+  NEXT i
+
+ RETURN
+
+ 
+
+ 
+ 
+	
+ 1600 'sub temperatuuriarvutus x8 kyljes olevate andurite jaoks - ds18b20 ainult (12bit)
+ ' saada siia adata(0) mille tagastame uuel kujul
+    'syslog "sub 1600: adata enne konv: "+str$(adata(0)),4 'ajutine
+	if adata(0)>32768 then adata(0)=65536-adata(0) 'negatiivne temperatuur
+	adata(0)=(adata(0)*5)/8 ' tulemus 1/10 deg yhikutes
+	'syslog "sub 1600: adata peale konv: "+str$(adata(0))	,4 'ajutine
+ return
+ 
+
+ 
+
+
+ ' -------------------------------------------
+ 1700 ' sub Read modbus message with crc check
+ ' kus delay kasutusel, ei tohi on timer kaivitust olla!
+  1702
+  mbs$=""
+  if filesize(4) >= ExpLen then
+      delay 10:READ 4,mbs$
+      goto 1705
+  else
+     if SYSTIME < MBTS(0) + 1000 then delay 10:goto 1702   ' no timeout yet
+  endif
+  mbsta(mba)=2 ' paneme vea lipu pysti
+  syslog "sub 1700: no valid response from modbus address "+str$(mba)+" in 1000ms",4 ' timeout!
+  if filesize(4)>0 then read 4,mbs$:syslog "sub 1700: mba "+str$(mba)+" read too short!",4 ' abiks
+  delay 1000:return ' kui eespool 1705 peale ei saadetud siis on jama
+  
+  1705 ' mingi vastus tuli, lugemise jarel siia
+  mlen=lastlen(4)-2 ' vastuse pikkus ilma crc-ta
+  
+    if mlen > 1 THEN ' midagi tuli
+        gosub 1250  ' find crc
+
+        if midget(mbs$,mlen+1,2)<>crc Then
+            gosub 1150:syslog "sub 1000/1160: crc error in read! mbsl$="+mbsl$,3 ' mida tehakse vigase lugemi puhul?
+	        mbsta(mba)=1
+        else
+           ' syslog "read crc ok",4
+            mbsta(mba)=0:mbts(mba)=SYSTIME 'edu korral ts meelde
+        endif
+
+    else 
+        mbsta(mba)=1:syslog "sub 1700: invalid or no response from mba "+str$(mba)+": "+mbsl$,4
+        ' device status, 2=error, 1=offline no resp, 0=online ok
+    endif
+	
+RETURN
+
+
+
+
+ 

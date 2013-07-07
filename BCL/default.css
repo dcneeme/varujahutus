@@ -1,0 +1,20 @@
+html
+{
+ overflow: auto;
+}
+
+body
+{
+ background-color: #fff;
+ color: #000;
+ font: normal 0.75em tahoma, verdana, arial, serif;
+ margin: 0;
+ overflow: auto;
+ padding: 0;
+}
+
+table
+{ 
+ font-size: inherit; 
+}
+

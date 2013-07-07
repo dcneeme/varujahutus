@@ -1,0 +1,21 @@
+ 3600 ' SUB 3600 HEX2NUM.BCL
+    if hex$ ="0" then num=0
+    if hex$ ="1" then num=1
+    if hex$ ="2" then num=2
+    if hex$ ="3" then num=3
+    if hex$ ="4" then num=4
+    if hex$ ="5" then num=5
+    if hex$ ="6" then num=6
+    if hex$ ="7" then num=7
+    if hex$ ="8" then num=8
+    if hex$ ="9" then num=9
+    if hex$ ="A" then num=10
+    if hex$ ="B" then num=11
+    if hex$ ="C" then num=12
+    if hex$ ="D" then num=13
+    if hex$ ="E" then num=14
+    if hex$ ="F" then num=15
+    
+ RETURN
+  
+  

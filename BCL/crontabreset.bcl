@@ -1,0 +1,12 @@
+5950 ' traffic loendite igakuine nullistamine.
+    if nmin<>omin then ' minut muutus, kontrollime crontab kirjeid koigi loendite kohta
+    
+        if and(nmin = 0, nhour = 0, DayOfMonth =0) then
+            syslog "sub 5950: resetting traffic counters",4
+            traffic(0)=0:traffic(1)=0:traffic(2)=0:traffic(3)=0 'traffic 4 sees aga hoiatuslimiit, emt 25/2=12,5 ja elisa 20.2/10M
+        endif    
+    
+    omin=nmin ' eelmiseks
+    endif
+    'kadumisel taastamine vaja, serveri info alusel
+return

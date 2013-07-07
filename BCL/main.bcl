@@ -1,0 +1,813 @@
+  dim APVER$(30) ' application version, hetkel ainult bn100 jaoks!
+ APVER$="starman_jahutus 14.06.2013" ' mac 00204AB18657 starmani vent ruumis ukse taga lisakilbis
+ syslog APVER$,1
+ 
+ ' 06.06.2013 fututec2 alusel
+ ' 12.06.2013 pohifunktsionaalsus (ilma monitooringuta) toimib
+ ' 13.06.2013 esimene test starmanis, temp andurite jrk
+ ' 14.06.2013 silumine, mon udp kaima ajutiselt
+ ' 05.07/2013 udp passive chk messages added
+ ' 07072013 teeme branchi 20130707, et see seis salvestada
+ 
+ ' TODO
+ ' lisada in arvestamine ja viimase teate kordusteade vajadusel
+ 
+#include define.bcl - muutujad registrite kaudu
+
+
+
+ ' communication handles
+ ' 0 - babup communication
+ ' 1 - udp monitoring send and read - not in use here
+ ' 2 - serial send a and read 
+ ' 3 - system setup in flash read/write eeprom
+ ' 4 - modbus rs485
+ ' 5 - app websetup read eeprom
+ ' 6 - flash reading
+ ' 7 - system setup html read / again?
+
+ 
+  
+ dim _CGI_$(20)  ' cgi jaoks muutuja
+ dim web$(25) ' serveri ajutine aadress
+ dim AK$(20) ' asukoht
+ 
+ 
+ dim LIST$(61) ' korraga saadud muutujanimede joru. yle 10 ei tule, max pikkus 6
+ dim listp$(12) ' korraga yle 10 setup muutuja ei tohiks tulla
+ dim reg$(20) ' ajutine meelespea mats vaartusele
+ ' dim value$(256) ' reg value kui string tagasi  - siin voib ka url sees olla ja siia peab INF ara mahtuma! koolonit ara kasuta!
+ dim mreg$(10) ' monitoring register
+ dim mval$(50) ' monitoring value, incl setup strings
+ 
+ dim uku, ukk ' indexid sub 11000, 12000
+ dim i, ki, J, n, rk ' other indexes
+  ' dim id$(15) 'mac vordluseks - keegi ei kasuta!
+
+ DIM set$(256)  ' String FOR SETUP content
+ ' dim _MSET$(256) ' buffer for setup record manipulation, copy of set$ in memory as binary string.
+                ' sub 140 will modify and if ok, open set$, copy _MSET$ to set$ and close.
+                ' tried also to use _set$, but cannot modify partly
+ dim stp$(256) ' teine muutuja setupiga tegelemiseks - me ei tea, kas tuleb uus muutuja system voi app osast...
+
+ ' POLE VAJA dim stpf$(20)   ' siit loeme muutujate nimed mida monitooringule saata
+
+ dim mac$(15) ' own mac 12 char
+
+ dim com$(35) ' communication opening string
+
+ dim up(15)  ' (up)time counters 0=sec, 1=min, 2=hour, 3=day, 4=last_mon_udp_tx_sec 5=last_mon_udp_rx_sec  
+   ' 6=pwfr_start_sec  7=last_ping_sec  8 m_upd_send_ts,  9 d_send_s, 10 - last a_udpsend ms,  11 - last a_udpread ms, 12 ja 13 uptime abi , 14 termochg, 15 termo
+ dim ts(9) ' various timestamps  - 0 LAS, 1..8 iga sisendi jaoks . 9 = secondary gw switching uptime in s
+
+
+ dim omst$(2) ' eelmine objekti tervikolek 2B stringina 4 baidi asemel, 1 tahemark kasutusel - 0 1 2
+ dim mst$(2) ' viimane objekti tervikolek 1 tahemark kasutusel
+ dim mchg$(2) ' as string, 0 if no chg in mst or msd$, 1 if changed, 2 if send all in sub 240+270
+ ' dim r5v$(2)  ' 5 v reset flag, "1"  active, "0" inactive ' see ja eelmine on jama! olgu parem virt reg!
+
+ dim msd$(60) ' monitoring state decr short
+ dim omsd$(60) ' old state description short
+
+ DIM TXT$(1024) '  some message buffer
+ dim sub$(30)
+ dim hex$(30)
+ dim site$(24)
+
+ dim traffic(4) ' 0 ja 1 udp sisse ja valja, 2 ja 3 tcp sisse ja valja. 4 hoiatuspiir. crontab nullistamine iga kuu!
+ 
+ 
+ ' DIM ss$(256) ' string to send message  (but not udp!)  vahenda seda ka...
+ dim uss$(100) ' eraldi muutuja "on timer" udp asjade jaoks, kuid korraga yle 1 rea pole vaja saata... pist varu ansi koodide jaoks
+
+ DIM sr$(100)  ' string to receive a message from .....  server
+ 
+ dim ser$(50)  ' string to send to com port as 2 / length dep on lcd size
+
+ dim mr$(256) ' monitoring read
+ dim ms$(350) ' monitoring send
+ 'dim ms1$(256), ms2$(256), ms3$(256), ms4$(256) ', ms5$(256), ms6$(256), ms7$(256), ms8$(256) ' in alusel valitav kordussaatmine max 256 b korraga 
+   ' 8 muutujaga Warning: data area for temporary variables maybe not enough!
+ 
+ DIM SVreg$(53) ' nimede tegemiseks abistring vt sub 240. muutujate arv*2+1, arvesta ka (0)!
+ dim mats$(10)  'kasutame seda tulemuse vastuvotmiseks peale stringiotsingut failist sub 11100
+
+ dim ip$(20) ' oma aadress LAN peal, dhcp juhtudeks hea teada
+ dim mip1$(20) ' monitoring server ip
+ dim mip2$(20) ' monitoring server ip
+   
+ dim mTee$(10) ' mida vaja teha monitooringus
+ dim TEHA$(10) ' mida vaja teha rakenduses
+ dim EVNT$(10) ' evendid di alusel... eraldame eelmiset 02.07.2010!
+ 
+ ' dim OmTee$(10) ' eelmine mida teha mon
+ ' dim OTEH$(10) ' mida vaja teha app
+ dim KORR$(20) ' protokolli kasu KORRALDUS sisu
+ 
+ 
+ dim del(7) ' delays: 0=restart s, 1=start delay s, 2=feedback s, 3=max_pump_runtime min, 4=monitooringu sagedus min
+    '  5=pload arvutuse ja tablooteadete sagedus s, 6=pwrf viide s, 7 - modbus kulumootja intervall
+    
+ dim user$(11)
+ dim uspa$(31) 'user:pass in base64
+ 
+ dim chn(50) 'channel name as dbl word
+ dim chd(50) 'channel data as dbl word
+ ' 1..8 di, A..F 11..16
+ 
+ dim mbsta(4) ' modbus adr mba suhtluse olek, ok kui 0
+ dim mbts(4) ' comm try timestamp 
+ dim mbs$(100) 'saadetav binaarne
+ dim mbsl$(200) 'vaatamiseks hex
+ 
+ dim imask(4) 'laiendustele
+ dim ichg(4) 'muudatuste grupisumma ichg(0), mask ichg(1..mbax)
+  
+ dim omask(4)
+ dim eser1(4)
+ dim eser2(4)
+ dim icnt(4)
+ dim ocnt(4)
+ dim pref(4)
+ dim suff(4)
+ dim mb(10) ' baidid saatmiseks modbusile ja lopus mingid tunnused (9,10)
+ dim adata(8) ' siin vist ei kasutagi, x8 analoogsisendid
+ dim tmask(8) ' x8 temperatuurisisendite mask, autodiscovery during power on
+ dim mbchfrom(4) 'laienduste esimenes kanali signaalinimi, siit edasi num kasvavalt
+ dim ExtensionType(4) ' x8 on B2, io12 B3
+ 
+ dim tset(3) 'etteandetemp 10*degC
+ dim tactual(3) 'tegelik temp tsoonides
+ dim tmax(3) ' piirtemperatuur haire tegemiseks
+ dim tsensno(3) 'anduri jrk nr tsoonidele
+ dim tsetnorm(3) ' igale tsoonile individuaalne
+ dim zonehi(3) 'tostetud temp olek
+ dim zonehits(3) 'zonehi algus, tagastub tsethilen alusel
+ dim cooling(3) 'jahutuse luba
+ dim zone 'tsooni id 0..3 vastab 1..4
+ dim tsetadd 'globaalne lisa 10*degC
+ dim tsethilen ' sekundid kaua kestab max tostetud temp
+ 
+ dim thre(3) 'dekodeerimisnivood (virtual)kanalitele 1,2,3,4 qai2 ja ai4 alusel
+ 
+ dim gw(3) 'def gw baidid
+
+ dim bit2B <gosub 5000> ' funktsioon baidi saamiseks bitregistritest alates kuni
+  
+ ' event handling part   - use separate variables and indexes!  #####
+ on error gosub 15000  ' paneme selle koige ette, teatame veast kui tekib, err ja erl
+ ' on udp gosub 0 ' on UDP gosub 140 ' incoming udp /  ara kasuta! gosub 140 pandud appmain sisse!
+ 
+ on CGI gosub 9900 ' basic.cgi save and reboot etc
+
+ 
+ 'BupComm=1:MonComm=1:
+ CommLed=1 'algseisus side puudumine, las poleb
+ 
+ mac$=sprintf$("%H",0) ' veebis naitamiseks muutujat vaja
+ ip$=sprintf$("%A",1) ' dynaamiline ip huvitab meid ka
+ syslog "init: mac/ip "+mac$+" / " +ip$,4
+ delay 3000   ' et jouaks uut uploadida
+
+ 
+ MonPort=44445 'esialgu, enne veebist lugemist
+ COM$="UDP:0.0.0.0:"+str$(MonPort) '  keep monitoring udp port open
+ open com$ as 1 'avame mon pordi, udp
+ syslog "init: opened udp port "+sprintf$("%u",MonPort)+" to listen monitoring responses",4 ' kasuta sprintf$ str$ ASEMEL 
+ delay 1000
+ 
+ 	 
+ gosub 110:gosub 270 ' read & send app setup ' aga see voib ara rikkuda esialgse mon ip! 
+ 
+ if MonPort<>44445 then 'monport muutus setupi kaudu!!
+	close 1 'vana yhendus kinni 
+	COM$="UDP:0.0.0.0:"+sprintf$("%u",MonPort) ' keep monitoring udp port open
+	open com$ as 1 'avame mon pordi, udp
+	syslog "init: reopened udp port "+sprintf$("%u",MonPort)+" due to changed monport",4
+	delay 1000
+ endif
+ 
+ 
+ if mbmax>0 then open "COM::2" as 4:syslog "init: modbus activated",4 ' open rs485 serial port on barionet for modbus 19k2 8e1
+ 
+ timer 1,1000 ' iga sekund
+ on timer1 gosub 330  'ai lu    gemine ja keskmistamine
+ 
+ 
+ '  ##### initial setup read and sent ####
+    
+
+
+ ' INIT: Application enabling
+ ' ---------------------------
+ 
+  
+  COM$= "STP:0":OPEN COM$ as 3:READ 3,set$:CLOSE 3:gosub 21000 ' read (and send) system setup variables in EEPROM
+  ' COM$= "STP:512":OPEN COM$ as 3:READ 3,set$:CLOSE 3 ' read (and send) application setup variables in EEPROM
+  mTee$=""
+  
+  
+ 
+ delay 1000:gosub 20100 ' list tok files
+
+
+ 
+ 
+ SYSLOG "INIT DONE, waiting for 3 seconds to allow new upload",2
+ delay 3000
+ 
+ syslog "init: pinging the data collection servers",4
+ if ping(str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]),3000) > 0 then
+	syslog str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+"  OK",4
+ else
+	syslog str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4])+" no response in 3 s",4
+    msd$=msd$+" no response from data1ip!"
+ endif
+	
+ if ping(str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]),3000) > 0 then
+	syslog str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+"  OK",4
+ else
+	syslog str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4])+" no response in 3 s",4
+    msd$=msd$+" no response from data2ip!"
+ endif
+
+ 
+ syslog "init: pinging the monitoring servers "+mip1$+" and "+mip2$,4
+ if ping(mip1$,3000) > 0 then
+	syslog mip1$+"  OK",4
+ else
+	syslog "no response in 3 s for "+mip1$,4
+    mip1$=mip2$ ' asendus
+ endif
+ 	
+ if ping(mip2$,3000) > 0 then
+	syslog mip2$+"  OK",4
+ else
+	syslog "no response in 3 s for "+mip2$,4
+    mip2$="195.222.15.51"  ' mip1$ ' asendus
+ endif
+ 
+ thre(0)=675 'kuni veebi saab voi iseoppivaks, encoding thresholds chan 1..4. vist ai1, ai2 kaudu kodeering
+ thre(1)=550
+ thre(2)=675
+ thre(3)=550
+ syslog "init: thre() "+str$(thre(0))+" "+str$(thre(1))+" "+str$(thre(2))+" "+str$(thre(3)),4 ' enc levels
+ 
+  
+ '  #######################################################################
+ '  ################# BASE ####### MAIN: Main program loop ##############
+ '  #######################################################################
+
+ 100	' SYSLOG "Main program looped", 8
+
+ 
+ if mTee$ = "I" then gosub 142 ' read ANY incoming UDP from known rmthost in buffer
+ if mTee$ = "W" then gosub 145 ' write setup variables, read them in and send the list back (mTee$="S" by sub 145 if W B S)
+ 
+ 
+ if mTee$ = "V" then ' cmd:VARLIST puhul voi rescue mode restart puhul, saadab nii app kui system setup!
+	'COM$= "STP:0":OPEN COM$ as 3:READ 3,set$:CLOSE 3:gosub 21000 ' sys setup. jouistub peale rebooti, seega loeme ka AINULT peale rebooti.
+    gosub 110 ' read (and send) application setup variables in EEPROM
+    ' mchg$="2":gosub 240:gosub 270:mchg$="0" ' saadame ka programmimuutujad sh igasugu counterid
+    mTee$=""
+ endif
+ 
+ 
+ if mTee$ = "R" then GOSUB 22000 ' reboot the controller (reads all variables from flash AFTER THAT)
+   
+ 
+ gosub 150 ' count uptime
+ 
+ 
+ if up(0)%3600 = 0 then ms$=ms$+"ver:1,"+APVER$+"\nAVV:"+APVER$+"\nAVS:0\n" ' igaks juhuks iga tund uuesti mis versioon meil on...
+ 
+ ' ms$ saatmine voi siis kordus viimasele datagrammile kui 7 s jooksul ack pole tulnud. ka ms$ saatmine kordab eelmist, kui vaja!
+  if ms$<>"" then 
+      gosub 270 ' monitooringuinfo minema 
+  else
+      if and(oin>0, up(0)>up(4)+7) then gosub 270 ' 7 s jooksul pole ack saabunud ja parajasti muud saata pole. ack saabumine nullistab oin, vt 140
+  endif
+ 
+ 
+  
+    
+  gosub 32000 ' appmain.bcl, application specific things in main loop
+  
+  ' syslog "main:commfailreaction="+str$(CommFailReaction),4 ' ajutine
+  
+  ' sidekatkestuse korral kaitumine
+  if and(1,CommFailReaction) = 1 then ' gprs toitekatkestus on lubatud
+    ' syslog "main: gprsuptime "+str$(GprsUptime)+", commfaildelay "+str$(CommFailDelay)+", uptime "+str$(up(0)),4 'ajutine
+    'if and(GprsUptime>CommFailDelay, up(0)>LastCommTS+CommFailDelay) then ' udp saabumisi pole olnud
+    if and(up(14)>CommFailDelay, up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+        syslog "main: GPRS power break due to comm loss longer than "+str$(CommFailDelay)+" s!",4
+        up(14)=0 'GprsUptime=0
+        msd$="resetting GPRS device":gosub 270
+        delay 500
+        CommBreak=50 ' 5 sek paus AINULT gprs ruuterile... kui juba 2 tundi sideta, siis ka kontrollerile
+        'nyyd on vahemalt minuti jooksul side katkenud...
+    endif
+  endif
+
+  if and(2,CommFailReaction) = 2 then ' reboot sidekatkestuse korral on lubatud, 3 x pikem katkestus vajalik kui gprs resetiks!
+    'syslog "main: uptimedelay "+str$(UptimeDelay)+", uptime "+str$(up(0))+", lastcommTS "+str$(LastCommTS),4 'ajutine
+    if and(up(0)>UptimeDelay, up(0)>up(5)+3*CommFailDelay+120) then '  voib rebooti teha, kolmanda gprs restardi jarel andes enne 120s aega gprs kaivitumiseks
+        SYSLOG "GOING TO REBOOT due to comm failure for more than 3 x "+str$(CommFailFelay),1
+        ms$="mst:2\nmsd:rebooting due to commfail\nUPS:2\nUPV:0\n":gosub 270 'see ei lahe ju kuhugi...
+        DELAY 5000:LOCK 2 ' reboot
+    endif
+  endif
+
+  if and(8,CommFailReaction) then ' varulyysi kasutus on lubatud, side kontroll udp alusel. peaks kaasama ka tcp...
+    ' syslog "main: gw change enabled",4 ' ajutine
+    if and(up(14)>CommFailDelay, up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
+        syslog "main: need to change gw to secondary! "+str$(SecondGW[1])+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),4
+        'proovi kas gprs / varulyys on ikka olemas
+        if ping(str$(SecondGW[1])+"."+str$(SecondGW[2])+"."+str$(SecondGW[3])+"."+str$(SecondGW[4]),1000) > 0 then 'GPRS RUUTER VASTAB, SAMAS LANis
+            syslog "main: changing default gateway due to comm loss longer than "+str$(CommFailDelay)+" s!",4 ' vahetada B12..B15
+            mr$="id:"+mac$+"\nB12:"+str$(SecondGW[1])+"\nB13:"+str$(SecondGW[2])+"\nB14:"+str$(SecondGW[3])+"\nB15:"+str$(SecondGW[4])+"\n":gosub 142:gosub 145
+            lock 2 'reboot
+        else
+            syslog "main: secondary gw unreachable (no answer to ping)!",4
+            up(5)=up(0) 'ootab samapalju veel
+        endif
+    ' else
+      '  syslog "no need to change def gw, up(0)="+sprintf$("%lu",up(0))+", up(5)="+sprintf$("%lu",up(0)),4 ' ajutine
+    endif
+  endif
+
+  'if SecondTS>0 then ' varu gw peal 'siin vorrelda B12... ja SecondGW vaartusi! loe ka system setup sisse osaliselt!
+  if and(SecondGW[1] = gw(0), SecondGW[2] = gw(1), SecondGW[3] = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
+        if SecondTS = 0 then SecondTS=up(0) ' siit edasi kasvab 10 min kaupa kuni pohiside taastub
+   
+        if up(0)>SecondTS+3600 then 'aeg tagasi lylituda 60 min parast, kui LAN gw vastab ########## tagasilylitumise viide / AEG
+           if ping(str$(PrimGW[1])+"."+str$(PrimGW[2])+"."+str$(PrimGW[3])+"."+str$(PrimGW[4]),1000) > 0 then 'prim gw VASTAB, SAMAS LANis
+                syslog "main: restoring def gw to primary gw",4 ' vahetada B12..B15
+                msd$="going to restore primary gw" ' laheb kasutusse, kui allpool uut setuppi raporteeritakse
+                mr$="id:"+mac$+"\nB12:"+str$(PrimGW[1])+"\nB13:"+str$(PrimGW[2])+"\nB14:"+str$(PrimGW[3])+"\nB15:"+str$(PrimGW[4])+"\n":gosub 142:gosub 145
+                lock 2 ' reboot 
+            else
+                syslog "main: primary gw unreachable, shall stay on secondary for now!",4
+                SecondTS=SecondTS + 600 '10 min jarel proovime uuesti
+            endif
+       endif
+  endif
+  
+  gosub 5950  'kuu alguse kontroll ja traffic() reset
+
+  
+ if up(0)> 1000000 then ' reboodime igaks juhuks iga 12 pv tagant
+     syslog "uptime 1Ms, going to reboot in 60 s!",1
+     msd$="going to reboot due 1Ms uptime\n":mst$="1"
+     gosub 270 'saatmine
+     delay 2000
+     CommBreak=20 '2 s gprs toite pausi
+     syslog "comm break started, delay 60 s before barionet reboot!",1
+     delay 60000 'anname gprs seadmele aega startida
+     lock 2 'reboot
+ endif
+        
+        
+  ' syslog "zonehi states "+str$(zonehi(0))+" "+str$(zonehi(1))+" "+str$(zonehi(2))+" "+str$(zonehi(3))+", tset "+str$(tset(0))+" "+str$(tset(1))+" "+str$(tset(2))+" "+str$(tset(3)),4     
+  delay 100 ' tegeliku too jaoks on 100 ok
+ 
+ GOTO 100
+
+ ' ###########################################################
+ ' ############   CLOSING MAIN PROGRAM LOOP      #############
+ ' ###########################################################
+
+ 
+
+
+
+
+ 109 ' sub send monitoring fragment away only IF bigger than FRAG
+     ' syslog "sub 109: len(ms$)="+str$(len(ms$))+" - kui yle 180, saadame ara",4
+	if len(ms$)>170 then ' kuulutame fragmendiks, alla selle nullistame nfrag ega lisa midagi ' 180 andis dim vea ja 170 ka...
+        syslog "sub 109: ms$ pikkus on "+str$(len(ms$))+", saadame fragmendina teele",5
+        nfrag=nfrag+1 ' selle nullistab iga mittefragment
+        ms$="frag:"+str$(nfrag)+"\n"+ms$  ' fragmendi tunnus
+        gosub 270 ' saatmisel tagastub tyhi ms$ kui nfrag>0
+    else
+        nfrag=0 ' see on jama, nullistab ka siis kui vaja pole, aga jarjekord tegelikult ei huvita  meid...
+        ' syslog "sub 109: no fragment yet, ms$ length "+str$(len(ms$)),4
+    endif
+  return
+
+
+  
+
+ 
+#include read_app_setup.bcl  ' sub 110 - app web setup 
+
+
+ ' #include hw_discovery.bcl ' hw type, ports etc
+
+
+   
+    
+    
+ 134   ms$=ms$+"0\n":gosub 109:return ' lisame 0
+ 135   ms$=ms$+"1\n":gosub 109:return ' lisame 1
+ 136   ms$=ms$+"2\n":gosub 109:return  'lisame 2
+   
+   
+   
+#include udpreceive.bcl ' sub 140 get udp
+ 
+
+
+
+
+
+#include remsetup145.bcl '  sub 145, save setup process monitoring responses
+ 
+ 
+
+
+ 
+150 ' SUB: count uptime - siin up(12), up(13) abimuutujad, mitte 10, 11 nagu pumplates!
+ '=========================
+  ' up(0)=_TMR_(0)/1000   ' do not use _dts_ which will be changed by ntp
+  ' every 600hours 32bit overflow with milliseconds!
+  
+ up(13)=_TMR_(0)-up(12)        ' timestep (difference) in ms
+ 
+ if up(13) > 1000 then
+    UP(0)=UP(0)+UP(13)/1000           ' update seconds time from this ms difference
+    up(12)=up(12)+(up(13)/1000)*1000 ' increase the reference
+    up(14)=up(14)+up(13)/1000 ' GprsUptime=GprsUptime+UP(13)/1000
+    ' such trick above is needed to avoid the uptime in secons being 2.5% slower than _DTS_(0)/1000!
+ endif
+
+ 'syslog "sub 150: dts"+str$(_DTS_)+", up(0):"+STR$(UP(0))+", UP(10):"+STR$(UP(10))+", UP(11):"+STR$(UP(11))+", diff:"+STR$(_DTS_-UP(0)),4
+  up(1)=up(0)/60:up(2)=up(1)/60:up(3)=up(2)/24
+  if up(2)>0 THEN up(1)=up(1)-60*up(2)
+  if up(3)>0 THEN up(2)=up(2)-24*up(3)
+
+  
+  ' now winter/summer fixed time in seconds up(10), based on _DTS_
+	
+  up(10)=_DTS_ ' +1*24*3600+up(0)*360 ' corrected time in seconds since 1970 using dts / test
+  MonthNumber=val(mid$(SPRINTF$("%48t",up(10)),3,2)) ' month
+  DayOfMonth=val(mid$(SPRINTF$("%48t",up(10)),5,2)) ' date
+  HourOfDay=val(mid$(SPRINTF$("%48t",up(10)),7,2)) ' temporary hours
+  WeekDay=val(mid$(SPRINTF$("%48t",up(10)),11,1)) ' weekday, 1=pyhap, minutid siin vahel (9,2)
+
+  if or(MonthNumber<3, MonthNumber>10) then return '  winter time, no change
+  
+  if and(MonthNumber = 3, or(DayOfMonth+(8-WeekDay)<32, and(WeekDay = 1, HourOfDay<1+TimeZone/2))) then return ' winter time before last mar sun 0100 GMT
+  if and(MonthNumber = 10, DayOfMonth+(8-WeekDay)>31, or(WeekDay<>1, HourOfDay>1+TimeZone/2)) then return '  winter time after last oct sun 0100 GMT
+  up(10)=up(10)+3600 ' changed due to summer time, recheck hour!
+
+  nmin=val(mid$(SPRINTF$("%48t",up(10)),9,2)) 'current minute
+  nhour=val(mid$(SPRINTF$("%48t",up(10)),7,2)) ' current hour
+  nwday=WeekDay-1:if nwday <0 then nwday=6 ' saturday correction
+  
+ RETURN
+
+
+
+
+
+
+#include m_udpsend.bcl ' mon udp send sub 270
+
+
+
+#include timed_events.bcl ' sub 300 valgus vms sisse valja
+
+
+ 
+#include ai_330.bcl ' sub 330 reading and averaging analogue inputs
+
+
+#include io12modbus.bcl ' sub 1000
+
+
+#include io12conf.bcl ' sub 1800
+
+
+#include bit2B_f.bcl ' sub 5000 function
+
+
+
+#include chd_tegu.bcl ' sub 5200 koostame kanaliite vaartused babup ja udpmon jaoks vastavalt kanali tyybile
+
+
+
+#include crontabreset.bcl ' sub 5950 nullistame traffic loendid
+
+
+
+' #include udp_parse.bcl 'sub 6000 process incoming udp messages
+
+
+
+' #include serial_send.bcl ' sub 7000
+
+
+
+' #include serial_send_info.bcl ' sub 7200
+
+
+
+
+
+ 9900 ' sub  cgi handling ########
+ ' use for reboot and power loss if detected or anything else
+  syslog "cgi handling with parameter "+_CGI_$,4
+
+   if _CGI_$ ="S1" then TEHA$=_CGI_$:_CGI_$="":DELAY 0
+   
+   if _CGI_$ = "R" then mTee$=_CGI_$:_CGI_$="": DELAY 0:_CGI_$="*uireboot22.html"  ' html ei toimi?
+   
+   if _CGI_$ = "S" then TEHA$=_CGI_$:_CGI_$="":DELAY 0 ' re-read app setup
+   
+   if _CGI_$ = "C" then mTee$=_CGI_$:_CGI_$="":DELAY 0
+   
+ ' vaja siit ruttu valjuda, blokeeriv!
+    'ara kasuta ACT, kui saab main loop kaudu mTee$ asju kaivitada!
+ return
+
+
+
+
+ 
+#include di_event.bcl  ' sub 10000 - digital inputs
+
+
+
+ 
+ 
+ 
+  11000 ' sub list received REGNAMES for setup from monitoring!
+   '  sisend mr$, eraldaja sisendis koolon, tulemus list$ ilma eraldajateta
+   ' yhtlasi tagastada ka registrinimede pikkused binaarse stringina listp$, vaartused ei huvita!
+   ' aga muutujate vaartusi siin ei uuri ega tagasta
+   ' setup muutujad, mis algavad S,B voi W ja on pikkusega 4 kontrollida enne lisamist yle html faili abil!
+   ' voib esineda ka N aga me ei kasuta
+   ' uku on kooloni asukoht ja ukk sellest tagasi minek, min 2 ja max uku võrra
+
+   list$=""  listp$="" ' tulemusstringid registrid ja nimede pikkused yhe baidina
+   pos=0  RegNum=0 ' list$ ja lispt$ siduv pointer  ning listi liikmete arv (kui seda vaja on)
+   ' syslog "sub 11000 otsime uku=2 kuni "+str$(len(mr$)),5
+
+   for uku=2 to len(mr$)  ' pole motet yhest alustada, alla 2 tahemargi reg nimesid pole
+        ' syslog "uku:"+str$(uku),6 ' debug
+        if mid$(mr$,uku,1) =":" then  ' leidis eraldaja
+            ' syslog "sub 11000, koolon leitud, uku:"+str$(uku),6
+            ukk=2 ' alustame kahest tagasiminekul sest lyhemat nime ei ole
+     11001    ' syslog "ukk:"+str$(ukk),6 ' debug
+            if ukk+1 =uku then  ' oleme registrinime alguses
+                mats$=mid$(mr$,uku-ukk,ukk)  ' registri nimi leitud
+                gosub 11200  ' testime ja lisame
+                goto 11003  ' next uku
+            else  ' oleme kaugemal kui esimene register:value ja otsime ETTEpoole reavahetuseni
+                if mid$(mr$,uku-ukk-1,1) ="\n" then  ' seda kontrolli ei saa yhises lauses eelmisega teha
+                    mats$=mid$(mr$,uku-ukk,ukk)  ' registri nimi
+                    gosub 11200 ' testime ja lisame
+                else    
+                    if uku>ukk+1 then ukk=ukk+1   goto 11001 ' astume veel sammu ettepoole
+                endif
+            endif
+        endif  ' kooloni otsimise lopp
+   11003 next uku
+   ' syslog "sub 11000: got list: "+list$+" liikmete arvuga RegNum:"+str$(RegNum)+", sub lopus uku:"+str$(uku)+" ukk:"+str$(ukk),5
+ return
+
+
+
+
+ 11100 ' otsi veebisetup failidest uiappsetup1.html ja uisystem.html stringi mats$     ##############
+   ' tulemus positiivne kui exit=0 (lastlen(5|7)>0)
+   syslog "sub 11100: looking in setup files for mats$ "+mats$,4
+   exit=1
+   ' otsi alati algusest. nii syst kui app! tulemus ise stp$ sees
+
+   if mediatype(5) =0 then OPEN "F_R:uiappsetup1.html" AS 5  ' ava html setup kui veel kinni
+   if mediatype(5)<>9 then return:syslog "sub 11100: problem opening app setup file as 5",2
+
+   reg$=mats$  ' vaja alles hoida enne READ tegemist
+   seek 5,1:READ 5,stp$,8,mats$ ' kui ei leia nullistab mats$!
+   ' read kasus 8 vms selleks, et null ei oleks - siis loeb ainult rea lopuni...
+	
+	if lastlen(5)>0 then 
+		exit=0
+	    ' syslog "sub 11100: found "+mats$+" from appsetup",5
+	else
+        mats$=reg$ ' taastame mats$ vaartuse mille eelmine otsing untsu vois keerata
+        if mediatype(7) =0 then OPEN "F_R:uisystem.html" AS 7  ' ava html setup kui veel kinni
+        if mediatype(7)<>9 then syslog "sub 11100: problem opening system setup file as 7",2:return
+        seek 7,1:READ 7,stp$,8,mats$
+        if lastlen(7)>0 then 
+			exit=0
+			' syslog "sub 11100: "+mats$+" esines failis uisystem.html, tema taga on: "+stp$,5  'oli app setup muutuja
+		' else
+			' syslog "sub 11100: "+mats$+" EI esinenud setup failides!",4  
+		endif
+    endif
+
+ return
+
+
+
+
+
+ 11200 ' sub lisame mats$ listile (kui pole id), seejuures Sxxx,Wxxx,Bxxx muutujate esinemist kontrollime JA TEISI EI LISA!
+       ' syslog "sub 11200 - otsime mats$="+ mats$+" pikkusega "+str$(len(mats$))+" sobivust ja esinemist veebisetupis "+stpf$,5
+       if and(and(len(mats$)>1, len(mats$)<7), or(mid$(mats$,1,1)="B", mid$(mats$,1,1)="W", mid$(mats$,1,1)="S")) then ' on setup
+	   'voimalikud setup muutujate pikkused on B0 kuni B999b7, ara sellest kaugemale bitte pane! 
+           gosub 11100 ' chk mats$=reg$ esinemine veebisetupis #######
+           if exit =0 then 'leiti
+               'syslog "sub 11200: register "+mats$+" esines veebisetupis",5
+               list$=list$+mats$
+               pos=pos+1:RegNum=RegNum+1
+               listp$=listp$+" " ' kasvatame listp$ pikkust, muidu midset ei toimi
+               midset listp$,pos,1,ukk
+           endif
+       endif
+
+ return
+
+
+
+#include getmonvalue.bcl ' sub 13000
+
+
+
+#include save_counters.bcl ' sub 13300
+
+
+ 
+ 
+ 
+
+ 15000  ' sub error handling  ################
+    syslog "sub 15000 error handling",4
+
+	IF up(0)<300 then ' 5 min esialgu, hiljem veebisetuppi, aga alla 2 ei tohiks kunagi...
+        SYSLOG "sub 15000: GOING TO RESCUE MODE DUE TO TOO LITTLE UPTIME",1
+        ' TEHA$="X":return
+        mr$="id:"+mac$+"\nS100:bnrescue\n":gosub 142:gosub 145 ' emuleerime kaugkonfi kasu vastuvotmist
+    ENDIF
+    
+    ms$="ERV:"+str$(_ERR_)+" on line "+str$(_ERL_)+"\nUPS:1\nUPV:0\ncmd:REBOOT\n"
+	gosub 270 
+    syslog "sent error message to mon_server, going to reboot in 5 seconds",1
+    delay 5000
+    lock 2 ' tehku reboot muidu jaabki jura ajama
+  
+  return ' error.bcl lopp
+
+
+
+ 
+
+
+ 20100 ' sub list available tok files eraldajaks tyhik niipalju kui leiab
+       ' saadab ise ara ka!
+       ' kasutab muutujaks stp$, mis selle sub too ajal ei tohi olla kasutuses
+
+       if mediatype(6) =0 then OPEN "F_R:." as 6 else syslog "sub 20100: handle 6 already open!",1:return ' open flash for reading
+
+       if mediatype(6)>0 then
+           syslog "handle 6 opened for webX read, mediatype(6)="+str$(mediatype(6)),4
+       else
+           syslog "sub 20100: could not open handle 6, closing",3
+           return
+       endif
+
+       ms$="tok:" 'siia otsa liidame leitud failinimed ilma laiendita, tyhik vahele
+
+       for num =1 to 7
+           seek 6,65536*(num-1)+num:read 6,set$,256 ' read old cob / reusing variable set$ used on sub 110
+           for uku=1 to 256
+               ukk=instr(-1*uku,set$,".tok") ' jargmise \0 -ni
+               if and(ukk>8,ukk>uku) then
+                    ms$=ms$+"WEB"+str$(num)+"_"+mid$(set$,ukk-8,8)+" "
+                    uku=ukk
+               endif
+           next uku
+       next num
+       close 6
+       ' syslog "sub 20100 found tok:"+ms$,3
+       if MonMode = 1 then ms$=ms$+"\n":gosub 270 else ms$="" ' saadame minema
+ return
+
+
+ 
+
+' #include rd_s_stp.bcl ' sub 21000
+ 21000 ' sub report system setup variables   #######################  lugeda ainult peale rebooti, mitte setupi muutudes.
+    ' set$ sisse olgu loetud vajalik! siin ainult teavitamine, vaartusi ei jata meelde!
+    ' KASUTAN siin nii siin kui app setupis numeratsiooni nagu manual annab, alates 0!
+    ' uisystem.html ei kasuta lugemiseks, kyll aga kirjutamiseks!
+ 
+    ' TXT$="system setup variables"+"\r\n" ' siia lisatakse RV puhul setup muutujad
+ 
+    FOR JJ =0 TO 3 ' IP ADDRESS 4 BYTES
+	    GOSUB 21010
+	NEXT JJ
+	JJ=6:GOSUB 21010 ' netmask
+	JJ=8:GOSUB 21010 ' web port
+	JJ=10:GOSUB 21020  ' lockdown mode	  
+	FOR JJ=12 TO 18 ' def gw 4 baiti, RS232 SETUP
+       GOSUB 21010
+       uk=jj-12:if uk<4 then gw(uk)=midget(set$,JK,1):syslog "sub 21000: def gw("+str$(uk)+")="+str$(gw(uk)),4 'kehtiv def gw muutujatesse
+	NEXT JJ
+	JJ=26:GOSUB 21020  ' diconnect timeout s, 0=dis
+    JJ=32:GOSUB 21010  ' rs485 baudrate
+	JJ=33:GOSUB 21010  ' rs485 mode
+    JJ=34:GOSUB 21020  ' local tcp port (serial tunneling)
+    JJ=42:GOSUB 21010  ' disconn timeout 
+	FOR JJ=48 TO 55 ' SNMP TRAP IP, UDP INFO SEND IP
+	   GOSUB 21020
+	NEXT JJ
+	JJ=56:GOSUB 21020 '  
+    JJ=58:GOSUB 21020 ' 
+	JJ=60:GOSUB 21020  ' udp interval 
+    JJ=62:GOSUB 21020  ' tcp command port 
+    for jj=64 to 67 ' pullup, trap mask, in pol, ai/di
+        gosub 21010
+	next jj
+	jj=68:GOSUB 21020  ' snmp trap repeat time
+	jj=70:gosub 21010 ' 1wire/wiegand
+	for jj=80 to 94 ' syslog ip, ntp ip, dns ip, sylog level, timezone
+	    gosub 21010
+	next jj
+	jj=96:gosub 21010 ' tcp command port timeout
+	
+	ms$=ms$+"S100:"+mid$(set$,101,9)+"\n"  'bcl filename
+    gosub 270 ' viimane ei ole kunagi fragment
+ return
+
+
+
+ 21010 ' sub  READ AND SEND SETUP bytes, used by sub 21000 and sub 110
+   'PANE PAIKA JJ ENNE SIIATULEKUT, ei funka vahemike 256...512 ja 768..1024 jaoks!
+	    if jj<512 then
+			if jj<256 then
+				jk=jj+1 'systeemne setup
+			else
+				jk=jj-255 'reserv
+			endif
+		else 
+			if jj<768 then
+				jk=jj-511 'tavaline appsetup
+			else
+				jk=jj-767 'varu app setup
+			endif
+		endif
+	    ms$=ms$+"B"+STR$(JJ)+":"+str$(midget(set$,JK,1))+"\n"  
+	    if MonMode = 1 then GOSUB 109 else ms$="" ' fragment send test - siin kirjutame ka maili sisu jupi porti ja tyhjendame TXT!
+   RETURN
+
+   
+  
+  21020 ' sub  READ AND SEND SETUP WORDS, used by sub 21000
+   'PANE PAIKA JJ ENNE SIIATULEKUT
+	    if jj<512 then
+			if jj<256 then
+				jk=jj+1 'systeemne setup
+			else
+				jk=jj-255 'reserv
+			endif
+		else 
+			if jj<768 then
+				jk=jj-511 'tavaline appsetup
+			else
+				jk=jj-767 'varu app setup
+			endif
+		endif
+	    ms$=ms$+"W"+STR$(JJ)+":"+str$(midget(set$,JK,2))+"\n"  
+	    if MonMode = 1 then GOSUB 109 ' fragment send test
+   RETURN 
+   
+   
+   
+   
+ 
+  22000 ' SUB REBOOT ############################
+    SYSLOG "GOING TO REBOOT IN 5 SECONDS",1
+    if MonMode = 1 then ms$="mst:2\nmsd:rebooting due to cmd\ncmd:REBOOT\n":gosub 270
+    DELAY 5000:LOCK 2 'see delay on blokeeriv...
+  RETURN
+
+
+  
+#include mon_msg.bcl ' sub 24000
+  
+#include babup_msg.bcl ' sub 25000
+
+#include babup_read.bcl ' sub 25400
+
+
+' #include base64enc.bcl ' sub 26000
+
+
+
+#include appmain.bcl ' sub 32000
+ 
+ '   ########## END ########################

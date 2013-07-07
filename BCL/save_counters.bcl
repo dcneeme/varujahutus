@@ -1,0 +1,76 @@
+ 13300 ' save_counters.bcl ' remote setup protseduuri emuleerimise kaudu, nagu eccua0104
+ 
+ '  13300 ' sub ALL counters saving W768,W770..W796..W798  8 tk igayks 32 baiti
+ 
+ ' ykshaaval salvestamine/seadmine kaib nagu setup muutmine. 
+ 
+ ' iga setup lugemine kas viib loendi setup poolt W poolt maaratud seisu - kui loendi seis on suurem,
+ ' voi tekitab loendi sisuks salvestatu ja hetkeseisu summa - kui setup baitide kogusisu on suurem, 
+  ' kui hetkeseis. see voimaldab enne rebooti loodetavasti salvestunud seisu automaatselt taastada.
+ 
+ 'mr$="id:"+mac$+"\nS733:"+sprintf$("%lu",psec(3))+"\nS744:"+sprintf$("%lu",psec(4))+"\n":gosub 142
+    syslog "sub 13300: saving all the counters",3
+	
+	mr$="id:"+mac$+"\n"
+	
+	for chan = 0 to 7 '1..8 asemel
+		mr$=mr$+"W"+sprintf$("%u",768+4*chan)+":"+str$(iostate(401+2*chan))+"\n"
+		mr$=mr$+"W"+sprintf$("%u",770+4*chan)+":"+str$(iostate(402+2*chan))+"\n"
+	next chan
+	syslog "sub 13300:"+mr$,4
+	mTEE$="I":gosub 142 'save setup
+ return
+
+ 
+ 
+ 
+ 
+ 13500 ' SET and save ONE COUNTER initial value via bas.cgi
+ 'one dec value will be divided into words and saved
+ 'a string from 2 dec values separated with colon will go to hi and lo setup words directly 
+    syslog "sub 13500: saving counter",4 'ajutine
+	
+	chan=val(mid$(TEHA$,2,len(TEHA$)-1))
+	if chan>0 then
+		chan=chan-1
+		syslog "sub 13500: got counter web setup string TXT$="+TXT$+", TEHA$="+TEHA$+" for counter "+str$(chan),4
+    else
+		syslog "sub 13500: illegal TEHA$ "+TEHA$+", exiting",1
+		return
+    endif
+   
+   
+    ki= instr(1,TXT$,":") 'otsime eraldajat, kas antud 2x16b voi 1x32b?
+	 
+    if ki>0 then ' hi and lo word
+	    syslog "2 words given: "+mid$(TXT$,1,ki-1)+" and "+mid$(TXT$,ki+1,len(TXT$)-ki),4
+		mr$="id:"+mac$+"\n"
+		if mid$(TXT$,1,ki-1)<>"" then 'hi word
+			i=768+4*chan:jj=val(mid$(TXT$,1,ki-1))
+			mr$=mr$+"W"+str$(i)+":"+mid$(TXT$,1,ki-1)+"\n"
+		endif
+		if mid$(TXT$,ki+1,len(txt$)-ki)<>""  then 'lo word
+			i=770+4*chan:jj=val(mid$(TXT$,ki+1,len(TXT$)-ki))
+			mr$=mr$+"W"+str$(i)+":"+mid$(TXT$,ki+1,len(TXT$)-ki)+"\n"
+		endif
+		syslog "sub13500: setup string mr$ "+mr$,4
+    else ' lo word only?
+		syslog "calculation needed",4
+		if TXT$<>"" then
+			mr$="id:"+mac$+"\n"
+			i=768+4*chan:jj=val(TXT$)/65536 'hi word
+			mr$=mr$+"W"+str$(i)+":"+sprintf$("%u",jj)+"\n"
+			i=770+4*chan:jj=val(TXT$)%65536 'lo word
+			mr$=mr$+"W"+str$(i)+":"+sprintf$("%u",jj)+"\n"
+			syslog "sub13500: setup string mr$ "+mr$,4
+		else
+			syslog "empty string TXT$ given for counter "+str$(chan+1)+", exiting ",3
+			return
+		endif
+	endif
+	
+	syslog "sub 13500 end: "+mr$,4
+	mTEE$="I":gosub 142 ' save setup / kas ka 4xx seis? pole vaja, setup lugemine tehakse labi nagunii peale setup muudatust...
+	
+ return
+ 

@@ -1,0 +1,43 @@
+26000 'base64enc
+ ' convert the input string uss$ into base64 encoded string encd$ 
+  
+  ' Dim bs64$(65),encd$(80), k, mats$(10), i, j, k
+
+bs64$ = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+' uss$ = "username:password"
+ 
+encd$ = ""
+
+
+for i = 1 to ((len(uss$)+2)/3)
+	k = ((i-1)*3)+1
+	if len(uss$) = k then mats$ = mid$(uss$,k,1)
+	if len(uss$) = k + 1 then mats$ = mid$(uss$,k,2)
+	if len(uss$) >= k + 2 then mats$ = mid$(uss$,k,3)
+	j = shr(ASC(mid$(mats$,1,1)),2)
+	encd$ = encd$ + mid$(bs64$,j+1,1)
+	if len(mats$) >= 2 then
+		j = shl(AND(ASC(mid$(mats$,1,1)),3),4) + shr(AND(ASC(mid$(mats$,2,1)),240),4)
+		encd$ = encd$ + mid$(bs64$,j+1,1)
+	else
+		j = shl(AND(ASC(mid$(mats$,1,1)),3),4)
+		encd$ = encd$ + mid$(bs64$,j+1,1) + "=="
+		goto 4520
+	endif
+	if len(mats$) >= 3 then
+		j = shl(AND(ASC(mid$(mats$,2,1)),15),2) + shr(AND(ASC(mid$(mats$,3,1)),192),6)
+		encd$ = encd$ + mid$(bs64$,j+1,1)
+	else
+		j = shl(AND(ASC(mid$(mats$,2,1)),15),2)
+		encd$ = encd$ + mid$(bs64$,j+1,1) + "="
+		goto 4520
+	endif
+	j = AND(ASC(mid$(mats$,3,1)),63)
+	encd$ = encd$ + mid$(bs64$,j+1,1)
+next i
+
+26010
+syslog encd$
+
+ return
+ 

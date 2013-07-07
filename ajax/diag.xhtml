@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <head>
+        <script type="text/javascript" src="prototype-1.4.0.js"></script>
+        <script type="text/javascript" src="util.js"></script>
+        <link rel="stylesheet" type="text/css" href="default.css"/>
+        <meta http-equiv="Content-type" content="text/html;charset=ISO-8859-1" />
+        <script type="text/javascript">
+            //preload images that are reusable by DOM for quicker rendering
+            if (document.images) 
+            {
+               img0 = new Image();
+               img1 = new Image();
+               img0.src = "d0.gif";
+               img1.src = "d1.gif";
+            }
+        </script>
+    </head>
+    <body> 
+	<div id="status" style="position:absolute; left:10px; top:450px;visibility:visible;background-color: #99FF66; layer-background-color: #99FF66;">Muutujad</div>
+   <h3>E-pileti terminaali diagnostika</h3>
+   
+   <table border="0" cellpadding="3">
+        
+        <tr>
+            <td align="right" bgcolor="#ddddca">Kontrolleri sisend</td>
+        
+                <td bgcolor="#DDDAC3" align="center">-</td>
+                <td bgcolor="#DDDAC3" align="center">-</td>
+                <td bgcolor="#DDDAC3" align="center">-</td>
+                <td bgcolor="#DDDAC3" align="center">-</td>
+                <td bgcolor="#DDDAC3" align="center">KM^</td>
+                <td bgcolor="#DDDAC3" align="center">LOOP</td>
+                <td bgcolor="#DDDAC3" align="center">TP|</td>
+                <td bgcolor="#DDDAC3" align="center">TP-</td>
+                </tr>
+                <tr>
+            <td align="right" bgcolor="#ddddca">Sisendi olek</td>
+            <td bgcolor="#993333" align="center">
+                <div class="ruler">
+                    <img id="i1" src="d0.gif" alt="sisend1"/>
+                    <span id="i1_txt" class="middle">-</span>
+                </div>
+            </td>
+            <td bgcolor="#993333">
+                <div class="ruler">
+                    <img id="i2" src="d0.gif" alt="sisend2"/>
+                    <span id="i2_txt" class="middle">-</span>
+                </div>
+            </td>
+            <td bgcolor="#993333">
+                <div class="ruler">
+                    <img id="i3" src="d0.gif" alt="sisend3"/>
+                    <span id="i3_txt" class="middle">-</span>
+                </div>
+            </td>
+            <td bgcolor="#993333">
+                <div class="ruler">
+                    <img id="i4" src="d0.gif" alt="sisend4"/>
+                    <span id="i4_txt" class="middle">-</span>
+                </div>
+            </td>
+            <td bgcolor="#993333"><img id="i5" src="d0.gif" alt="sisend5"/></td>
+            <td bgcolor="#993333"><img id="i6" src="d0.gif" alt="sisend6"/></td>
+            <td bgcolor="#993333"><img id="i7" src="d0.gif" alt="sisend7"/></td>
+            <td bgcolor="#993333"><img id="i8" src="d0.gif" alt="sisend8"/></td>
+        </tr>
+        
+        <tr>
+            <td align="right" bgcolor="#ddddca">Kontrolleri v&auml;ljund</td>
+            <td bgcolor="#DDDAC3" align="center">-</td>
+            <td bgcolor="#DDDAC3" align="center">-</td>
+            <td bgcolor="#DDDAC3" align="center">-</td>
+            <td bgcolor="#DDDAC3" align="center">-</td>
+            <td colspan="2" bgcolor="#DDDAC3" align="center">&nbsp;</td>
+            <td bgcolor="#DDDAC3" align="center">TP</td>
+            <td bgcolor="#DDDAC3" align="center">kyte</td>
+        </tr>
+        <tr>
+            <td align="right" bgcolor="#ddddca">V&auml;ljundi olek</td>
+            <td bgcolor="#993333"><img id="o1" src="d0.gif" alt="v&auml;ljund1"/></td>
+            <td bgcolor="#993333"><img id="o2" src="d0.gif" alt="v&auml;ljund2"/></td>
+            <td bgcolor="#993333"><img id="o3" src="d0.gif" alt="v&auml;ljund3"/></td>
+            <td bgcolor="#993333"><img id="o4" src="d0.gif" alt="v&auml;ljund4"/></td>
+            <td bgcolor="#993333" colspan="2">&nbsp;</td>
+            <td bgcolor="#993333">
+                <a href="/rc.cgi?o=1,5" target="empty" onclick="setTimer(this)"><img id="r1" src="d0.gif" alt="relee1"/></a>
+            </td>
+            <td bgcolor="#993333"><img id="r2" src="d0.gif" alt="relee2"/></td>
+        </tr>
+            
+    </table>
+    
+    
+    <script type="text/javascript">
+<![CDATA[
+var refreshRate = 2; //kui tihti lehel olevaid vaartusi uuendada
+
+function toggleImage(state, id) {
+    var node = $(id);
+    if (node != null) {
+        if (state == 1) {
+            node.src = img1.src;
+        } else {
+            node.src = img0.src;
+        }
+    }
+}
+
+//hangi muutujad eraldi lehelt kompaktses formaadis - refreshimisel laetakse seega vaid osa tervest lehest.
+new Ajax.PeriodicalUpdater($("status"), 'io_diag.html', {
+    method: 'get', frequency: refreshRate, decay: 2,
+    onSuccess : function(request) {
+        var str  = request.responseText;
+        var jsonStr = str.substring(str.indexOf('['), str.indexOf(']')+1);        
+        //muuda sisend json objektiks (a la maatriks)
+        var jsonData = eval(jsonStr);
+        if (jsonData == undefined) { 
+            alert("Could not obtain variables.");
+            return;
+        }
+        jsonData.each(function(data) {
+            //alert('refresh algus');
+            //refresh DOM
+            toggleImage(data.bin_in1, "i1");
+            toggleImage(data.bin_in2, "i2");
+            toggleImage(data.bin_in3, "i3");
+            toggleImage(data.bin_in4, "i4");
+            toggleImage(data.bin_in5, "i5");
+            toggleImage(data.bin_in6, "i6");
+            toggleImage(data.bin_in7, "i7");
+            toggleImage(data.bin_in8, "i8");
+            toggleImage(data.bin_out1, "o1");
+            toggleImage(data.bin_out2, "o2");
+            toggleImage(data.bin_out3, "o3");
+            toggleImage(data.bin_out4, "o4");
+            toggleImage(data.bin_relay1, "r1");
+            toggleImage(data.bin_relay2, "r2");
+            $("i1_txt").childNodes[0].data = data.an_in1;
+            $("i2_txt").childNodes[0].data = data.an_in2;
+            $("i3_txt").childNodes[0].data = data.an_in3;
+            $("i4_txt").childNodes[0].data = data.an_in4;
+            
+            //alert('refresh lopp');
+        })
+    }
+});
+]]>
+    </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,129 @@
+ 25000 'sub babup_msg.bcl - create and send babup AND udpmon messages
+ 
+ sub$="babup_msg: " 
+ 
+ ' make message, send, read ack id:
+ 
+    d_id=d_id+1
+	if d_id%2 = 0 then
+		web$=str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
+	else
+		web$=str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
+    endif
+	' COM$="TCN:"+web$+":"+sprintf$("%u",DataPort) ' non-blocking open, checking connected below
+	COM$="TCP:"+web$+":"+sprintf$("%u",DataPort) ' blocking open, checking connected below
+ 
+	' tcp puhul ei lahe edasi kui yhendust pole saadud, aga tcn on kahtlane basen serveritega proovides...
+	
+	if mediatype(0)<>0 then close 0,10:syslog sub$+": current handle 0 session canceled",3:delay 1000
+    if mediatype(0)=0 then 
+        open COM$ as 0
+    else
+		syslog sub$+": handle 0 busy???",1:return
+	endif
+    ts(2)=SYSTIME ' take SYSTIME timestamp 
+
+    25010 delay 10
+	if not(connected(0)) then
+        if ts(2)+3000 <SYSTIME then 
+			msd$="could not connect to "+com$+" in 3 s"
+            syslog sub$+": "+msd$,2
+            mst$="2"
+            goto 25020 'ei tohi valjuda, siis ka udp saatmata!
+		else
+			goto 25010 ' ootame veel
+		endif
+    endif ' connected to server from now on
+	syslog sub$+"connected to "+com$,4
+	
+	
+	' uid: neeme passwd: 17Vill4
+	
+	TXT$="authentication {\nusername: \""+user$+"\"\n}\n"+&
+		"babupVersion {\nmajor: 1\nminor: 0\n}\n"+&
+		"dataReply {\nid: "+str$(d_id)+"\n" 
+	
+	'  gosub 25500 'send away
+	25020 'hyppame eestpoolt siia. kui tcp yhendust ei saadud, teeme vahemalt udp.
+    
+	for chan=1 to 43 ' put together channel data, including di 1..8, 9,10, modbus 11...37 and temperature sensors A...F (teiste loppu max 6)
+		' syslog sub$+"chan="+str$(chan)+", chn(chan)="+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4
+		if and(ChanType[chan]>0, chn(chan)>0) then ' kanal aktiivne ja nimi olemas
+			
+			gosub 5250 ' uss$ ehk kanalinime leidmine
+			
+			if and(ChanType[chan] = 6, chd(chan)>999) then goto 25050 ' seda temperatuuri ei saada, vigane tulemus #########################
+						
+			if or(ChanType[chan] =2, ChanType[chan] =6) then ' ai voi termo
+				if ChanType[chan] =2 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.2F",chd(chan)),5 'ai
+				if ChanType[chan] =6 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.1F",chd(chan)),5 'termo, nait olgu alla 100deg
+			else 'muud variandid
+				syslog sub$+"channel "+uss$+":"+sprintf$("%lu",chd(chan)),5 '+str$(chd(chan)),4 'di ja counters
+			endif
+			
+			
+			TXT$=TXT$+"data {\nchannelName: \""+uss$+"\"\n"+&
+				"value {\ntime {\ntimeSinceEpoch: "+sprintf$("%lu",_DTS_)+"000"
+			if or(ChanType[chan] =2, ChanType[chan] =6) then ' ai voi termo
+				if ChanType[chan] =2 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.2F",chd(chan)) 'ai
+				if ChanType[chan] =6 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.1F",chd(chan)) ' temp norm nait olemas
+			else
+				if or(ChanType[chan] =4, ChanType[chan] =5) then ' raw or unit counter
+					TXT$=TXT$+"\n}\nintValue: "+sprintf$("%lu",chd(chan)) ' loendid
+				else
+					TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%lu",chd(chan)) ' olekud jms yles/alla
+				endif
+			endif
+			TXT$=TXT$+"\n}\n}\r\n" 
+		
+			gosub 24000 'udpmon message piece ################
+			
+		25050 'siia kui temp voi nimi puudub voi midagi vale
+		else
+			syslog sub$+"chan "+str$(chan)+" skipped from message due to missing name or type, chn() "+str$(chn(chan))+", chantype[] "+str$(ChanType[chan]),5 'ajutine
+		endif
+    next chan
+	
+	if ms$<>"" then gosub 270 'udpmon send all away
+	
+	TXT$=TXT$+"}\n"
+	
+	if and(mediatype(0)>0, connected(0)) then gosub 25500:gosub 25400 else TXT$="" ' babup send & read response. do not try with closed H0!
+	
+ 
+ return
+ 
+ 
+ 
+ 
+ 
+ 
+ 25500 ' sub send the babup msg
+    ' uss$="neeme:17Vill4" ' replace with the real values from setup
+	' gosub 26000 ' base64enc uss$, returns encd$
+	
+	'Content-length voib olla pikem kui vaja aga mitte lyhem!
+	' ss$="POST /babup/ HTTP/1.0\r\n"+&
+	TXT$="POST /babup/ HTTP/1.0\r\n"+&
+		"Authorization: Basic "+uspa$+"\r\n"+&
+		"Content-length: "+str$(len(TXT$))+"\r\n"+&
+		"X-Babup-Text: true\r\n"+&
+		"Content-type: text/plain\r\n\r\n"+TXT$
+	
+	' WRITE 0,ss$,0 ' tcp korral adr ja porti ei anna! ,web$,DataPort:UP(4)=UP(0)' 
+	WRITE 0,TXT$,0 ' nyyd koik korraga et oige content -length tleks. buffer 0 on 1k!
+    
+	up(9)=up(0) 'timestamp meelde, siis regulaarne saatmine nihkub edasi, kui erakorraline toimub
+	
+	if len(TXT$)>260 then
+        TXT$=mid$(TXT$,1,210)+" ... "+mid$(TXT$,len(TXT$)-50) 'koike ei saada, liiga pikk, ainult algus ja lopp
+    endif
+    syslog TXT$,4 
+	'syslog sub$+"sent to "+com$+": "+TXT$,4' liiga pikk
+    
+    traffic(3)=traffic(3)+len(TXT$) ' valjuv tcp traffic
+    TXT$="" '  tyhjaks
+	BupComm=1:CommLed=1 'LED jaoks yks osa infost
+	
+ return
+ 

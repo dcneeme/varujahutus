@@ -1,0 +1,52 @@
+
+ 10270 ' a_udpsend.bcl - teated rakendusserverile
+    
+ if count=0 then count=1
+ if count=99999 then count=1
+ 
+ if and(aip1$<>"",port(2)>0) then syslog "sub  10270: app udp send",8 else udps$="":ProcAppInput=0:return
+    ' if iostate(103)=1 then udps$="":return ' fragmendi korral ka 103=1!
+	
+    IF mediatype(6)=0 then  ' app udp pole avatud 
+        COM$="UDP:0.0.0.0:"+STR$(port(2))  ' udp port open
+        open com$ as 6
+    endif
+    
+    if mediatype(6)<>7 then syslog "sub 10270: no app udp port opened, cannot send!!!",1:return
+    ' if len(udps$)=0 then return ' pole siin saata midagi, vist paljas "\r\n"! tahangi testida!
+ 
+    ' syslog "sub 10270: sending to "+aip1$+":"+str$(port(2))+" datagram with len(udps$)="+str$(len(udps$)),4
+    
+    
+    WRITE 6,"VERSIOON:1\nTEATEID:"+STR$(COUNT)+"\nSADAM:"+SAD$+"\n"+udps$,0,aip1$,port(2) ' SAATMINE KOOS ALATI VAJALIKU LISAINFOGA
+    count=count+1:up(10)=_TMR_(0) ' SAVe 2 TIMESTAMPs OF UDP SENT
+    
+    syslog "sub 10270: sent to app server (among TEATEID, SADAM): "+udps$,4
+    
+    if afrag>0 then ' oli fragment
+        udps$="" ' teeme tyhjaks, et uut infot ette koguda
+    else ' ei ole fragment
+        ' ootame, kas vastus tuleb ja kui ei tule, saadame YKS kord uuesti
+ ' 864 on sideseansi lipp (1 kestab) ka 863 on sidejama lipp (1 on jama)       
+ 10271    if _TMR_(0)<up(10)+1000 then ' max ootamine app serveri taga kuni 1s
+            if iostate(865)=0 then ' seansi eduks lopp sest vastus serverist aip1$
+                ' ioctl 863,0 ' vastus tuli, retry pole vajalik. ioctl 103,0 siin EI TEE!
+                ' syslog "sub 10270: app vastus saabus, viide ms: "+str$(_TMR_(0)-up(10)),4
+                goto 10272 ' valjume ootamisest ja uuesti ei saada
+            else
+                delay 10:goto 10271 ' ootame veel kuni up(10)+1000 tais
+            endif
+        else ' timeout kaes
+            syslog "sub 10270: app vastust ei tulnud 1 s jooksul",4
+            ioctl 865,0 
+        endif 
+        
+        syslog "sub 10270: vastust ei tulnud, resend: "+udps$,4 ' kordussaatmine yhekordne
+        WRITE 6,udps$,0,aip1$,port(2) ' :UP(4)=UP(0) ' siin seanssi arvestust ei hakka tegemagi...
+        ioctl 346,1 ' app kordussaatmine lipp igaks juhuks
+        
+ 10272    udps$="" ' rohkem uuesti ei saada
+    endif
+    ProcAppInput=0 'igaks juhuks
+ return
+

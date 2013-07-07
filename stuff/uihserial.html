@@ -1,0 +1,39 @@
+<html>
+<body bgcolor="#CCCCCC">
+<p><b><font face="Arial">Help<br>
+  </font></b><font size="2" face="Arial"><br>
+  <font size="2" face="Arial">Define </font><font size="2" face="Arial"> the
+  two serial ports.<br>
+<br>
+<b>Interface Type</b> (RS-285/422 only)<br>
+Choose between 2 wire RS-485 or 4 wire RS-422.<br>
+<br>
+<b>Serial speed<br>
+</b>Select the serial transmission speed in Baud (bits per second).<br>
+<br>
+<b>Data bits<br>
+</b>Select the number of serial data bits. Default setting is 8 data bits.<br>
+<br>
+<b>Parity bit<br>
+</b>Select the parity bit settings. Default setting is disabled.<br>
+If enabled select Even or Odd parity.<br><br>
+<b>Stop bits<br>
+</b>Select the number of serial stop bits. Default setting is 1 stop bit.<br>
+<br>
+<b>Hardware flow control</b> (RS-232 only)<br>
+Select if hardware flow contol (RTS/CTS) is used. Default setting is disabled.<br>
+<br>
+<b>Local port</b><br>
+Define the Port on which the serial gateway can be accessed using TCP.<br>
+Default: <em>&quot;10001&quot;</em> for RS-232, <em>&quot;10002&quot;</em> for RS-485/422<br>
+Enter <em>&quot;0&quot;</em> to disable TCP access and to free TCP handles for
+ BCL application use<br><br>
+<b>Disconnect Tout</b><br>
+Defines the time in seconds after which the TCP connection to the local serial port will be closed due to inactivity.<br>
+  Enter <em>&quot;0&quot;</em> to disable the Disconnect Timeout (default).</font>
+  <br>  
+  <font size="2" face="Arial">Enter <em>&quot;1&quot;</em> to <em>&quot;255&quot;</em> to enable the Disconnect Timeout.</font>
+
+<p>
+</body>
+</html>

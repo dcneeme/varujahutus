@@ -1,0 +1,11 @@
+ ' bitid baidiks dim bit2B  =  sub 5000
+ 5000 LOCAL nv11,nv12,nv13,nv14,nv15 ' bit_adr_alates, bit_adr_kuni, adr_kuhu
+
+  if or(nv11>400, nv12>400, nv11<101, nv12<101) then syslog "sub 5000: incorrect bit address range",3:return
+  nv15=0 ' igaks juhuks
+  for nv14=0 to nv12-nv11 
+      nv15=nv15+shl(iostate(nv11+nv14),nv14)
+  next nv14
+  bit2B=nv15
+  ' syslog "sub 5000 bit2B: from "+str$(nv11)+" to "+str$(nv12)+" out "+str$(nv15)+" "+sprintf$("%02x",nv15),4 
+ return 

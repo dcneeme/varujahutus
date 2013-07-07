@@ -1,0 +1,138 @@
+ 7500 ' serial_read.bcl  - loeb rs232 pordist scanneri voi keypadi sisestusi
+ ' handle=2, voib olla rs232 voi rs485, meie juhul 232
+
+  if filesize(2)=0 then ' kontrolli RSS$ vanust ja tyhjenda kui liiga vana
+    if and(len(RSS$)>0, up(0)>RSTO+RSTS) then ' timeout, tyhjenda sisendstring
+        RSS$="":KORR$="TEKST2":INF$=RSS$:gosub 7000 ' kustutame terminaalirea
+        syslog "sub 7500: serial string cleared as too old",4
+    endif
+    return  
+  
+  else
+  
+  7505  read 2,rs$,20 ' loeme mis seal puhvris on, EOF ära ootamata, timeout 20 ms - voiks jouda kogu scanneri stringi sisse lugeda!
+    ' sisestuse lopetamiseks ok vajalik, v.a scanneri info puhul
+    
+    if len(rs$)<5 then ' keypad scan koodid, make ja break
+        
+        gosub 7550 ' vt allpool  
+        return
+        
+    endif  ' siit edasi scanner, jaab nagu on, tagant 2 symbolit maha. kustutab kogu eelmise saatmata jura!!
+
+    rss$=mid$(rs$,1,len(rs$)-2) ' loppu ei saada! muidu kustutab tabloo!
+       
+    if or(RSS$ = reg0$, mid$(RSS$,1,6) = "rajale") then ' registreeringukood 
+        SYSLOG "sub 7500: saadud registreeringukood "+rss$,4
+        Registration=1
+        PiesoPiiks=2:delay 100:PiesoPiiks=2 ' registreeringu puhul 2 piiksu. vaartust 1 ei tohi kasutada!
+        gosub 2500 ' registreering kassa voi rada
+        Registration=0 'jargmise korrani
+    else ' saadame saadud triipkoodi otse serverile ja korraks ka tabloole
+        if len(RSS$) > 9 then ' EndComplex ehk len10 peab juba labi mahtuma
+            syslog "sub 7500: saadud triipkood serverile saatmiseks "+rss$,4
+            PiesoPiiks=3 ' kestusega 0,3 s
+            udps$="TEATELIIK:RAKENDUS\nASUKOHT:VARIKATUS\nSEADMETYYP:KOODILUGEJA\nRAJANUMBER:"+STR$(SNI)
+            udps$=udps$+"\nSISULIIK:EVENT\nINFO:"+RSS$+"\n"
+            GOSUB 10270 ' info scannerist app serverile 
+            ' KORR$="TEKST2":INF$=RSS$:gosub 7000 ' scrolleri jama 
+            write 2,"\x1B\x51B"+RSS$+"\x0D",0
+            RSS$="":delay 500
+            write 2,"\x1B\x51B\x0D",0 ' kustutame rea 2
+            ' INF$="":gosub 7000 ' kustutame tabloo
+        else
+            syslog "sub 7500: saadud liiga lyhike triipkood, ei saada serverile, 3 piiksu. "+rss$,4
+            PiesoPiiks=2 ' kestusega 0,2 s kolm korda
+            delay 200
+            PiesoPiiks=2 ' kestusega 0,2 s kolm korda
+            delay 200
+            PiesoPiiks=2 ' kestusega 0,2 s kolm korda
+        endif
+    endif
+    
+
+ endif ' filesize>0 lopp
+        
+ return '  sub 7500 lopp    
+
+
+ 
+ 
+ 
+ ' ----------------------------------------
+ 
+ 7550 ' sub keypad info tootlus
+ ' syslog "sub 7550: got from keypad rs$="+rs$+" with length "+str$(len(rs$)),4
+    for h=1 to lastlen(2) ' see vordub rs$ pikkusega
+        hkey$=sprintf$("%02x",midget(rs$,h,1))
+        if hkey$="43" then key$="1":goto 7555
+        if hkey$="38" then key$="2":goto 7555
+        if hkey$="34" then key$="3":goto 7555
+        if hkey$="44" then key$="4":goto 7555
+        if hkey$="39" then key$="5":goto 7555
+        if hkey$="35" then key$="6":goto 7555
+        if hkey$="45" then key$="7":goto 7555
+        if hkey$="41" then key$="8":goto 7555
+        if hkey$="36" then key$="9":goto 7555
+        if hkey$="42" then key$="0":goto 7555
+        
+      
+        if hkey$="31" then key$="C":goto 7556 ' 
+        ' if hkey$="32" then key$="?":goto 7556 ' abi
+        if hkey$="30" then key$="\b":goto 7556 ' backspace BS=8
+        if hkey$="33" then key$="\n":goto 7556 ' OK, kood 10
+          
+        ' syslog "sub 7550: unknown hkey$:"+hkey$,4        
+        goto 7570 ' next char pls    
+    
+    7555 RSTS=up(0):syslog "sub 7550: got number - hkey$="+hkey$+", key$:"+key$,4 ' saime miskit normaalset
+        PiesoPiiks=2 ' kestusega 0,2 s, alla selle ei saa
+        syslog "sub 7550: got a number, key$="+key$,4
+        if len(rss$)<Kmax then rss$=rss$+key$ ' lisame stringi loppu
+        ' if len(rss$)>Kmax then rss$=mid$(rss$,2,len(rss$)-1) ' algusest yks symbol maha!
+        ' KORR$="TEKST2"
+        if len(rss$)>20 then inf$=mid$(rss$,len(rss$)-19,20) else INF$=RSS$ ' lopuosa peab ara mahtuma ekraanile scrollimata
+        INF$=brk$+INF$:gosub 7700 ' saadame terminaali ekraanile reale 2  / kui ei ole eemaldatud
+        goto 7570 ' next char pls
+        
+    7556 ' special symbols
+        syslog "sub 7550: got a control code, key$="+key$,4
+        PiesoPiiks=2 ' kestusega 0,2 s, alla selle ei saa
+        if key$="\b" then ' BS
+            if len(rss$)>0 then rss$=mid$(rss$,1,len(rss$)-1) else rss$="" ' lopust yks symbol maha!
+            RSTS=UP(0)
+            if len(rss$)>20 then inf$=mid$(rss$,len(rss$)-19,20) else INF$=RSS$ ' ainult lopuosa peab naha olema, scrollimata
+            INF$=brk$+INF$:gosub 7700 ' saadame terminaali ekraanile reale 2  / kui ei ole eemaldatud
+        endif
+
+        if and(RSS$<>"", key$="C") then ' CLR, tyhista, clear teadet serverile pole vaja
+            rss$="":INF$="Katkestatud / Cancel"
+            INF$=brk$+RSS$:gosub 7700 ' saadame terminaali ekraanile
+            delay 500:INF$=brk$+" ":gosub 7700 ' 7000 ' kustutame terminaali ekraanirea
+        endif
+        
+        
+        if and(RSS$<>"", key$="\n") then ' ok - saada minema kogu rss$ kui on midagi saata
+            udps$="TEATELIIK:RAKENDUS\nASUKOHT:VARIKATUS\nSEADMETYYP:KLAVIATUUR\nRAJANUMBER:"+STR$(RajaNumberReg)
+            udps$=udps$+"\nSISULIIK:EVENT\nINFO:"+RSS$+key$ ' newline loppu!
+            syslog "sub 7500: got OK from keypad, sending away rss$="+rss$,4
+            GOSUB 10270:RSS$="" ' keypad info app serverile
+            INF$=brk$+" ":gosub 7700 '  7000 ' aga terminaali ekraanirea 2 kustutame            
+        endif
+   7570 next h
+ return ' from sub 7500
+
+
+ 
+
+ 7700 ' eemaldatud terminaali puhul asendame INF$, aga igal juhul saadame  
+    if or(ast(4)>10, ast(5)>10) then ' ongi eemaldatud
+        if RajaNumberFys>0 then
+            INF$="Pöördu kassasse - Approach the cashier" 
+        else
+            INF$="Registreerimata!"
+        endif
+    endif
+    gosub 7000 'saadame tabloole, see kontrollib kas ast(4)>0
+  RETURN
+  

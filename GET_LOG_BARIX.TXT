@@ -1,0 +1,64 @@
+2010-12-22 12:08:16	Local7.Debug	10.0.0.14	217.64.178.25  OK
+2010-12-22 12:08:17	Local7.Debug	10.0.0.14	217.64.178.25  OK
+2010-12-22 12:08:17	Local7.Debug	10.0.0.14	init: checking GET for TCP:212.226.43.162:80
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:HTTP/1.1 401 Unauthorized
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:Server: Apache-Coyote/1.1
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:Pragma: No-cache
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:Cache-Control: no-cache
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:Expires: Thu, 01 Jan 1970 00:00:00 UTC
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:WWW-Authenticate: Digest realm="Authentication required", qop="auth", nonce="cb595af6dead101d0ddbe7
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:b48889c578", opaque="e71aec40d7476ebcbdce479665465f0f"
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:Content-Type: text/html;charset=utf-8
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:Content-Length: 952
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:Date: Wed, 22 Dec 2010 10:08:29 GMT
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:<html><head><title>Apache Tomcat/7.0.4 - Error report</title><style><!--H1 {font-family:Tahoma,Aria
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:l,sans-serif;color:white;background-color:#525D76;font-size:22px;} H2 {font-family:Tahoma,Arial,san
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:s-serif;color:white;background-color:#525D76;font-size:16px;} H3 {font-family:Tahoma,Arial,sans-ser
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:if;color:white;background-color:#525D76;font-size:14px;} BODY {font-family:Tahoma,Arial,sans-serif;
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:color:black;background-color:white;} B {font-family:Tahoma,Arial,sans-serif;color:white;background-
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:color:#525D76;} P {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:}A {color : black;}A.name {color : black;}HR {color : #525D76;}--></style> </head><body><h1>HTTP St
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:atus 401 - </h1><HR size="1" noshade="noshade"><p><b>type</b> Status report</p><p><b>message</b> <u
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got:></u></p><p><b>description</b> <u>This request requires HTTP authentication ().</u></p><HR size="1"
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got: noshade="noshade"><h3>Apache Tomcat/7.0.4</h3></body></html>authentication ().</u></p><HR size="1"
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got: noshade="noshade"><h3>Apache Tomcat/7.0.4</h3></body></html>authentication ().</u></p><HR size="1"
+2010-12-22 12:08:18	Local7.Debug	10.0.0.14	got: noshade="noshade"><h3>Apache Tomcat/7.0.4</h3></body></html>authentication ().</u></p><HR size="1"
+
+
+
+2010-12-22 12:12:28	Local7.Debug	10.0.0.14	init: checking GET for TCP:212.226.43.162:80
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:HTTP/1.1 401 Unauthorized
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:Server: Apache-Coyote/1.1
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:Pragma: No-cache
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:Cache-Control: no-cache
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:Expires: Thu, 01 Jan 1970 00:00:00 UTC
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:WWW-Authenticate: Digest realm="Authentication required", qop="auth", nonce="568562c5975af2083c1fb4
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:19f7d00850", opaque="f2167c4236948cc7714f978ffc759401"
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:Content-Type: text/html;charset=utf-8
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:Content-Length: 952
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:Date: Wed, 22 Dec 2010 10:12:41 GMT
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:<html><head><title>Apache Tomcat/7.0.4 - Error report</title><style><!--H1 {font-family:Tahoma,Aria
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:l,sans-serif;color:white;background-color:#525D76;font-size:22px;} H2 {font-family:Tahoma,Arial,san
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:s-serif;color:white;background-color:#525D76;font-size:16px;} H3 {font-family:Tahoma,Arial,sans-ser
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:if;color:white;background-color:#525D76;font-size:14px;} BODY {font-family:Tahoma,Arial,sans-serif;
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:color:black;background-color:white;} B {font-family:Tahoma,Arial,sans-serif;color:white;background-
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:color:#525D76;} P {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:}A {color : black;}A.name {color : black;}HR {color : #525D76;}--></style> </head><body><h1>HTTP St
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:atus 401 - </h1><HR size="1" noshade="noshade"><p><b>type</b> Status report</p><p><b>message</b> <u
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got:></u></p><p><b>description</b> <u>This request requires HTTP authentication ().</u></p><HR size="1"
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got: noshade="noshade"><h3>Apache Tomcat/7.0.4</h3></body></html>authentication ().</u></p><HR size="1"
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got: noshade="noshade"><h3>Apache Tomcat/7.0.4</h3></body></html>authentication ().</u></p><HR size="1"
+2010-12-22 12:12:29	Local7.Debug	10.0.0.14	got: noshade="noshade"><h3>Apache Tomcat/7.0.4</h3></body></html>authentication ().</u></p><HR size="1"
+....
+2010-12-22 12:12:33	Local7.Debug	10.0.0.14	got: noshade="noshade"><h3>Apache Tomcat/7.0.4</h3></body></html>authentication ().</u></p><HR size="1"
+2010-12-22 12:12:33	Local7.Debug	10.0.0.14	GET test end
+2010-12-22 12:12:33	Local7.Debug	10.0.0.14	sub m_udpsend: next address to send is 221.86.195.222
+2010-12-22 12:12:33	Local7.Debug	10.0.0.14	sub 270: sent to 221.86.195.222:44445: BTS:2<010>BTV:0<010>id:00204A938921
+2010-12-22 12:12:34	Local7.Debug	10.0.0.14	babup_msg: connected to TCP:217.64.178.25:80
+2010-12-22 12:12:34	Local7.Debug	10.0.0.14	babup_msg: channel BTV:0
+2010-12-22 12:12:34	Local7.Debug	10.0.0.14	babup_msg: channel C1V:0
+2010-12-22 12:12:34	Local7.Debug	10.0.0.14	babup_msg: channel C2V:0
+2010-12-22 12:12:34	Local7.Debug	10.0.0.14	babup_msg: channel C3V:0
+2010-12-22 12:12:34	Local7.Debug	10.0.0.14	babup_msg: channel PWS:0
+2010-12-22 12:12:43	Local7.Debug	10.0.0.14	sub 25400: H0 read timeout after 9 s
+2010-12-22 12:12:43	Local7.Debug	10.0.0.14	appmain: handle 0 closed due to timeout (9s)

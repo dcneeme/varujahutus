@@ -1,0 +1,45 @@
+ 3500 ' sub 3500 event alusel teate saatmiseks ehk ms$ koostamine hex koodis
+ ' evente kaivitatakse cgi abil ja nad algavad E tahega, asuvad muutujas EVNT$
+ ' naide EVNT$="E1234" on event seadmelt asukohalt 1 rajalt 2 seadmelt 3 teade 4
+ ' asukoht vt sub 1500, rada 0..sradu voi ..oradu, seade vt sub 2000 teade/info syb 4000
+ 
+ ' sellise kodeeringu kasutamisel on voimalik koik teated kodeerida ka veebilehel ilma taiendava if-tootluseta!
+ ' seega teha manuaalset kaugjuhtimist veebilehelt.
+ 
+   syslog "sub 3500: got EVNT:"+EVNT$,4
+   
+    if and(mid$(EVNT$,1,1)<>"E", mid$(EVNT$,1,1)<>"V") then ' sisuliik EVENT voi SEADMEVIGA
+        syslog "sub 3500: illegal EVNT$="+EVNT$+" for sub 3500!",4
+        return
+    endif
+        
+    hex$=MID$(EVNT$,2,1):gosub 3600:AKOHT=NUM:gosub 1500 ' asukoht AK$ olemas
+    hex$=MID$(EVNT$,3,1):gosub 3600:RADA=NUM ' rajanumber RADA olemas
+    hex$=MID$(EVNT$,4,1):gosub 3600:STYYP=NUM:gosub 2000 ' asukoht ST$ olemas
+    hex$=MID$(EVNT$,5,1):hinf$=hex$ ' teade vt INFO.BCL   
+    
+    if and(STYYP=3, hinf$="X") then ' erijuht - korgusemootja toggle, vaid veebilehelt
+        if km(RADA)=0 then KM(RADA)=1:hinf$="8":goto 3502 ' korgeks
+        if km(RADA)=1 then KM(RADA)=0:hinf$="7" ' madalaks
+    endif
+    
+    3502 gosub 4000 ' leia hinf$ alusel INFO$
+    
+    ms$="TEATELIIK:RAKENDUS\nASUKOHT:"+AK$+"\nSEADMETYYP:"+ST$+"\nRAJANUMBER:"+STR$(rada)
+    if mid$(EVNT$,1,1) = "E" then  ' event
+        ms$=ms$+"\nSISULIIK:EVENT\n"
+    else
+        ms$=ms$+"\nSISULIIK:SEADMEVIGA\n" ' siis on Viga kui ei ole Event
+    endif
+    ms$=ms$+"INFO:"+INF$+"\n"
+    
+  
+    EVNT$=""
+    ' syslog "sub 3500 (udp_msg): calling 10270, EVNT$ "+EVNT$,4
+    gosub 10270 ' SAADAME ARA
+    
+    ' kirjuta midagi ka kuhugi bitiregistrisse vastavalt hex koodile
+    
+ return
+ 
+ 

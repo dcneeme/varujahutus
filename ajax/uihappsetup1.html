@@ -1,0 +1,58 @@
+<html>
+<body bgcolor="#CCCCCC">
+<p><font face="Arial, Helvetica, sans-serif"><b>Help</b><br></font>  <font size="2" face="Arial, Helvetica, sans-serif"><br><br>
+<font size="3"><b>Zone Monitor</b></font><br>
+This application monitors binary or analogue signals on the inputs of the controller and the extension modules, sending the states or values to up to two different servers.
+<br><br>
+
+<h4>Channel definitions</h4>
+The channel mode must be selected in order to activate the data exchange to the data collection server (and the monitoring server of ITvilla, if configured).
+The first 4 inputs can also be used as analogue inputs, but all the inputs can be configured as binary inputs (DI) or counters. 
+Counting result can be converted to energy units, if the conversion factor (pulses per unit) is entered and the according mode selected.
+The initial value of the counter should be set to match the value on the according powermetering device display.<br> 
+The 4 last input channels (5 to 8) can also be used as inputs for 2 Wiegand readers, in this case the direct data forwarding from these inputs is off. 
+The current application does not react to any data from the Wiegand devices yet however.
+<br>
+
+<h4>Battery Voltage</h4>
+Any of the first 4 inputs can be used for battery voltage monitoring if the wiring is done accordingly. 
+In order to correctly convert the voltage on the selected analogue input (AI) to the battery voltage, the channel must be named <b>BTV</b>.<br>
+ The battery is needed to ensure no counted pulses are lost in case of AC power blackout. Also the battery enables to continue sending out 
+other data from the site during AC power outage, possibly including security related information. The normal range for a lead-acid battery voltage is 11..13V.
+
+<br>
+<h4>Thermosensors</h4>
+The application currently supports up to 6 Dallas DS18B20 temperature sensors on the 1wire bus (J5), see the Barionet manual). The sensors are listed in an order based on their ID. If needed, the ID values can be checked on Settings, TEMP tab.
+<br>
+
+<h4>Data collection servers (BaseN)</h4>
+These are the main servers for the application, receiving the data from the site. 
+The channel names and user credentials configured on the controller must mach those on the server.
+The connection to the server is initiated using TCP on port 80, to avoid possible problems with firewalls on other ports. 
+<br>
+
+<h4>Monitoring servers (ITvilla)</h4>
+These servers maintained by ITvilla are able to receive UDP data from the controller for remote maintenance related needs. 
+In addition to storing the channel data these servers enable sending commands and setup changes to the site controller. 
+The servers are contacted by the controller first and then the pending data is sent back as part of the reponse to the controller message.<br>
+All of the commands (except the setup parameters) need to be predefined in the controller application to actually do something. Setup data is exceptional however, as all of the setup parameters reported by the controller can be changed by simply sending the new parameter name and value to the controller in the same format as received. <br>
+	One of the possible commands can also start the application software upating process. 
+<br>
+
+
+
+<h4>Controlling the site</h4>
+No outputs are used in current application, but they could be used to control something if needed. The output activation is possible via remote commands via monitoring server 
+or according to the internal rules (defined in the application software). Up to 6 binary control channels are possible without any extension modules.
+
+
+<br>
+
+<h4>Other interfaces</h4>
+The controller can be used for monitoring some serial ports (RS232 and RS485) as well, if needed. 
+For example, the security or fire detection system usually outputs a general alarm (1 bit only), 
+without any further information which sensor has triggered the alarm. But these systems may have a serial port for continuous event logging
+That information can be useful for parsing and forwarding. The according string parser is programmed into the application software however.  
+
+</body>
+</html>

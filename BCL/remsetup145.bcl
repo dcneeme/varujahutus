@@ -1,0 +1,135 @@
+ 145 ' remote setup based on mr$ values  ############# siia tulles mTee$="W" ##
+ ' ette list$ ja listp$ (ja mval$?)
+ ' olgu universaalne, et saaks kasutada koigi setup flashi veerandike jaoks (adr 1...1024 256 b kaupa)
+ ' setup registrid on siin juba sub 145/11000 poolt kontrollitud nimega !!   STRING VOIB KA TYHI OLLA!
+ ' selle kaigus saadud vaartusi ei kontrolli, kuid jargneval setupi sisselugemisel ignoreeritakse jama
+ ' loeme senise setupi set$ muutujasse
+ ' asendame sellega, mis saadud ja kirjutame (close) flashi tagasi
+ ' seejarel lugeda muudetud setup ka sisse (vahemalt app osas, sub 110)
+ SYSLOG "sub 145: going to change setup and/or execute commands in list$:"+list$,4
+
+
+ ' syslog "sub 145: mediatypes for handles 3 and 6 are "+str$(mediatype(3))+" "+str$(mediatype(6)),4:delay 1000
+ if mediatype(3)>0 then close 3 ' igaks juhuks
+
+
+ RegPos=1    ' registrite joru index, korraga voime saada erinevaid registreid nii setup kui app, teeme setup yhekorraga
+ for pos=1 to RegNum ' len(listp$) ' see jamas ' pointer registritejorus
+    RegLen=midget(listp$,pos,1)
+    mreg$=mid$(list$,RegPos,RegLen)
+
+    if len(mreg$)>1 then
+        gosub 13000:syslog "sub 145: proccesing list_pos "+str$(pos)+" from total "+str$(RegNum)+", pair "+mreg$+":"+mval$,4 ' processing this value
+    else
+        ' syslog "sub 145 - empty mreg$? list_pos "+str$(pos),4
+        goto 149
+    endif
+
+
+    RegPos=RegPos+RegLen
+    ' syslog "sub 145 - mreg$="+mreg$+" mval$ = "+mval$+", reg_pos="+str$(RegPos)+", list_pos="+str$(pos)+", Reg_Len "+str$(RegLen),4
+
+    if and(len(mreg$)>1, or(mid$(mreg$,1,1)="S", mid$(mreg$,1,1)="B", mid$(mreg$,1,1)="W", mid$(mreg$,1,1)="N")) then ' vist setup muutuja
+        ' esialgu N (netmask) ei sisaldu uisystem.html sees!
+        'vahetame muutujachk faili iga kord, eepromist avame vaid siis, kui vaja
+        syslog "sub 145: got setup pair "+mreg$+":"+mval$,4
+        FlashAddr=val(mid$(mreg$,2,len(mreg$)-1)):syslog "sub 145: Flash_Addr to write is "+str$(FlashAddr),4 ' vahemikus 0...1023, muuta alasse 1...256 igas veerandis!
+
+        if or(FlashAddr<0, FlashAddr>1023) then ' 
+			syslog "sub 145: illegal setup variable (address out of setup variable range 1..255 after conversion): "+str$(FlashAddr)+" from "+mreg$,4
+            goto 148
+        endif
+
+
+        ' sordime saadud muutujaid ja avame set$
+        ' korraga ei saa rohkem avatud  olla kui 1 veerandik!! kui ilmub jargmine sama portsuga, suleme kohe eelmise!
+        ' avame sama asja kord handle 3 (sapp), kord 6 (syst) et handle num muutujana kasutada!
+
+        if FlashAddr<256 then ' system setup, uisystem.html
+            COM$="STP:0"
+			StpAddr=FlashAddr+1 
+            if and(mediatype(3)>0, mid$(COM$,5,1)<>"0") then write 3,set$,256:close 3:delay 100:syslog "sub 145: setup written&closed to open "+COM$ ' korraga mitu stp lahti olla ei saa!
+            ' seetottu enne jargmise avamist enne lahti olnu vaja kinni panna!
+            ' delay oli selleks, et jouaks ikka eeprom kirjutamise ara teha
+ 147        if mediatype(3)=0 then
+                COM$="STP:0":OPEN COM$ as 3:READ 3,set$
+                syslog "opened "+com$+" as 3 for set$ due to "+mreg$+":"+mval$,4  ' ####  system, set$, OPEN 6 ###
+            endif
+
+            goto 148 'skip the following app part
+        endif
+
+        if and(FlashAddr>511,FlashAddr<768) then 'app setup part1
+            COM$="STP:512"
+			StpAddr=FlashAddr-511
+            if and(mediatype(3)>0, mid$(COM$,5,1)<>"5") then write 3,set$,256:close 3:delay 100:syslog "sub 145: setup written&closed to open "+COM$,4 ' korraga ei saa eri veerandeid avada!
+
+            if mediatype(3)=0 then
+            OPEN COM$ as 3:read 3,Set$
+                syslog "sub 145: opened "+COM$+" as 3 for set$ due to "+mreg$+":"+mval$,4 ' #### APP, set$, OPEN 3 ####
+            endif
+        endif
+		
+		if and(FlashAddr>767,FlashAddr<1024) then 'app setup part2
+            COM$="STP:768":StpAddr=FlashAddr-767
+            if and(mediatype(3)>0, mid$(COM$,5,1)<>"7") then write 3,set$,256:close 3:delay 100:syslog "sub 145: setup written&closed to open "+COM$,4 ' 
+            if mediatype(3)=0 then
+                OPEN COM$ as 3:read 3,Set$
+                syslog "sub 145: opened "+COM$+" as 3 for set$ due to "+mreg$+":"+mval$,4 ' #### APP, set$, OPEN 3 ####
+            endif
+        endif
+
+        ' siit edasi on eeprom avatud
+
+148     if mid$(mreg$,1,1)="S" then  ' use midcpy for strings, chk length!
+            mval$=mval$+"\x00" ' chr$(0) ' end char needed to truncate possible old trash
+            MIDCPY SET$,StpAddr,len(mval$)+1,mval$ 
+			if mid$(set$,StpAddr,len(mval$)) = mval$ then syslog "sub 145: setup string "+mreg$+":"+mval$+" accepted",4 else syslog "midcpy fail!",2
+            gosub 109 ' delay 200:gosub 270 ' saadame saadud reg:value kohe tagasi ka, vastust pole vaja!
+        endif
+
+        if mid$(mreg$,1,1)="B" then
+            MIDSET SET$,StpAddr,1,val(mval$)
+			syslog "sub 145: setup byte "+mreg$+":"+str$(val(mval$))+" accepted",4
+            gosub 109 ' delay 200:gosub 270 ' saadud cmd kohe tagasi, vastust pole vaja!
+        endif
+
+        if mid$(mreg$,1,1)="W" then
+            MIDSET SET$,StpAddr,2,val(mval$)
+			syslog "sub 145: setup word "+mreg$+":"+str$(val(mval$))+" accepted",4
+            gosub 109 ' delay 200:gosub 270 ' saadud cmd kohe tagasi, vastust pole vaja!
+        endif
+        ' tegime valmis muudetud SET$, mis salvestub close 3 tegemisel
+
+    else ' siit allapoole ei ole setup vaid commands
+        syslog "sub145 - "+mreg$+":"+mval$+" is not a setup value",4
+        ' akki on miski cmd, nagu REBOOT?  kui erinevad kasud tulevad korraga, siis jaab viimane kehtima
+
+        if and(mreg$="cmd", mval$="VARLIST") then mTee$="V":goto 149 ' app ja sys setup vaartused saata
+        if and(mreg$="cmd", mval$="REBOOT") then mTee$="R":goto 149  ' rebootimine
+        
+        if mid$(mreg$,1,6)="update"then msd$="direct update not supported, use rescue mode":goto 149
+         
+        'reboot kaivitada hiljem eraldi kui vaja!
+
+        syslog "sub 145: got unknown command "+mreg$+":"+mval$,2 ' kustutada vaja et ei jaaks seda jura igavesti tulema
+        ms$=ms$+"ERS:1\nERV:invalid command "+mreg$+":"+mval$+"\n"
+		' vastame alati ka saadud cmd-ga et uuesti ei saadetaks ja tsyklisse ei jaaks
+ 149    '' nfrag=99
+    endif ' done with this one setup value, multiple cmd impossible due to sqlite unique index
+    ms$=ms$+mreg$+":"+mval$+"\n" ' lisame selle registri tagasisaadetavasse vastusesse
+    syslog "sub 145: done so far "+ms$,4
+    
+ next pos   ' koik list$ registreid toodeldud
+
+  if mediatype(3)>0 then write 3,set$,256:Close 3:syslog "sub 145: setup changed&saved!",1   ' will be saved to eeprom if set$ was modified
+  'korraga saab salvestada vaid yhe veerandi!
+  delay 100 ' salvestamiseks aega - igaks juhuks
+  'SAADAME kohe tagasi portsu mille salvestasime muutujasse ms$, ilma taieliku listinguta S kaudu
+  
+  if len(ms$)>0 then gosub 270 else syslog "sub 145: did nothing...",4 ' send ms$, content to be deleted from newstate
+  
+  if mTee$="W" then mTee$="V"  ' uus setup lugemine vaja, sh ka system muutujatele! ja mon serverile saatmine
+ return ' sub 145 lopp
+ 
+ 

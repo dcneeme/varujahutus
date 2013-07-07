@@ -1,0 +1,21 @@
+[1373055139] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[1];1;Temperature in zone 1: 0.0degC|Setpoint=21.0degC Actual=0.0degC Warning=31.0degC
+[1373055140] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[2];1;Temperature in zone 2: 0.0degC|Setpoint=22.0degC Actual=0.0degC Warning=32.0degC
+[1373055140] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[3];1;Temperature in zone 3: 0.0degC|Setpoint=23.0degC Actual=0.0degC Warning=33.0degC
+[1373055140] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[4];0;Temperature in zone 4: 28.6degC|Setpoint=24.0degC Actual=28.6degC Warning=34.0degC
+[1373055140] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;CoolingActivity;1;Active cooling in zones (1..4): 0 0 0 1|Main=0 OpticsB=0 OpticsA=0 Servers=1
+[1373055150] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[1];1;Temperature in zone 1: 0.0degC|Setpoint=21.0degC Actual=0.0degC Warning=31.0degC
+[1373055150] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[2];1;Temperature in zone 2: 0.0degC|Setpoint=22.0degC Actual=0.0degC Warning=32.0degC
+[1373055150] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[3];1;Temperature in zone 3: 0.0degC|Setpoint=23.0degC Actual=0.0degC Warning=33.0degC
+[1373055150] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[4];0;Temperature in zone 4: 28.6degC|Setpoint=24.0degC Actual=28.6degC Warning=34.0degC
+[1373055150] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;CoolingActivity;1;Active cooling in zones (1..4): 0 0 0 1|Main=0 OpticsB=0 OpticsA=0 Servers=1
+[1373055153] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;Version;0;Application version: starman_jahutus 14.06.2013|Version=starman_jahutus 14.06.2013
+[1373055161] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[1];1;Temperature in zone 1: 0.0degC|Setpoint=21.0degC Actual=0.0degC Warning=31.0degC
+[1373055161] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[2];1;Temperature in zone 2: 0.0degC|Setpoint=22.0degC Actual=0.0degC Warning=32.0degC
+[1373055161] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[3];1;Temperature in zone 3: 0.0degC|Setpoint=23.0degC Actual=0.0degC Warning=33.0degC
+[1373055161] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[4];0;Temperature in zone 4: 28.6degC|Setpoint=24.0degC Actual=28.6degC Warning=34.0degC
+[1373055161] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;CoolingActivity;1;Active cooling in zones (1..4): 0 0 0 1|Main=0 OpticsB=0 OpticsA=0 Servers=1
+[1373055172] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[1];1;Temperature in zone 1: 0.0degC|Setpoint=21.0degC Actual=0.0degC Warning=31.0degC
+[1373055172] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[2];1;Temperature in zone 2: 0.0degC|Setpoint=22.0degC Actual=0.0degC Warning=32.0degC
+[1373055172] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[3];1;Temperature in zone 3: 0.0degC|Setpoint=23.0degC Actual=0.0degC Warning=33.0degC
+[1373055172] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;TempZone[4];0;Temperature in zone 4: 28.6degC|Setpoint=24.0degC Actual=28.6degC Warning=34.0degC
+[1373055172] PROCESS_SERVICE_CHECK_RESULT;00204ACA6E57;CoolingActivity;1;Active cooling in zones (1..4): 0 0 0 1|Main=0 OpticsB=0 OpticsA=0 Servers=1

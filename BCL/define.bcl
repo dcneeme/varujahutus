@@ -1,0 +1,143 @@
+' define.bcl - muutujad (virtuaal)registrite kaudu piiripunkti jaoks. see ei ole sub!
+ 
+#define SYSTIME _TMR_(0) ' millisekundid stardist
+#define SecondTS ts(9)  ' up(0) seis varulingi akiveerimisel
+
+'#define GprsUptime up(14) 's
+'#define LastCommTS up(5) 's, viimane saadud udp uptime arvestuses
+
+' #define Temperature iostate(601)*5/8 ' terminaali sisetemperatuur 1/10 kraadides
+
+#define CommBreak= ioctl 1, ' relee 1
+#define CommBreak iostate(1)
+
+#define CommLed= ioctl 103, ' 0 voi 1 voi ka imp
+#define CommLed iostate(103)
+ 
+#define MonComm= ioctl 326,  ' kui jaab yles, siis puudub side mon serveriga
+#define MonComm iostate(326)
+
+#define BupComm= ioctl 327,  ' kui jaab yles, siis puudub infovahetus babup (200 ok) serveriga
+#define BupComm iostate(327)
+
+#define PowerLost= ioctl 329,  ' toide ametlikult kadunud peale viidet 
+#define PowerLost iostate(329)
+
+#define LoBatt= ioctl 330,  ' akupinge madal 
+#define LoBatt iostate(330)
+
+#define HiBatt= ioctl 331,  ' akupinge korge
+#define HiBatt iostate(331)
+
+
+ ' siin tyhjus...
+
+'#define MonParseJama= ioctl 392,  ' mr$ parse unsuccess flag
+'#define MonParseJama iostate(392)
+
+
+#define ChanType[#1]= ioctl 700+#1, ' kanali 1..8...16..24..32 ja temp max 50 tyyp
+#define ChanType[#1] iostate(700+#1) ' kuni 782 kinni!
+
+
+#define StpAddr= ioctl 791,  ' setup address in  range 1...256
+#define StpAddr iostate(791) ' was addr
+
+#define FlashAddr= ioctl 792,  ' setup parameter address in range 0...1023
+#define FlashAddr iostate(792) ' was fa
+
+#define RegNum= ioctl 793,  ' was lnum
+#define RegNum iostate(793)
+
+#define RegPos= ioctl 794,  ' was rpos
+#define RegPos iostate(794)
+
+#define RegLen= ioctl 795,  ' was rlen
+#define RegLen iostate(795)
+
+#define VoltageRaw= ioctl 796,  ' was VRW
+#define VoltageRaw iostate(796)
+
+#define TempLoLimit= ioctl 798,  ' was temp (1)
+#define TempLoLimit iostate(798)
+
+#define TempHiLimit= ioctl 799,  ' was temp (2)
+#define TempHiLimit iostate(799)
+
+'auk
+
+#define VoltLoLimit= ioctl 809,  ' akupinge min
+#define VoltLoLimit iostate(809)
+
+#define VoltHiLimit= ioctl 810,  ' akupinge max
+#define VoltHiLimit iostate(810)
+
+
+#define VoltageAvgRaw[#1]= ioctl 810+#1, ' iga anal sisendite keskmistatud vaartused    
+#define VoltageAvgRaw[#1] iostate(810+#1)
+ ' kuni 814 hoivatud
+ 
+#define VoltCoeff= ioctl 818,  ' akupinge arvutuskoef
+#define VoltCoeff iostate(818)
+
+#define BattVoltage= ioctl 819,  ' akupinge mV
+#define BattVoltage iostate(819)
+
+#define PowerLossDelay= ioctl 820, ' toite kadu viitega
+#define PowerLossDelay iostate(820)
+
+#define SlidingWindowSize= ioctl 821, ' an sis keskmistamiseks
+#define SlidingWindowSize iostate(821)
+
+#define Data1IP[#1]= ioctl 822+#1, ' 4 baiti basen server
+#define Data1IP[#1] iostate(822+#1)
+
+#define Data2IP[#1]= ioctl 826+#1, ' 4 baiti basen server
+#define Data2IP[#1] iostate(826+#1)
+
+#define Mon1IP[#1]= ioctl 830+#1, ' 4 baiti basen server
+#define Mon1IP[#1] iostate(830+#1)
+
+#define Mon2IP[#1]= ioctl 834+#1, ' 4 baiti basen server
+#define Mon2IP[#1] iostate(834+#1)
+
+#define DataPort= ioctl 839, ' 2 baiti basen serveri port
+#define DataPort iostate(839)
+
+#define MonPort= ioctl 840, ' 2 baiti basen server
+#define MonPort iostate(840)
+
+#define DataInterval= ioctl 841, ' data saatmise max periood s
+#define DataInterval iostate(841)
+
+#define MonInterval= ioctl 842, ' mon korduste max periood s 
+#define MonInterval iostate(842)
+
+#define CommFailDelay= ioctl 843, ' millal side katkemine registreeritakse
+#define CommFailDelay iostate(843)
+
+#define CommFailReaction= ioctl 844, '  mida teha kui side puudub
+#define CommFailReaction iostate(844)
+
+#define UptimeDelay= ioctl 845, ' min uptime peale mida voib rebootida side puudumisel
+#define UptimeDelay iostate(845)
+
+#define PrimGW[#1]= ioctl 845+#1, ' 4 baiti gprs vms def gw. index 1..4
+#define PrimGW[#1] iostate(845+#1)
+
+#define SecondGW[#1]= ioctl 850+#1, ' 4 bytes primary def gw to restore 
+#define SecondGW[#1] iostate(850+#1)
+ 
+ ' vaba auk 
+ 
+#define ReturnCode= ioctl 883, ' mon korduste max periood s 
+#define ReturnCode iostate(883)
+
+ 'vaba auk
+ 
+#define InOldWd[#1]= ioctl 940+#1,
+#define InOldWd[#1] iostate(940+#1)
+
+#define OutOldWd[#1]= ioctl 950+#1,
+#define OutOldWd[#1] iostate(950+#1)
+

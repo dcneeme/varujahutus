@@ -1,0 +1,142 @@
+1800  ' io12conf.bcl - run once to connect to the io12 based on it's serial number
+ ' comm params 19200 8E1, see below if 8N1!
+ ' wait more than 5s in the end to get the change done
+ 
+  ' set the io12 modbus address for eser1(mba) eser2(mba) to mba 
+  ' using the serial numbers in the web setup
+ ' eodef(mba)=0 ' default output states
+ ExpLen=8 ' expected response lenght with crc
+ 
+	'if mba=1 then syslog "io12conf: no setup for mba 1 due to inverter",4:return 'ajutiselt inverter aadressil 2
+	
+  ' if eena(mba)=0 then syslog "mba "+str$(mba)+" eser "+str$(eser1(mba))+"-"+ str$(eser2(mba))+" disabled",3   goto 12
+
+  syslog "sub 1800: modbus config attempt for mba "+str$(mba)+" eser "+str$(eser1(mba))+"-"+ str$(eser2(mba)),3
+  
+  if and(icnt(mba)+ocnt(mba)<9, and(imask(mba), omask(mba)) > 0) then syslog " sub 1800: imask, omask overlapping for x8 on mba "+str$(mba),4:return
+  
+    IF AND(eser1(mba)>0, eser2(mba)>0) THEN
+        if icnt(mba)+ocnt(mba)<9 then 
+			ExtensionType(mba)=&HB2
+			syslog "io12conf: x8 assumed. input mask "+str$(255-omask(mba))+", pullup mask "+str$(imask(mba))+", output mask "+str$(omask(mba)),4 'mis ei ole valj on sis			
+		else 
+			ExtensionType(mba)=&HB3 'esialgne oletus x8 voi io12
+			syslog "io12conf: io12 possible on mba "+str$(mba)+". input mask "+str$(imask(mba))+", output mask "+str$(omask(mba)),4
+		endif
+		'lopus tuleks teha reg 257 sisu alusel ExtensionType kontroll
+		
+        mb(1)=0   ' Broadcast
+        mb(2)=69  ' Set config
+        mb(3)=eser1(mba)   'Serial number, part 1
+        mb(4)=eser2(mba)   'Serial number, part 2
+        mb(5)=eser1(mba)   'Serial number, part 1 again
+        mb(6)=eser2(mba)   'Serial number, part 2 again
+        if ExtensionType(mba) = &HB2 then '  x8 ilmselt
+			mb(7)=imask(mba) ' reg 273, pullup. ylejaanud siis valjundid... aga kui analoogsisend? siis pane imask vaiksem selle vorra!
+		else ' io12 vist
+			mb(7)=0 ' 273, io12 pull up puudub. power-on default?
+		endif
+		
+		mb(8)=0 ' 128 '0   ' reg274, Serial mode, 0=19k2e1, 128=19k8n1 - bit 7 parity, bit 0 speed! 1=9600 ####### PARITY jms ######
+        
+		mb(9)=mba ' 275, Modbus address
+        if ExtensionType(mba) = &HB2 then '  x8 ilmselt
+			mb(10)=omask(mba) ' reg 276, io suund. omask=valjundid, ylejaanud on sisendid!
+		else ' io12 vist
+			mb(10)=0 ' io12 
+		endif
+		mlen = 10
+		' x8 di on register 2, bits 0..7. x8 ai voi temp kanalid loetavad reg 3..10, 10bit vaartused ehk 2 baiti! temp tunnus reg 11
+        
+        read 4,tmp$	 ' clear receive buffer
+        if len(tmp$)>0 then syslog "sub 1800: some data in buffer before send!",4
+		GOSUB 1200 ' add crc and send
+        gosub 1150 'got mbsl$ in hex from mbs$
+		syslog "sub 1800: sent to mba "+str$(mba)+": "+mbsl$,4
+        
+        gosub 1700 ' reads the answer and chk crc, sets mbsta(mba) and mbts(mba)
+        if mlen>1 then gosub 1150:syslog "sub 1800: response from mba "+str$(mba)+": "+mbsl$,4 else syslog "no response from mba "+str$(mba),5      
+
+        if mbsta(mba)>0 then
+            syslog "sub 1800: configuration attempt error for device "+str$(mba)+" ("+STR$(eser1(mba))+"-"+STR$(eser2(mba))+"), response:"+mbsl$,4
+            delay 1000
+			return
+        else
+            syslog "sub 1800: configuration success for mba "+str$(mba)+", now checking extensiontype and temp sensors",4
+        endif
+		
+		'siit edasi type ja temp andurite kontroll
+		
+		mb(1)=mba ' modbus address
+		mb(2)=3 ' command to read registers
+		mb(3)=1 ' register to be read address hi (256)
+		mb(4)=0 ' register to be read address lo (kokku 257=ext type)
+		mb(5)=0 ' wordcount hi
+		mb(6)=1 ' wordcount lo, 2 bytes to read
+		mlen=6 ' saadetava stringi pikkus ilma crc-ta. len() ei aita, sest lopetab \0 juures!
+		ExpLen=4 ' 
+		
+		gosub 1200 'send to mb
+		gosub 1150:syslog "sub 1800: sent to mba "+str$(mba)+": "+mbsl$,4 'ajutine abi
+		gosub 1700 ' send read cmd and read the response
+		if mlen>1 then gosub 1150:syslog "sub 1800: response from mba "+str$(mba)+": "+mbsl$,4 else syslog "no response from mba "+str$(mba),4 'ajutine abi
+		
+		if MIDGET(mbs$,5,1) <> ExtensionType(mba) then 
+			syslog "sub 1800: unknown extension device on mba "+str$(mba)+" :"+sprintf$("%02x",MIDGET(mbs$,5,1)),4
+		else
+			syslog "sub 1800: assumed extension device type verified on mba "+str$(mba)+" :"+sprintf$("%02x",MIDGET(mbs$,5,1)),4
+		endif
+		
+		
+		
+		if ExtensionType(mba) = &HB2 then '  kui x8 siis temp andurite kontroll
+			mb(1)=mba ' modbus address
+			mb(2)=3 ' command to read registers
+			mb(3)=0 ' register to be read address hi
+			mb(4)=10 ' register to be read address lo (11=tmap)
+			mb(5)=0 ' wordcount hi
+			mb(6)=1 ' wordcount lo, 2 bytes to read
+			mlen=6 ' saadetava stringi pikkus ilma crc-ta. len() ei aita, sest lopetab \0 juures!
+			ExpLen=4 ' 
+			
+			gosub 1200 'send to mb
+			gosub 1150:syslog "sub 1800: sent to mba "+str$(mba)+": "+mbsl$,4 'ajutine abi
+			gosub 1700 ' send read cmd and read the response
+			if mlen>1 then gosub 1150:syslog "sub 1800: response from mba "+str$(mba)+": "+mbsl$,4 else syslog "no response from mba "+str$(mba),4 'ajutine abi
+			
+			tmask(mba)=MIDGET(mbs$,4,1) ' hi byte vastusest on temp map. pullup olgu sees!
+			
+			syslog "sub 1800: temp sensors tmask for mba "+str$(mba)+": "+str$(tmask(mba)),4
+			
+			'moodame kohe ara ka temperatuurid...
+			for uk=0 to 7
+				if and(2^(uk),tmask(mba)) / 2^uk =1 then ' temp andur
+					syslog "sub 1800: going to read temperature on channel "+str$(uk+1),4
+					mb(3)=0:mb(4)=3+uk 'aadress kust lugeda temp 12 biti
+					gosub 1200 'send to mb
+					gosub 1150:syslog "sub 1800: sent to mba "+str$(mba)+": "+mbsl$,4 'ajutine abi
+					gosub 1700 ' send read cmd and read the response
+					if mlen>1 then gosub 1150:syslog "sub 1800: response from mba "+str$(mba)+": "+mbsl$,4 else syslog "no response from mba "+str$(mba),4 'ajutine abi
+					
+					' tmask(0)=MIDGET(mbs$,4,2) 'see andis -228
+					'tmask(0)=256*MIDGET(mbs$,4,1)+MIDGET(mbs$,5,1) 'raw value temp - annab -1008
+					tmask(0)=256*MIDGET(mbs$,5,1)+MIDGET(mbs$,4,1) 'raw value temp - annab -228, ehk on see 22.8?
+					IF tmask(0) < 32768 THEN 
+						tmask(0)=tmask(0)/16 
+					ELSE 
+						tmask(0) = (tmask(0) - 65536)/16 
+					ENDIF
+					syslog "sub 1800: temperature deg C on channel "+str$(1+uk)+" of mba "+str$(mba)+" is "+str$(tmask(0)),4
+				endif
+			next uk
+		endif
+
+    ELSE
+        SYSLOG "sub 1800: Illegal configuration data " + STR$(eser1(mba)) + "-" + STR$(eser2(mba))+" for device "+str$(mba), 1
+    ENDIF
+    
+    delay 6000 'siis joustub konfimuudatus kohe, ilma x8 powerdownabiota! kuidas aga io12 lugu?
+	
+    ' mbsta(1)=1 ' ajutine abi pideva registreeringu pealesundimiseks
+
+return

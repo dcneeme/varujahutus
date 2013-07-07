@@ -1,0 +1,29 @@
+
+ 270 ' m_udpsend.bcl - sub send ms$ to monitoring system via mip1$ or mip2$ and monport, handle 1 #######
+  ' kordussaatmisega, mida vaid 1 x teha... chk ka  main resend! siis ms$="" ajal siia kui oin>0!
+    
+    if mediatype(1)<>7 then syslog "sub 270: no udp port opened, cannot send!!!",2:ms$="":return
+    
+    m_id=m_id+1 'saadetud pakettide loendi, vahetame saatmise aadressi
+    if m_id>65535 then m_id=2 ' piirdume 16 bitiga
+    
+    web$=mip1$ 'str$(Mon1IP[1])+"."+str$(Mon1IP[2])+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
+	
+    
+    if MonMode = 1 then  ' key:value
+        ms$="in:"+sprintf$("%lu",m_id)+"\nid:"+mac$+"\n"+ms$  ' lisame in ja id 
+        if msd$<>"" then ms$=ms$+"mst:"+mst$+"\nmsd:"+msd$+"\n":msd$="":mst$="" 'babupdebug teenus jms
+    endif
+    
+    WRITE 1,ms$,0,web$,MonPort:UP(4)=UP(0)
+	 ' udp korral saadetavate baitide arv kolmandaks parameetriks? voi saadab 0 koik?
+    syslog "sub 270: sent to "+web$+":"+sprintf$("%u",MonPort)+": "+ms$,4
+    
+    traffic(1)=traffic(1)+len(ms$) ' valjuv udp liiklus
+    
+    ms$=""
+    
+ 	MonComm=1:CommLed=1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+    
+  return
+

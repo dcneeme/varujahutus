@@ -1,0 +1,65 @@
+ 7000  ' serial.bcl sub 7000
+    if ast(6)>0 then
+        syslog "sub 7000: going to display INF "+inf$,4  ' send to the serial port rs232  ####
+    else
+        syslog "sub 7000: terminal display is currently disabled!",4
+        return
+    endif
+    
+    if mediatype(2)<>8 then syslog "sub 7000: com port not open!",2:return
+    ' lopetame siin korralduse kontrolli, naidaku alati kui kutsutakse...
+    ' lubatud on INF asemel AINF voi BINF etteandmine
+    
+    if KORR$ ="RST" THEN ' tabloo kustutamine/reset
+        ' write 2,"\x1F",0 ' futaba
+        write 2,"\x0C",0 ' cd7220 clear ja horisontal scroll mode
+        write 2,"\x1B\x51\x41A\x0D",0 ' eelmine reset alati ei aita...
+        write 2,"\x1B\x51\x42B\x0D",0
+        syslog "sub 7000: terminal display reset!",4
+        return 
+    endif
+ 
+    if INF$<>"" then 'ei ole tyhi
+        ' otsime kas esineb <br/>, kui esineb siis enne seda reale 1 (AINF$) ja peale seda reale2 (BINF$)
+        ReaVahePos=instr(1,INF$,brk$)
+        ' syslog "sub 7000: rea_vahe_pos: "+str$(ReaVahePos),4 ' konfitavaks!   
+
+        if ReaVahePos > 0 then ' esines reavahetus
+            AINF$=mid$(INF$,1,ReaVahePos-1)
+            ' syslog "sub 7000: AINF$:"+AINF$,4
+            BINF$=mid$(INF$,ReaVahePos+len(brk$),len(INF$)-ReaVahePos-len(brk$)+1)
+            ' syslog "sub 7000: BINF$:"+BINF$,4
+        else
+            AINF$=INF$
+            ' syslog "sub 7000: no break in text, first line message: "+AINF$,4 ' koik esimesse ritta
+            BINF$="" 'kui oleks tyhik, siis kustutaks, muidu mitte
+        endif
+
+
+        if len(AINF$)>20 then ' scrolling line 1
+            INX(0)=10 ' rida 1 cd7220
+            ' syslog "sub 7000: sent SCROLLING string to line 1 (len:"+str$(len(AINF$))+")= "+AINF$,4
+        else
+            INX(0)=0:write 2,"\x1B\x51A"+AINF$+"\x0D",0
+            ' syslog "sub 7000: sent SHORT string to line 1 (len:"+str$(len(AINF$))+")= "+AINF$,4
+        endif
+        
+        if len(BINF$)>20 then ' scrolling line 2
+            INX(1)=10 ' rida 2 cd7220 
+            ' syslog "sub 7000: sent SCROLLING string to line 2 (len:"+str$(len(BINF$))+")= "+BINF$,4
+        else    ' lyhike tekst reale 2 
+            INX(1)=0:write 2,"\x1B\x51B"+BINF$+"\x0D",0 
+            ' syslog "sub 7000: sent SHORT string to line 2 (len:"+str$(len(BINF$))+")= "+BINF$,4
+        endif
+        
+    else ' INF$ is empty, clear both lines
+        write 2,"\x1B\x51A\x0D",0:AINF$="" ' clear line 1 AND clear possible scrolling data 
+        write 2,"\x1B\x51B\x0D",0:BINF$="" ' clear line 2 AND clear possible scrolling data 
+        ' syslog "sub 7000: both terminal lines and scrolling buffer cleared",4
+    endif
+
+
+ return ' from sub 7000
+ 
+ 
+ 

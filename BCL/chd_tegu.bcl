@@ -1,0 +1,195 @@
+ 5200 ' chd_tegu.bcl - chd(chan) varskendamine, peab kaima pidevalt endise di_event asemel!
+   'see on bn sisendite jaoks!
+    InWd=0 'teeme siin ka sona, ja inoldwd[0], 10 bitise, 1..10 chan
+	
+	for chan=1 to 4 'ai voi di bn100 puhul
+		gosub 5250 'leiame kanalinime
+		
+		if or(ChanType[chan] =4, ChanType[chan] =5) then ' counter raw or unit
+			chd(chan)=iostate(399+2*chan) ' read 32bits from lo address 
+		endif
+		
+		if ChanType[chan] =2 then ' ai
+			if chn(chan)=4346966 then ' BTV vaste 4346966
+				BattVoltage=iostate(810+chan)*VoltCoeff/200
+				'syslog "chd_tegu: battvoltage "+str$(BattVoltage)+" on ai"+str$(chan),4 ' mV
+				chd(chan)=BattVoltage/10 ' averaged BTV, saatmisel sprintf$("%l.2F",chd(chan)) 
+			else
+				chd(chan)=iostate(500+chan) ' read directly wo calibration/conversion
+                'syslog "chd_tegu: ai voltage "+str$(chd(chan))+" on ai"+str$(chan),4 ' mV
+			endif
+		endif
+
+		if ChanType[chan] =1 then ' di, 1 on 201
+			chd(chan)=iostate(200+chan) ' 350+chan) ' lisa filter viitega kui eraldi di liik, 11?
+			InWd=InWd+2^(chan-1)*chd(chan) 'bitmap
+		endif
+		
+		if or(ChanType[chan] =11, ChanType[chan] =12) then ' dekodeerime di1,di2 ai2 alusel
+			ailevel=iostate(502) ' ai2
+			syslog "sub5200: ai chan "+str$(chan)+" value "+str$(ailevel)+", thres "+str$(thre(0))+", "+str$(thre(1)),5 'ajutine, levelid vaja teada saada 
+							
+			if ailevel<thre(1) then 'olek 3
+				chd(chan)=1 ' di1=1 ja di2=1
+				chd(chan)=1 ' di1=1 ja di2=1
+			else ' jarelikult ailevel>= thre(1), variandid 0...2
+				if ailevel<thre(0) then ' olek 2, di1=0 ja di2=1
+					if chan=1 then chd(chan)=0 ' 
+					if chan=2 then chd(chan)=1 ' 
+				else ' olek 0 voi 1? 
+					if ailevel>(1023+thre(0))/2 then 'olek 0
+						chd(chan)=0
+					else ' olek 1
+						if chan=1 then chd(chan)=1 ' 
+						if chan=2 then chd(chan)=0 
+					endif
+				endif
+			endif
+			InWd=InWd+2^(chan-1)*chd(chan) 'bitmap
+		endif
+	
+		if or(ChanType[chan] =13, ChanType[chan] =14) then ' dekodeerime di1,di2 ai2 alusel
+			ailevel=iostate(504) ' ai2
+			syslog "sub5200: ai chan "+str$(chan)+" value "+str$(ailevel)+", thres "+str$(thre(2))+", "+str$(thre(3)),5 'ajutine, levelid vaja teada saada 
+			
+			if ailevel<thre(3) then 'olek 3
+				chd(chan)=1 ' di1=1 ja di2=1
+			else 'ailevel> thre(1)
+				if ailevel<thre(2) then ' olek 2, di1=0 ja di2=1
+					if chan=3 then chd(chan)=0 ' 
+					if chan=4 then chd(chan)=1 ' 
+				else ' olek 0 voi 1? 
+					if ailevel>(1023+thre(2))/2 then 'olek 0
+						chd(chan)=0
+					else ' olek 1
+						if chan=3 then chd(chan)=1 ' 
+						if chan=4 then chd(chan)=0 
+					endif
+				endif
+			endif
+			InWd=InWd+2^(chan-1)*chd(chan) 'bitmap
+		endif
+		
+		syslog "chd_tegu: ai/di chan "+str$(chan)+", uss$ "+uss$+", chd() "+sprintf$("%lu",chd(chan))+", inwd_ "+sprintf$("%06x",InWd),5 'ajutine abi
+	next chan	
+	
+	
+	
+	for chan=5 to 8 'di osa
+		gosub 5250 'leiame kanalinime
+		
+		if or(ChanType[chan] =4, ChanType[chan] =5) then ' counter raw or unit
+			chd(chan)=iostate(399+2*chan) ' read 32bits from lo address 
+		endif
+		
+		
+		if ChanType[chan] =1 then ' di, 1 on 201
+			chd(chan)=iostate(200+chan) ' 350+chan) ' lisa filter viitega kui eraldi di liik, 11?
+			InWd=InWd+2^(chan-1)*chd(chan) 'bitmap
+		endif
+		
+		if chd(chan)>0 then syslog "chd_tegu: di chan "+str$(chan)+", uss$ "+uss$+", chd() "+sprintf$("%lu",chd(chan))+", inwd_ "+sprintf$("%06x",InWd),5 'ajutine abi
+	next chan	
+	
+
+
+	
+	for chan=9 to 10 ' ai abi osa
+		gosub 5250 'leiame kanalinime
+		
+		if ChanType[chan] =15 then ' di based on di1
+			chd(chan)=iostate(201)
+			InWd=InWd+2^(chan-1)*chd(chan) 'bitmap
+		endif
+
+		
+		if ChanType[chan] =16 then ' ai
+			if chn(chan)=4346966 then ' BTV vaste 4346966
+				BattVoltage=iostate(501)*VoltCoeff/200 ' peaks keskmistama...
+				syslog "appmain: battvoltage "+str$(BattVoltage)+" on ai"+str$(chan),5 ' mV
+				chd(chan)=BattVoltage/10 ' averaged BTV, udpmon jaoks pane oige jagaja.. bup saatmisel sprintf$("%l.2F",chd(chan)) 
+			else
+				chd(chan)=iostate(501) 'ai1
+			endif
+		endif
+		
+		if ChanType[chan] =17 then ' di based on di3
+			chd(chan)=iostate(203)
+			InWd=InWd+2^(chan-1)*chd(chan) 'bitmap
+		endif
+
+		
+		if ChanType[chan] =18 then ' ai
+			if chn(chan)=4346966 then ' BTV vaste 4346966
+				BattVoltage=iostate(813)*VoltCoeff/200
+				syslog "appmain: battvoltage "+str$(BattVoltage)+" on ai"+str$(chan),5 ' mV
+				chd(chan)=BattVoltage/10 ' averaged BTV, saatmisel sprintf$("%l.2F",chd(chan)) 
+			else
+				chd(chan)=iostate(503) 'ai3
+			endif
+		endif
+		
+		if chd(chan)>0 then syslog "chd_tegu: abi chan "+str$(chan)+", uss$ "+uss$+", chd() "+sprintf$("%lu",chd(chan))+", inwd_ "+sprintf$("%06x",InWd),5 'ajutine abi
+	next chan	
+	
+	ichg(0)=xor(InWd, InOldWd[0]) 'mis muutus
+	InOldWd[0]=InWd 'jatame meelde
+	syslog "chd_tegu: bn InWd "+sprintf$("%06x",InWd)+", inoldwd[0] "+sprintf$("%06x",InOldWd[0]),5 'ajutine
+	if ichg(0)>0 then syslog "chd_tegu: bn ichg(0)="+sprintf$("%06x",ichg(0)),4
+	
+	' bn100 sisendite osa sai labi, v.a. temp, mis tuleb lopus
+	
+
+
+	
+	for chan=11 to 10+icnt(1)+icnt(2)+icnt(3) ' modbus sisendid
+		gosub 5250 'leiame kanalinime
+		
+		if or(ChanType[chan] =4, ChanType[chan] =5) then ' counter raw or unit
+			chd(chan)=iostate(399+2*chan) ' read 32bits from lo address 
+		endif
+		
+		
+		if ChanType[chan] =1 then ' di, 1 on 201
+			chd(chan)=iostate(350+chan) ' alates 361...
+		endif
+		
+		if chd(chan)>0 then syslog "chd_tegu: mb chan "+str$(chan)+", uss$ "+uss$+", chd() "+sprintf$("%lu",chd(chan)),5 'ajutine abi
+	next chan	'mb lopp
+	ailevel=chan 'meelde korraks
+
+
+	
+	
+	for i=0 to 5 'temperatuuriandurid kuni 6 tk
+		chan=ailevel+i ' 1wire temperatuurid kuni 6 tk, kui id puudub, siis katkestame
+		
+		gosub 5250 'leiame kanalinime chn() alusel
+		
+		ChanType[chan]=6 'koikidele, aga palju neid juba on? vt define varuga... 82 tk?
+		
+		if iostate(650+i)>0 then ' no on mingi andur
+			chd(chan)=iostate(601+i)*5/8 ' 10 on 601 jne, yhik 0.1 deg
+		endif
+	
+		if chd(chan)>0 then syslog "chd_tegu: temp chan "+str$(chan)+", uss$ "+uss$+", chd() "+sprintf$("%lu",chd(chan)),5 'ajutine abi
+	next i	
+
+    
+  return
+  
+  
+  
+  
+  
+  5250  'teeme chn() alusel uss$ ehk kanalinime, rikub jj ja tmp!
+  
+	tmp=chn(chan):uss$="":jj=1 'algseis
+		5252
+		uss$=chr$(tmp%256)+uss$ ' jagamise jaak on symboli ascii kood paremalt vasakule
+		tmp=tmp/256 ' next char to the left
+		jj=jj+1
+		if tmp>0 then goto 5252 'nimi jatkub veel
+		'continue if chan name string uss$ is ready (no more bytes to process left)
+	return 'tagastab uss$ uue vaartuse
+   

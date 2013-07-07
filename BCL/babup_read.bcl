@@ -1,0 +1,87 @@
+ 25400  ' sub babup_read - read matching line from handle 0
+	' reading the response from babup server after sending
+	
+	25420
+	sr$=""
+	if filesize(0)>0 then ' there is something to read out
+		delay 10
+		Read 0,sr$,0 ' ,mats$  ' reading starts from match$ until the current line end
+        traffic(2)=traffic(2)+len(sr$) ' sisenev tcp liiklus
+	endif
+	
+    
+	' if lastlen(0) > 0 then ' siin vist saatmise maht veel sees
+    if len(sr$) > 0 then ' got something
+		ts(2)=SYSTIME 'viimane info saabumine meelde
+		CommLed=0 'LED kustutamine babup teate poolest, ei huvita kas parool oli oige vms
+		if instr(1,sr$,"HTTP/") > 0 then
+			syslog "sub 25400: got from h0:"+sr$,4
+            msd$=sr$ 'babupdebug teenusesse
+			if instr(1,sr$," 200 OK") =0 then ' not OK 
+				syslog "sub 25400: http error, closing",4
+				
+				if mediatype(0)>0 then close 0,10:syslog "sub 25400: closed H0 due to http error",4 '
+                msd$="babup http response "+sr$:mst$="2" ' NOT OK
+				return
+			else
+				msd$="babup http response "+sr$:mst$="0"  'OK
+            endif 'siit edasi oleme 200 OK vastuse saanud, loodetavasti esineb selles ka oige id
+			
+			BupComm=0 'jaab 1, kui ei olnud 200 ok
+
+		endif		
+		
+		mats$=str$(d_id) ' mats$="id: "
+		ki=instr(1,sr$,mats$) 'kas vastuses id ka tuleb, paikusel lihtsalt number mitte nagu basen
+
+		if ki > 0 then ' got match at char ki
+			' syslog "sub 25400: got match for "+mats$,4
+			sr$=mid$(sr$, ki+len(mats$),len(sr$)- ki+len(mats$)+1)
+			' syslog "sub 25400: sr$ id part "+sr$,4
+			if val(sr$)	> 0 then ' found correct id
+				if val(sr$) = d_id then
+					ReturnCode=0
+					syslog "sub 25400: got id "+sr$+", returncode 0",4 ' ok
+                    msd$=msd$+", correct id "+sr$
+                else
+					ReturnCode=1 ' invalid id in ack
+					syslog "sub 25400: invalid id, returncode 1, closing",4 ' not ok
+                    msd$=msd$+", incorrect id "+sr$:if mst$="0" then mst$="1"
+				endif
+			else
+				ReturnCode=1
+				syslog "sub 25400: invalid id (not a number?), returncode 1, closing",4 ' ok
+			endif
+		else
+			goto 25420 ' no match, read more lines
+		endif
+		
+		if mediatype(0)<>0 then close 0,10:syslog "sub 25400: closed H0",4 ' close in any case, wrong or right id
+		' if connected(0) then close 0:syslog "sub 25400: closed H0",4 ' ei sulge???
+		
+	else ' empty line or no info yet - read more
+	
+		if ts(1)>ts(2) then ' midagi on tulnud peale saatmist
+			if ts(1)+1000 > SYSTIME then ' kuni sekund lubame info saabumises pausi, ts(2) siin uuendatud
+				goto 25420 ' loeme veel
+			else
+				syslog "sub 25400: H0 read timeout, pause in received data more than 1 s",4 '
+                msd$="babup timeout after initial response":mst$="2"                
+
+				if mediatype(0)<>0 then close 0,50:syslog "sub 25400: closed H0 due to pause",4 '
+			endif
+		else ' midagi pole tulnud saatmisest alates
+			if ts(2)+4500 > SYSTIME then ' ootame veel
+				goto 25420 
+			else ' aitab ootamisest
+				syslog "sub 25400: timeout waiting for response, closing" ,4
+				msd$="babup timeout while waiting for answer":mst$="2"
+
+				if mediatype(0)<>0 then close 0:syslog "sub 25400: closed the quiet H0 ",4 '
+			endif
+		endif
+		
+	endif
+
+	
+return ' end of babup_read / 25400

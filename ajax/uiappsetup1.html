@@ -1,0 +1,386 @@
+<html>
+  <!-- &L(0,"*"); -->
+  <head>
+    <script language=JavaScript src=util.js></script>
+
+	
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  </head>
+  
+  <body bgcolor=#FFFFFF link=#33333cc vlink=#cc33CC alink="#33FFFF33"><br>
+    <p><font size="3" face="Arial"><b>APPLICATION SETUP for &LBAS(1,"%fs",mac$); : &LBAS(1,"%fs",apver$);, &LBAS(1,"%fs",ip$);</b></font><br>
+    <br>                                                                            
+    <img src="col0.gif" width="650" height="1"><br>                                 
+    <table>                                                                         
+       <form action=setup.cgi method=get><input type="hidden" name="L" value="uiappsetup1.html">
+        <tr>                                                                         
+            <td colspan="2">
+				Sitename <input name="S1000" size="22" maxlength="22" value='&LSetup(1,"%s",1000,S);' />
+			</td>
+			<td>
+				Username <input name="S512" size="10" maxlength="10" value='&LSetup(1,"%s",512,S);' />
+			</td>
+		</tr>
+		
+		<tr>
+			<td>Username:Password (base64)</td>     
+			<td colspan="2">
+				<input name="S523" size="30" maxlength="30" value='&LSetup(1,"%s",523,S);' />
+			</td>
+        </tr>
+		
+		</table>
+        
+		<hr>
+		
+		<table>
+        
+		<tr><td>Zone</td><td>tempsensor no&nbsp;&nbsp;&nbsp;</td><td>actual ddegC&nbsp;&nbsp;</td><td>setpoint ddegC&nbsp;&nbsp;</td><td>warning threshold ddegC&nbsp;&nbsp;</td><td>description</td></tr>
+		
+		<tr>
+			<td nowrap>Zone 1</td>
+			<td>
+	            <select size="1" name="B738" style="width: 50px">
+					<option value=1&LSetup(3,"%s",738,B,1," selected");> 1 </option>
+					<option value=2&LSetup(3,"%s",738,B,2," selected");> 2 </option>
+					<option value=3&LSetup(3,"%s",738,B,3," selected");> 3 </option>
+					<option value=4&LSetup(3,"%s",738,B,4," selected");> 4 </option>
+				</select>
+			</td>
+			<td>&LBAS(1,"%u",tactual(0));</td>
+			<td nowrap align="left">
+                <input name="B746" size="3" maxlength="5" value='&LSetup(1,"%u",746);' onChange="ByteCheck(this)" />
+			</td>
+            <td nowrap align="left">
+                <input name="W754" size="3" maxlength="5" value='&LSetup(1,"%u",754,W);' onChange="WordCheck(this)" />
+			</td>
+			<td align="right"><input name="S628" size="10" maxlength="9" value='&LSetup(1,"%s",628,S);' /></td>
+		</tr>
+ 
+		<tr>
+			<td nowrap>Zone 2</td>
+			<td>
+	            <select size="1" name="B739" style="width: 50px">
+					<option value=1&LSetup(3,"%s",739,B,1," selected");> 1 </option>
+					<option value=2&LSetup(3,"%s",739,B,2," selected");> 2 </option>
+					<option value=3&LSetup(3,"%s",739,B,3," selected");> 3 </option>
+					<option value=4&LSetup(3,"%s",739,B,4," selected");> 4 </option>
+				</select>
+			</td>
+			<td>&LBAS(1,"%u",tactual(1));</td>			
+			<td nowrap align="left">
+                <input name="B747" size="3" maxlength="5" value='&LSetup(1,"%u",747);' onChange="ByteCheck(this)"/>
+			</td>
+            <td nowrap align="left">
+                <input name="W756" size="3" maxlength="5" value='&LSetup(1,"%u",756,W);' onChange="WordCheck(this)" />
+			</td>
+			
+			<td align="right"><input name="S638" size="10" maxlength="9" value='&LSetup(1,"%s",638,S);' /></td>
+		</tr>
+ 
+        <tr>
+			<td nowrap>Zone 3</td>
+			<td>
+	            <select size="1" name="B740" style="width: 50px">
+					<option value=1&LSetup(3,"%s",740,B,1," selected");> 1 </option>
+					<option value=2&LSetup(3,"%s",740,B,2," selected");> 2 </option>
+					<option value=3&LSetup(3,"%s",740,B,3," selected");> 3 </option>
+					<option value=4&LSetup(3,"%s",740,B,4," selected");> 4 </option>
+				</select>
+			</td>
+            <td>&LBAS(1,"%u",tactual(2));</td>
+			<td nowrap align="left">
+                <input name="B748" size="3" maxlength="5" value='&LSetup(1,"%u",748);' onChange="ByteCheck(this)" />
+			</td>
+            <td nowrap align="left">
+                <input name="W758" size="3" maxlength="5" value='&LSetup(1,"%u",758,W);' onChange="WordCheck(this)" />
+			</td>
+			
+			<td align="right"><input name="S648" size="10" maxlength="9" value='&LSetup(1,"%s",648,S);' /></td>
+		</tr>
+ 
+        <tr>
+			<td nowrap>Zone 4</td>
+			<td>
+	            <select size="1" name="B741" style="width: 50px">
+					<option value=1&LSetup(3,"%s",741,B,1," selected");> 1 </option>
+					<option value=2&LSetup(3,"%s",741,B,2," selected");> 2 </option>
+					<option value=3&LSetup(3,"%s",741,B,3," selected");> 3 </option>
+					<option value=4&LSetup(3,"%s",741,B,4," selected");> 4 </option>
+				</select>
+			</td>
+                <td>&LBAS(1,"%u",tactual(3));</td>
+			<td nowrap align="left">
+                <input name="B749" size="3" maxlength="5" value='&LSetup(1,"%u",749);' onChange="ByteCheck(this)"  />
+			</td>
+            <td nowrap align="left">
+                <input name="W760" size="3" maxlength="5" value='&LSetup(1,"%u",760,W);' onChange="WordCheck(this)" />
+			</td>
+			
+			<td align="right"><input name="S658" size="10" maxlength="9" value='&LSetup(1,"%s",658,S);' /></td>
+		</tr>
+        
+        </table>
+        
+        <table>
+        <tr bgcolor=#FFFF00>
+			<td>Global temperature hysteresis ddegC</td>
+			<td nowrap align="left">
+                <input name="B750" size="3" maxlength="3" value='&LSetup(1,"%u",750);'  onChange="ByteCheck(this)" />
+			</td>
+        </tr><tr bgcolor=#FFFF00>
+            <td>Global temperature jump ddegC</td>
+			<td nowrap align="left">
+                <input name="B751" size="3" maxlength="3" value='&LSetup(1,"%u",751);'  onChange="ByteCheck(this)" />
+			</td>
+        </tr><tr bgcolor=#FFFF00>
+            <td nowrap>Max time for increased temperature minutes</td>
+			<td nowrap align="left">
+                <input name="B752" size="3" maxlength="3" value='&LSetup(1,"%u",752);'  onChange="ByteCheck(this)" />
+			</td>
+        </tr><tr bgcolor=#FFFF00>
+            <td nowrap>Temperature checking and cooling control period s</td>
+			<td nowrap align="left">
+                <input name="B753" size="3" maxlength="4" value='&LSetup(1,"%u",753);'  onChange="ByteCheck(this)" />
+			</td>
+            
+        </tr>
+        </table>
+ 
+		<hr>
+
+        <table>
+		
+		<tr>
+			<td colspan="3">IO-laiendusi&nbsp;&nbsp;
+				<input name="B716" size="2" maxlength="1" value='&LSetup(1,"%u",716);' onChange="ByteCheck(this)"/>
+				&nbsp;&nbsp;&nbsp;&nbsp;pullup mask hi lo, kanaleid, v&auml;ljundmask hi lo, kanaleid, kanalid alates
+			</td>
+		</tr>
+    
+		<tr>
+			<td>IO-1&nbsp;&nbsp; 
+				<input name="B717" size="3" maxlength="3" value='&LSetup(1,"%u",717);' onChange="ByteCheck(this)"/> - 
+				<input name="B720" size="3" maxlength="3" value='&LSetup(1,"%u",720);' onChange="ByteCheck(this)"/> &nbsp;&nbsp;
+			</td>
+			<td colspan="2">
+				<input name="B723" size="3" maxlength="3" value='&LSetup(1,"%u",723);' onChange="ByteCheck(this)"/>
+				<input name="B726" size="3" maxlength="3" value='&LSetup(1,"%u",726);' onChange="ByteCheck(this)"/>&nbsp;&nbsp;&LBAS(1,"%u",icnt(1)); &nbsp;&nbsp;&nbsp;&nbsp;
+				<input name="B729" size="3" maxlength="3" value='&LSetup(1,"%u",729);' onChange="ByteCheck(this)"/>
+				<input name="B732" size="3" maxlength="3" value='&LSetup(1,"%u",732);' onChange="ByteCheck(this)"/>&nbsp;&nbsp;&LBAS(1,"%u",ocnt(1));&nbsp;&nbsp;
+				<input name="S816" size="3" maxlength="4" value='&LSetup(1,"%s",816,S);' />
+			</td>
+		</tr>
+		
+		<tr>
+			<td>IO-2&nbsp;&nbsp;
+				<input name="B718" size="3" maxlength="3" value='&LSetup(1,"%u",718);' onChange="ByteCheck(this)"/> - 
+				<input name="B721" size="3" maxlength="3" value='&LSetup(1,"%u",721);' onChange="ByteCheck(this)"/> &nbsp;&nbsp;
+			</td>
+			<td colspan="2">
+				<input name="B724" size="3" maxlength="3" value='&LSetup(1,"%u",724);' onChange="ByteCheck(this)"/>
+				<input name="B727" size="3" maxlength="3" value='&LSetup(1,"%u",727);' onChange="ByteCheck(this)"/>&nbsp;&nbsp;&LBAS(1,"%u",icnt(2)); &nbsp;&nbsp;&nbsp;&nbsp;
+				<input name="B730" size="3" maxlength="3" value='&LSetup(1,"%u",730);' onChange="ByteCheck(this)"/>
+				<input name="B733" size="3" maxlength="3" value='&LSetup(1,"%u",733);' onChange="ByteCheck(this)"/>&nbsp;&nbsp;&LBAS(1,"%u",ocnt(2));&nbsp;&nbsp;
+				<input name="S821" size="3" maxlength="4" value='&LSetup(1,"%s",821,S);' />
+			</td>
+		</tr>
+		<tr>
+			<td>IO-3&nbsp;&nbsp;
+				<input name="B719" size="3" maxlength="3" value='&LSetup(1,"%u",719);' onChange="ByteCheck(this)"/> - 
+				<input name="B722" size="3" maxlength="3" value='&LSetup(1,"%u",722);' onChange="ByteCheck(this)"/> &nbsp;&nbsp;
+			</td>
+			<td colspan="2">
+				<input name="B725" size="3" maxlength="3" value='&LSetup(1,"%u",725);' onChange="ByteCheck(this)"/>
+				<input name="B728" size="3" maxlength="3" value='&LSetup(1,"%u",728);' onChange="ByteCheck(this)"/>&nbsp;&nbsp;&LBAS(1,"%u",icnt(3)); &nbsp;&nbsp;&nbsp;&nbsp;
+				<input name="B731" size="3" maxlength="3" value='&LSetup(1,"%u",731);' onChange="ByteCheck(this)"/>
+				<input name="B734" size="3" maxlength="3" value='&LSetup(1,"%u",734);' onChange="ByteCheck(this)"/>&nbsp;&nbsp;&LBAS(1,"%u",ocnt(3));&nbsp;&nbsp;
+				<input name="S826" size="3" maxlength="4" value='&LSetup(1,"%s",826,S);' />
+			</td>
+		</tr>
+		
+		
+		
+		
+		
+		<tr><td colspan="3"><hr></td></tr>
+		
+ 
+		<tr bgcolor="#eeeeee">
+		    <td>Data collection server 1 IP:port</td>    
+			<td>
+				<input name="B568" size="3" maxlength="3" value='&LSetup(1,"%u",568);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B569" size="3" maxlength="3" value='&LSetup(1,"%u",569);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B570" size="3" maxlength="3" value='&LSetup(1,"%u",570);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B571" size="3" maxlength="3" value='&LSetup(1,"%u",571);' onChange="IPCheck(this)"></td>
+			<td>:
+				<input name="W576" size="6" maxlength="6" value='&LSetup(1,"%u",576,W);' onChange="PortCheck(this)">
+			</td>
+		</tr>
+		
+		<tr bgcolor="#eeeeee">
+		    <td>Data collection server 2 IP</td>    
+			<td>
+				<input name="B572" size="3" maxlength="3" value='&LSetup(1,"%u",572);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B573" size="3" maxlength="3" value='&LSetup(1,"%u",573);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B574" size="3" maxlength="3" value='&LSetup(1,"%u",574);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B575" size="3" maxlength="3" value='&LSetup(1,"%u",575);' onChange="IPCheck(this)"></td>
+			<td>: &LIO(1,"%u",839);</td>
+		</tr>
+
+		<tr>
+			<td colspan="2">Max data collection interval (s)</td>
+			<td align="right">
+			    <input name="W764" size="6" maxlength="6" value='&LSetup(1,"%u",764,W);' onChange="PortCheck(this)">     
+			</td>
+		</tr>
+		
+		
+		<tr bgcolor="#eeeeee">
+		    <td>Monitoring server 1 IP:port</td>    
+			<td>
+				<input name="B556" size="3" maxlength="3" value='&LSetup(1,"%u",556);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B557" size="3" maxlength="3" value='&LSetup(1,"%u",557);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B558" size="3" maxlength="3" value='&LSetup(1,"%u",558);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B559" size="3" maxlength="3" value='&LSetup(1,"%u",559);' onChange="IPCheck(this)"></td>
+			<td>:
+				<input name="W564" size="6" maxlength="6" value='&LSetup(1,"%u",564,W);' onChange="PortCheck(this)">
+			</td>
+		</tr>
+		
+		<tr bgcolor="#eeeeee">
+		    <td>Monitoring server 2 IP</td>    
+			<td nowrap>
+				<input name="B560" size="3" maxlength="3" value='&LSetup(1,"%u",560);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B561" size="3" maxlength="3" value='&LSetup(1,"%u",561);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B562" size="3" maxlength="3" value='&LSetup(1,"%u",562);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B563" size="3" maxlength="3" value='&LSetup(1,"%u",563);' onChange="IPCheck(this)"></td>
+			<td>: &LIO(1,"%u",840);</td>
+		</tr>
+
+		<tr>
+            <td colspan="2">Monitoring message type</td>
+            <td colspan="1">
+                <select size="1" name="B584">
+                    <option value=0&LSetup(3,"%s",584,B,0," selected");>None </option>
+                    <option value=1&LSetup(3,"%s",584,B,1," selected");>UniSCADA</option>
+                    <option value=2&LSetup(3,"%s",584,B,2," selected");>Nagios passive</option>
+                </select>
+            </td>
+        </tr>
+        
+		<tr>
+			<td colspan="2">Max messaging interval for monitoring (s)</td>
+			<td align="right">
+				<input name="W762" size="6" maxlength="6" value='&LSetup(1,"%u",762,W);' onChange="PortCheck(this)">
+			</td>
+		</tr>
+		
+	
+		<tr><td colspan="3"><hr></td></tr>
+    
+        <tr>
+            <td colspan="2">Reaktsioon kestvale sidekatkestusele</td>
+            <td colspan="1">
+                <select size="1" name="B555">
+                    <option value=0&LSetup(3,"%s",555,B,0," selected");>None </option>
+                    <option value=1&LSetup(3,"%s",555,B,1," selected");>GPRS restart</option>
+                    <option value=2&LSetup(3,"%s",555,B,2," selected");>PAC restart</option>
+                    <option value=3&LSetup(3,"%s",555,B,3," selected");>Restart PAC+GPRS</option>
+                    <option value=4&LSetup(3,"%s",555,B,4," selected");>UDP socket reopen</option>
+                    <option value=8&LSetup(3,"%s",555,B,8," selected");>Secondary   GW+restart</option>
+                </select>
+            </td>
+        </tr>
+        
+        <tr>
+            <td colspan="2">Sideprobleemi kestvus reaktsiooni aktiveerimiseks (3..255 min)</td>
+            <td colspan="1">
+                <input name="B566" size="3" maxlength="3" value="&LSetup(1,"%u",566);" onChange="ByteCheck(this)" />
+                (reaktsioon jääb sama ajavahemiku järel korduma, kui side ei taastu)
+            </td>
+        </tr>
+        
+        <tr bgcolor="#eeeeee">
+		    <td>Varul&uuml;&uuml;si aadress (GPRS ruuter vms,
+                tagastumine 1h p&auml;rast)
+            </td>                
+			
+            <td nowrap colspan="2">
+				<input name="B858" size="3" maxlength="3" value='&LSetup(1,"%u",858);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B859" size="3" maxlength="3" value='&LSetup(1,"%u",859);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B860" size="3" maxlength="3" value='&LSetup(1,"%u",860);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B861" size="3" maxlength="3" value='&LSetup(1,"%u",861);' onChange="IPCheck(this)">
+			</td>
+		</tr>
+        
+        <tr bgcolor="#eeeeee">
+		    <td>Vaikel&uuml;&uuml;si aadress tagastumiseks</td>    
+			<td colspan="2">
+				<input name="B912" size="3" maxlength="3" value='&LSetup(1,"%u",912);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B913" size="3" maxlength="3" value='&LSetup(1,"%u",913);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B914" size="3" maxlength="3" value='&LSetup(1,"%u",914);' onChange="IPCheck(this)"><b>.</b>
+				<input name="B915" size="3" maxlength="3" value='&LSetup(1,"%u",915);' onChange="IPCheck(this)">
+			    
+			</td>
+		</tr>
+        
+        
+        <tr>
+             <td colspan="2">Minimaalne <i>uptime</i> kontrolleri restardi lubamiseks (0..255h, kuni selle <i>uptime</i> saavutamiseni toimub ainult sideseadme restart vastava loa olemasolul)</td>
+             <td colspan="1">
+                <input name="B567" size="3" maxlength="3" value="&LSetup(1,"%u",567);" onChange="ByteCheck(this)" />
+             </td>
+        </tr>
+        
+    
+    	<tr><td colspan="3"><hr></td></tr>
+        
+		<tr>
+			<td>Min/max for battery voltage (mV)</td>
+        	<td align="right"><input name="W580" size="5" maxlength="5" value='&LSetup(1,"%u",580,W);' onChange="mVCheck(this)"/></td>
+			<td align="right"><input name="W582" size="5" maxlength="5" value='&LSetup(1,"%u",582,W);' onChange="mVCheck(this)"/></td>
+		</tr>
+		
+		<tr bgcolor="#eeeeee">
+			<td>Actual battery voltage <br> and calibration coefficient</td>
+			<td align="right" bgcolor="#eeffee">&LIO(1,"%u",819); mV</td>
+			<td align="right">
+			    <input name="W578" size="4" maxlength="4" value='&LSetup(1,"%u",578,W);' onChange="VcalCheck(this)"/> &nbsp;
+			</td>
+		</tr>
+		
+		<tr>
+			<td colspan="2">Delay to report power outage (s)</td>
+			<td align="right"> <input name="B766" size="5" maxlength="5" value='&LSetup(1,"%u",766);' onChange="ByteCheck(this)"/></TD>
+		</tr>
+		
+		<tr>
+			<td colspan="2">Sliding window size to average analogue input readings </td>
+			<td align="right" align="center"><input name="B767" size="5" maxlength="3" value='&LSetup(1,"%u",767);' onChange="ByteCheck(this)"/> </td>
+		</tr>
+		   
+		<tr><td colspan="3"><hr></td></tr>
+		
+		<tr>
+		    <td colspan="1">
+				<input type="submit" value=" SAVE "/> &nbsp;&nbsp; 
+			</td>
+			<td colspan=2 align="right">
+				<a href="basic.cgi?S" target="empty"><b>Apply new setup</b></a><br/>
+			</td>
+		</tr>
+	  </form>    
+	</table>
+	<script type="text/javascript">
+	
+		function openUrl(id, target) {
+			var url = "BAS.cgi?TEHA$=" + id + "&TXT$" + '=' + document.getElementById(id).value;
+			document.getElementById(id + 'href').href = url;
+			window.open(url, target);
+			return false;
+		}
+	</script>
+  </body>
+</html>
+ 

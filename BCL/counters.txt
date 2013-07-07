@@ -1,0 +1,11 @@
+1) there is one 4 byte counter ready made for every input in barionet,
+with addresses 401 for LSW and 402 for MSW,  and so on, up to 415/416.
+
+2) you can read counters as one long word but you must set the bytes
+separately, LSW first.
+
+
+julf Mon Dec 27 00:07:07 EET 2010
+
+[ { "mac": "[NO_VAR]", "di1" : "0", "di2" : "0", "di3" : "0", "di4" : "0", "di5" : "0", "di6" : "1", "di7" : "0", "di8" : "1", "count41" : "0", "count42" : "0", "count51" : "60837", "count52" : "6", "count61" : "61096", "count62" : "42", "count71" : "46575", "count72" : "5", "count81" : "1", "count82" : "0", "out1" : "0", "out2" : "0", "out3" : "0", "out4" : "0" } ]
+

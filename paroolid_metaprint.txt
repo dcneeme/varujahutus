@@ -1,0 +1,4 @@
+site     (comment)        user:pass  base64
+metaprint1  (suur ladu )   metapr1n8:9yddt67  bWV0YXByMW44Ojl5ZGR0Njc=
+metaprint2  (pudelitsehh)  metapr1n7:pu037    bWV0YXByMW43OnB1MDM3
+

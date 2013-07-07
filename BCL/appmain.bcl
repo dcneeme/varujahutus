@@ -1,0 +1,186 @@
+ 
+ 32000 ' sub appmain.bcl - rakenduslik jupp main tsyklis
+	sub$="appmain: "
+	
+    gosub 140 ' incoming udp chk
+    
+    if TEHA$ = "S" then TEHA$="":syslog "re-reading app_setup",4:gosub 110 ' setup sisse veebist
+    ' if TEHA$ = "I" then TEHA$="":gosub 6000 ' input parse
+    ' if TEHA$ ="R" then TEHA$="":gosub 150 ' reboot
+      
+    if TEHA$="X" then  ' reboot to rescue 
+		syslog sub$+"TEHA=X, rescue ",1 ' :delay 500:GOSUB 15000 ' miks ei toimi?emulate program error and reboot
+		mr$="id:"+mac$+"\nS100:bnrescue\n":mTEE$="I":gosub 142:gosub 145:delay 5000:lock 2 
+	endif
+
+    if TEHA$ = "SC" then TEHA$="":gosub 13300 ' save all counters
+    
+	if mid$(TEHA$,1,1) = "C" then syslog "appmain: saving counter, TEHA$ "+TEHA$,4:gosub 13500:TEHA$="" ' save counter
+    
+    ' CommLed=BupComm ' CommLed=or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
+	'aga udpmon vastused lahevad vahel kaduma ja jaab peale... kahes suunas korraga suhtlemise koosmoju?
+	'syslog "appmain: inword "+sprintf$("%x04",bit2B(311+icnt(1),311+icnt(1)+icnt(2)))+" "+sprintf$("%x02",bit2B(311,311+icnt(1)))+" "+sprintf$("%x02",bit2B(351,358))+", moncomm "+str$(MonComm)+", bupcomm "+str$(BupComm),4 ' ajutine abi
+	
+    
+	if mbmax>0 then gosub 1000 ' di modbus laiendustest
+	
+	gosub 10000  ' di_event, nupuvajutused
+	'gosub 5200 ' bn100 sisendite kontroll chan1..10 ja chd tegemine, sh ka mb ja temp
+	
+	
+		
+	  
+
+   ' if and(PowerLost = 0, iostate(318) = 1, up(0)> ts(8)+PowerLossDelay) then PowerLost=1:ms$=ms$+"PWS:2\n":gosub 270  ' kohe teatamine
+   'tegelikult peaks koiki saatma, millel nimi...
+
+   if and(LoBatt = 0, BattVoltage < VoltLoLimit - 10) then 
+		LoBatt=1:syslog "sub 10000: lobatt start",4
+	endif
+	
+	if and(LoBatt = 1, BattVoltage > VoltLoLimit + 10) then 
+		LoBatt=0:syslog "sub 10000: lobatt end",4
+	endif
+	
+	if and(HiBatt = 0, BattVoltage > VoltHiLimit + 10) then 
+		HiBatt=1:syslog "sub 10000: hibatt start",4
+	endif
+	
+	if and(HiBatt = 1, BattVoltage < VoltHiLimit - 10) then 
+		HiBatt=0:syslog "sub 10000: hibatt end",4
+	endif
+
+
+    'temperatuuri juhtimine 4 tsooni
+    
+    
+    if up(15)+ThermoInterval < up(0) then 'kaes on aeg temperatuuri moota ja ehk midagi ka lylitada
+        for zone=0 to 3
+            tset(zone)=tsetnorm(zone)+zonehi(zone)*tsetadd ' kehtiv etteandetemperatuur
+            tactual(zone)=iostate(600+tsensno(zone))*5/8 ' soltub andurite jrk valikust. zone 0..3
+            if tactual(zone) = 2560 then tactual(zone)=0 ' sensor line broken
+            if MonMode = 1 then
+                ms$=ms$+"T"+str$(zone+1)+"W:"+str$(tset(zone))+" "+str$(tactual(zone))+" "+str$(tmax(zone))+"\nT"+str$(zone+1)+"S:" ' temp setpoint, actual, alarm
+                if tactual(zone)>tmax(zone) then 
+                    ms$=ms$+"2\n" 
+                else ' warning or ok
+                    if tactual(zone) = 0 then ms$=ms$+"1\n" else ms$=ms$+"0\n"
+                endif
+            endif
+            'lisa siia passive chk if MonMode = 2
+            if MonMode = 2 then 'nagios passive chk
+                if tactual(zone)>tmax(zone) then tmpstatus=2 else if tactual(zone) = 0 then tmpstatus=1 else tmpstatus=0
+                ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";TempZone["+str$(zone+1)+"];"+str$(tmpstatus)
+                ms$=ms$+";Temperature in zone "+str$(zone+1)+": "+sprintf$("%0.1F",tactual(zone))+"degC"
+                ms$=ms$+"|Setpoint="+sprintf$("%0.1F",tset(zone))+"degC Actual="+sprintf$("%0.1F",tactual(zone))+"degC Warning="+sprintf$("%0.1F",tmax(zone))+"degC\n"
+                gosub 270
+            endif
+        
+            if or(tactual(zone) = 0, tactual(zone)>500) then
+                syslog "appmain: temperature sensor error for zone "+str$(zone+1)+", invalid value "+str$(tactual(zone)),4
+            else ' zone sensor ok
+                if tactual(zone)>tset(zone) then 'vaja jahutada
+                    syslog "cooling need for zone "+str$(zone+1),4 'debug
+                    if cooling(zone) = 0 then 'jahutus sisse ja teavita mon
+                        cooling(zone)=1
+                        tset(zone)=tsetnorm(zone)+tsetadd 'tostame etteandetemperatuuri
+                        syslog "cooling for zone switched "+str$(zone+1)+" on",4
+                        zonehits(zone)=up(0)
+                    endif
+                else   
+                    if tactual(zone)<tset(zone)-thyst then ' ei ole vaja jahutada
+                        syslog "NO cooling need for zone "+str$(zone+1),4 'debug
+                        if cooling(zone) = 1 then 'jahutab praegu
+                            if cooling(zone) = 1 then
+                                cooling(zone)=0
+                                syslog "cooling for zone switched "+str$(zone+1)+" off",4
+                            endif
+                        endif
+                    else
+                        syslog "possible cooling for zone "+str$(zone+1),4 'debug
+                    endif
+                endif
+            endif
+            ioctl 111+zone,zonehi(zone) 'LED on if increased temp
+            ioctl 115+zone,cooling(zone) 'cooler on or off
+            
+            if and(zonehi(zone) = 1, up(0)>zonehits(zone)+tsethilen) then
+                zonehi(zone)=0
+                syslog "appmain: zonehi("+str$(zone+1)+") end due to passed tsethilen of "+str$(tsethilen)+" s",4
+            endif
+            
+        next zone
+        up(15)=up(0) 
+        
+
+        syslog "appmain: zonehi "+str$(zonehi(0))+" "+str$(zonehi(1))+" "+str$(zonehi(2))+" "+str$(zonehi(3))+", tset "+str$(tset(0))+" "+str$(tset(1))+" "+str$(tset(2))+" "+str$(tset(3))+", outwd "+sprintf$("%04x",OutWd),4     
+        syslog "appmain: actual temperatures ddegC "+str$(tactual(0))+" "+str$(tactual(1))+" "+str$(tactual(2))+" "+str$(tactual(3))+", cooling "+str$(cooling(0))+" "+str$(cooling(1))+" "+str$(cooling(2))+" "+str$(cooling(3)),4     
+        tmpstatus=or(cooling(0), cooling(1), cooling(2), cooling(3)) ' 1 if anythiong running
+        if MonMode = 1 then 
+            ms$=ms$+"RCW:"+str$(cooling(0))+" "+str$(cooling(1))+" "+str$(cooling(2))+" "+str$(cooling(3))+"\nRCS:" ' run cooler signals
+            ms$=ms$+str$(tmpstatus)+"\n"   
+        endif
+        if MonMode = 2 then 
+            ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";CoolingActivity;"+str$(tmpstatus)
+            ms$=ms$+";Active cooling in zones (1..4): "+str$(cooling(0))+" "+str$(cooling(1))+" "+str$(cooling(2))+" "+str$(cooling(3))
+            ms$=ms$+"|Main="+str$(cooling(0))+" OpticsB="+str$(cooling(1))+" OpticsA="+str$(cooling(2))+" Servers="+str$(cooling(3))+"\n"
+        endif
+        '[1373048188] PROCESS_SERVICE_CHECK_RESULT;00204AB18657;JahutiAktiivsused;1;Jahutite olekud tsoonides 1..4: 1.0 1.0 0.0 1.0|Peajaam=1.00 OptikaTagumine=1.00 OptikaEsimene=0.00 Serverid=1.00
+        
+        'if or(cooling(0), cooling(1), cooling(2), cooling(3)) then ms$=ms$+"1\n" else ms$=ms$+"0\n"    
+        
+        if ms$<>"" then gosub 270 'saadame minema need
+                    
+    endif
+    
+  
+	' teated monitooringutele regulaarsed   (olekumuudatuste puhul vt sub 10000)
+    'if or(and(up(0)>30, up(8)=0), up(8)+MonInterval < up(0), d_id = 0) then 'saadaks midagi
+    if or(and(up(0)>30, up(8)=0), up(8)+MonInterval < up(0)) then ' esimene saatmine peale restarti    
+        
+        syslog sub$+"time "+str$(nhour)+":"+str$(nmin)+", uptime s "+sprintf$("%lu",up(0)),4
+            
+        if up(8) = 0 then 'esimene  teavitus 30 s peale starti. up(8) on LastUdpSendTS
+            syslog "appmain: first regular messaging after reboot, uptime s "+sprintf$("%lu",up(0)),4
+            if ms$<>"" then gosub 270:syslog "appmain: sent/emptied ms$",4
+            if MonMode = 1 then ms$=ms$+"AVV:"+APVER$+"\nAVS:0\nUPV:"+sprintf$("%lu",up(0))+"\nUTW:?\n" ' kysime ka liiklusmahtu
+            '[1373047965] PROCESS_SERVICE_CHECK_RESULT;00204AA9B70A;_Versioon;0;Versioon: eccua1301v3 31.01.2013|_Versioon=0
+            if MonMode = 2 then ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Version;0;Application version: "+APVER$+"|Version="+APVER$+"\n"
+            gosub 270  
+            
+        else ' koik jargmised regulaarsed teavitused
+            
+            
+            if MonMode = 1 then 'uniscada
+                ms$=ms$+"UPV:"+sprintf$("%lu",up(0))+"\nUPS:":if up(0)<3600 then gosub 135 else gosub 134 ' uptime, alla 1 h warning
+            endif
+            if Monmode = 2 then
+                '[1373047637] PROCESS_SERVICE_CHECK_RESULT;00204ADEADE5;_AegStardist;0;Kontrolleri alglaadimisest on aega: 557.5h|_AegStardist=557.50h
+                ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Uptime;0;Time from restart: "+str$(up(0)/3600)+"h|Uptime="+str$(up(0)/3600)+"h\n"
+            endif
+            if ms$<>"" then gosub 270 'saadame minema need
+            
+            gosub 5200 ' kanalitele vaartused uuesti igaks juhuks
+            ' gosub 25000 ' kanalite / tsoonide regulaarne kordussaatmine babup ja ka udpmon
+            
+        endif
+        up(8)=up(0) ' et ei korduks regulaarne teavitus enne kui vaja
+        
+    endif
+ 
+  
+	
+
+	if ts(2)+10000 < SYSTIME then ' igaks juhuks handle 0 sulgemine
+		if mediatype(0)<>0 then syslog "appmain: closing due to mediatype(0)="+str$(mediatype(0))+" for too long",4:close 0,10
+	endif
+ 
+   
+    
+    if ms$<>"" then gosub 270 ' send mon msg 
+
+	 'delay 500	 ' 1000 'ajutine    
+return
+
+
+ 
