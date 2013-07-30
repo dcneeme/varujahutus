@@ -99,7 +99,7 @@
  
  for zone=0 to 3 ' tsoonide seadistused
     jj=738+zone:tsensno(zone)=MIDGET(set$,jj-511,1):gosub 21010 'anduri jrk nr 1..4
-    jj=746+zone:tsetnorm(zone)=MIDGET(set$,jj-511,1):gosub 21010 ' etteandetemp  ' kuni 749
+    jj=742+2*zone:tsetnorm(zone)=MIDGET(set$,jj-511,1):gosub 21020 ' etteandetemp  ' kuni 749
     jj=754+2*zone:tmax(zone)=MIDGET(set$,jj-511,2):gosub 21020 ' max limit W
     syslog "tsensor for zone "+str$(zone+1)+" is "+str$(tsensno(zone))+", tset "+str$(tsetnorm(zone))+", tmax "+str$(tmax(zone)),4
  next zone

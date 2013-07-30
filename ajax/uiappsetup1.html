@@ -49,7 +49,7 @@
 			</td>
 			<td>&LBAS(1,"%u",tactual(0));</td>
 			<td nowrap align="left">
-                <input name="B746" size="3" maxlength="5" value='&LSetup(1,"%u",746);' onChange="ByteCheck(this)" />
+                <input name="W742" size="3" maxlength="5" value='&LSetup(1,"%u",742,W);' onChange="WordCheck(this)" />
 			</td>
             <td nowrap align="left">
                 <input name="W754" size="3" maxlength="5" value='&LSetup(1,"%u",754,W);' onChange="WordCheck(this)" />
@@ -69,7 +69,7 @@
 			</td>
 			<td>&LBAS(1,"%u",tactual(1));</td>			
 			<td nowrap align="left">
-                <input name="B747" size="3" maxlength="5" value='&LSetup(1,"%u",747);' onChange="ByteCheck(this)"/>
+                <input name="W744" size="3" maxlength="5" value='&LSetup(1,"%u",744,W);' onChange="WordCheck(this)"/>
 			</td>
             <td nowrap align="left">
                 <input name="W756" size="3" maxlength="5" value='&LSetup(1,"%u",756,W);' onChange="WordCheck(this)" />
@@ -90,7 +90,7 @@
 			</td>
             <td>&LBAS(1,"%u",tactual(2));</td>
 			<td nowrap align="left">
-                <input name="B748" size="3" maxlength="5" value='&LSetup(1,"%u",748);' onChange="ByteCheck(this)" />
+                <input name="W746" size="3" maxlength="5" value='&LSetup(1,"%u",746,W);' onChange="WordCheck(this)" />
 			</td>
             <td nowrap align="left">
                 <input name="W758" size="3" maxlength="5" value='&LSetup(1,"%u",758,W);' onChange="WordCheck(this)" />
@@ -111,7 +111,7 @@
 			</td>
                 <td>&LBAS(1,"%u",tactual(3));</td>
 			<td nowrap align="left">
-                <input name="B749" size="3" maxlength="5" value='&LSetup(1,"%u",749);' onChange="ByteCheck(this)"  />
+                <input name="W748" size="3" maxlength="5" value='&LSetup(1,"%u",748,W);' onChange="WordCheck(this)"  />
 			</td>
             <td nowrap align="left">
                 <input name="W760" size="3" maxlength="5" value='&LSetup(1,"%u",760,W);' onChange="WordCheck(this)" />
@@ -280,54 +280,27 @@
 		<tr><td colspan="3"><hr></td></tr>
     
         <tr>
-            <td colspan="2">Reaktsioon kestvale sidekatkestusele</td>
+            <td colspan="2">Reaction to communication loss</td>
             <td colspan="1">
                 <select size="1" name="B555">
                     <option value=0&LSetup(3,"%s",555,B,0," selected");>None </option>
                     <option value=1&LSetup(3,"%s",555,B,1," selected");>GPRS restart</option>
                     <option value=2&LSetup(3,"%s",555,B,2," selected");>PAC restart</option>
                     <option value=3&LSetup(3,"%s",555,B,3," selected");>Restart PAC+GPRS</option>
-                    <option value=4&LSetup(3,"%s",555,B,4," selected");>UDP socket reopen</option>
-                    <option value=8&LSetup(3,"%s",555,B,8," selected");>Secondary   GW+restart</option>
                 </select>
             </td>
         </tr>
         
         <tr>
-            <td colspan="2">Sideprobleemi kestvus reaktsiooni aktiveerimiseks (3..255 min)</td>
+            <td colspan="2">Communication loss length to activate reaction (3..255 min)</td>
             <td colspan="1">
                 <input name="B566" size="3" maxlength="3" value="&LSetup(1,"%u",566);" onChange="ByteCheck(this)" />
-                (reaktsioon j‰‰b sama ajavahemiku j‰rel korduma, kui side ei taastu)
             </td>
         </tr>
         
-        <tr bgcolor="#eeeeee">
-		    <td>Varul&uuml;&uuml;si aadress (GPRS ruuter vms,
-                tagastumine 1h p&auml;rast)
-            </td>                
-			
-            <td nowrap colspan="2">
-				<input name="B858" size="3" maxlength="3" value='&LSetup(1,"%u",858);' onChange="IPCheck(this)"><b>.</b>
-				<input name="B859" size="3" maxlength="3" value='&LSetup(1,"%u",859);' onChange="IPCheck(this)"><b>.</b>
-				<input name="B860" size="3" maxlength="3" value='&LSetup(1,"%u",860);' onChange="IPCheck(this)"><b>.</b>
-				<input name="B861" size="3" maxlength="3" value='&LSetup(1,"%u",861);' onChange="IPCheck(this)">
-			</td>
-		</tr>
-        
-        <tr bgcolor="#eeeeee">
-		    <td>Vaikel&uuml;&uuml;si aadress tagastumiseks</td>    
-			<td colspan="2">
-				<input name="B912" size="3" maxlength="3" value='&LSetup(1,"%u",912);' onChange="IPCheck(this)"><b>.</b>
-				<input name="B913" size="3" maxlength="3" value='&LSetup(1,"%u",913);' onChange="IPCheck(this)"><b>.</b>
-				<input name="B914" size="3" maxlength="3" value='&LSetup(1,"%u",914);' onChange="IPCheck(this)"><b>.</b>
-				<input name="B915" size="3" maxlength="3" value='&LSetup(1,"%u",915);' onChange="IPCheck(this)">
-			    
-			</td>
-		</tr>
-        
         
         <tr>
-             <td colspan="2">Minimaalne <i>uptime</i> kontrolleri restardi lubamiseks (0..255h, kuni selle <i>uptime</i> saavutamiseni toimub ainult sideseadme restart vastava loa olemasolul)</td>
+             <td colspan="2">Minimal uptime (0..255h) to enable restart</td>
              <td colspan="1">
                 <input name="B567" size="3" maxlength="3" value="&LSetup(1,"%u",567);" onChange="ByteCheck(this)" />
              </td>
