@@ -8,7 +8,7 @@
  ' 14.06.2013 silumine, mon udp kaima ajutiselt
  ' 05.07/2013 udp passive chk messages added
  ' 07072013 teeme branchi 20130707, et see seis salvestada
- ' 02.08.2013 nupuvajutustega seoses led ja cooler kohene lyliotusvajaduse kontroll
+ ' 02.08.2013 nupuvajutustega seoses led ja cooler kohene lylitusvajaduse kontroll. sub 31000 eraldamine ja nupuvajutusel kaivitamine.
  
  ' TODO
  ' lisada in arvestamine ja viimase teate kordusteade vajadusel
@@ -149,10 +149,10 @@
  dim tsetadd 'globaalne lisa 10*degC
  dim tsethilen ' sekundid kaua kestab max tostetud temp
  
- dim zone1name$(10)
- dim zone2name$(10)
- dim zone3name$(10)
- dim zone4name$(10)
+ dim zone1name$(12)
+ dim zone2name$(12)
+ dim zone3name$(12)
+ dim zone4name$(12)
  
  dim thre(3) 'dekodeerimisnivood (virtual)kanalitele 1,2,3,4 qai2 ja ai4 alusel
  
@@ -823,7 +823,7 @@ endif
 
 ' #include base64enc.bcl ' sub 26000
 
-
+#include thermo.bcl ' sub 31000
 
 #include appmain.bcl ' sub 32000
  

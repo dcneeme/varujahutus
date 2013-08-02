@@ -113,7 +113,7 @@ syslog "zonenames "+zone1name$+", "+zone2name$+", "+zone3name$+", "+zone4name$,4
  jj=751:tsetadd=MIDGET(set$,jj-511,1):gosub 21010  ' hi temp increase ddegC
  jj=752:tsethilen=60*MIDGET(set$,jj-511,1):gosub 21010  'max hitime s
  jj=753:ThermoInterval=MIDGET(set$,jj-511,1):gosub 21010 ' thermo & control period s
- syslog "thyst "+str$(thyst)+", tsetadd "+str$(tsetadd)+", tsethilen "+str$(tsethilen)+", thermointerval "+str$(ThermoInterval),4	
+ syslog "thyst "+str$(thyst)+", tsetadd "+str$(tsetadd)+", tsethilen "+str$(tsethilen)+", thermointerval "+str$(ThermoInterval),4
  
  jj=762:MonInterval=MIDGET(set$,jj-511,2):gosub 21020 ' max mon intervall
  jj=764:DataInterval=MIDGET(set$,jj-511,2):gosub 21020 ' max data intervall

@@ -1,4 +1,4 @@
-BARIX BCL Tokenizer, V1.5, 2013/08/02 13:23:10
+BARIX BCL Tokenizer, V1.5, 2013/08/02 18:09:35
 
 Preprocessor: Start
 
@@ -22,6 +22,7 @@ Preprocessor: First pass for collecting code by #include
 - Source file is included in target BAS file: <./BCL/mon_msg.bcl>
 - Source file is included in target BAS file: <./BCL/babup_msg.bcl>
 - Source file is included in target BAS file: <./BCL/babup_read.bcl>
+- Source file is included in target BAS file: <./BCL/thermo.bcl>
 - Source file is included in target BAS file: <./BCL/appmain.bcl>
 
 Preprocessor: Second pass for replacement of macros by #define
@@ -1100,7 +1101,7 @@ Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
         GOSUB 5250
         GOSUB 5250
          GOTO 5252
-        GOSUB 32000
+        GOSUB 31000
         GOSUB 11200
          GOTO 11003
         GOSUB 11200
@@ -1149,6 +1150,10 @@ Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
          GOTO 25420
          GOTO 25420
          GOTO 25420
+        GOSUB 270
+        GOSUB 270
+        GOSUB 270
+        GOSUB 270
         GOSUB 140
         GOSUB 110
         GOSUB 142
@@ -1157,10 +1162,7 @@ Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
         GOSUB 13500
         GOSUB 1000
         GOSUB 10000
-        GOSUB 270
-        GOSUB 270
-        GOSUB 270
-        GOSUB 270
+        GOSUB 31000
         GOSUB 270
         GOSUB 270
         GOSUB 135
@@ -1257,57 +1259,58 @@ Label=5950,offset=0x5637
 Warning: this name is used by default without DIM declaration (OMIN)
 Label=9900,offset=0x56c3
 Label=10000,offset=0x576c
-Label=11000,offset=0x58ad
-Label=11001,offset=0x58f5
-Label=11003,offset=0x5972
-Label=11100,offset=0x597d
+Label=11000,offset=0x5935
+Label=11001,offset=0x597d
+Label=11003,offset=0x59fa
+Label=11100,offset=0x5a05
 Warning: this name is used by default without DIM declaration (EXIT)
-Label=11200,offset=0x5af7
-Label=13000,offset=0x5b92
-Label=13001,offset=0x5c43
-Label=13300,offset=0x5cd9
-Label=13500,offset=0x5dba
-Label=15000,offset=0x6143
+Label=11200,offset=0x5b7f
+Label=13000,offset=0x5c1a
+Label=13001,offset=0x5ccb
+Label=13300,offset=0x5d61
+Label=13500,offset=0x5e42
+Label=15000,offset=0x61cb
 Warning: this name is used by default without DIM declaration (_ERR_)
 Warning: this name is used by default without DIM declaration (_ERL_)
-Label=20100,offset=0x6272
+Label=20100,offset=0x62fa
 Warning: this name is used by default without DIM declaration (NUM)
-Label=21000,offset=0x6403
+Label=21000,offset=0x648b
 Warning: this name is used by default without DIM declaration (JK)
-Label=21010,offset=0x6577
-Label=21020,offset=0x6612
-Label=22000,offset=0x66a8
-Label=24000,offset=0x6715
+Label=21010,offset=0x65ff
+Label=21020,offset=0x669a
+Label=22000,offset=0x6730
+Label=24000,offset=0x679d
 Label=25000,offset=0x0
 Warning: this name is used by default without DIM declaration (D_ID)
-Label=25010,offset=0x68fd
-Label=25020,offset=0x6a03
-Label=25050,offset=0x6ca2
-Label=25500,offset=0x6d6f
-Label=25400,offset=0x6e94
-Label=25420,offset=0x6e97
-Label=32000,offset=0x7356
+Label=25010,offset=0x6985
+Label=25020,offset=0x6a8b
+Label=25050,offset=0x6d2a
+Label=25500,offset=0x6df7
+Label=25400,offset=0x6f1c
+Label=25420,offset=0x6f1f
+Label=31000,offset=0x73db
 Warning: this name is used by default without DIM declaration (TMPSTATUS)
-Code tokenized, size=0x82ab
+Label=32000,offset=0x7dfd
+Code tokenized, size=0x8394
 
 Tokenization: Third pass for label offsets used in GOTO/GOSUB/RETURN
     Statement Label --> Offset in tokenized code
-        GOSUB 15000 --> 0x6143 (24899 bytes)
+        GOSUB 15000 --> 0x61CB (25035 bytes)
         GOSUB 9900  --> 0x56C3 (22211 bytes)
         GOSUB 110   --> 0x0F87 ( 3975 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 330   --> 0x32EC (13036 bytes)
-        GOSUB 21000 --> 0x6403 (25603 bytes)
-        GOSUB 20100 --> 0x6272 (25202 bytes)
+        GOSUB 21000 --> 0x648B (25739 bytes)
+        GOSUB 20100 --> 0x62FA (25338 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 142   --> 0x2120 ( 8480 bytes)
         GOSUB 145   --> 0x2627 ( 9767 bytes)
         GOSUB 110   --> 0x0F87 ( 3975 bytes)
-        GOSUB 22000 --> 0x66A8 (26280 bytes)
+        GOSUB 22000 --> 0x6730 (26416 bytes)
         GOSUB 150   --> 0x2EE9 (12009 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
-        GOSUB 32000 --> 0x7356 (29526 bytes)
+        GOSUB 32000 --> 0x7DFD (32253 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 142   --> 0x2120 ( 8480 bytes)
@@ -1320,38 +1323,38 @@ Tokenization: Third pass for label offsets used in GOTO/GOSUB/RETURN
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
@@ -1360,20 +1363,20 @@ Tokenization: Third pass for label offsets used in GOTO/GOSUB/RETURN
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
         GOSUB 115   --> 0x1F05 ( 7941 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
-        GOSUB 13000 --> 0x5B92 (23442 bytes)
-        GOSUB 13000 --> 0x5B92 (23442 bytes)
-        GOSUB 13000 --> 0x5B92 (23442 bytes)
-        GOSUB 13000 --> 0x5B92 (23442 bytes)
+        GOSUB 13000 --> 0x5C1A (23578 bytes)
+        GOSUB 13000 --> 0x5C1A (23578 bytes)
+        GOSUB 13000 --> 0x5C1A (23578 bytes)
+        GOSUB 13000 --> 0x5C1A (23578 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
-        GOSUB 11000 --> 0x58AD (22701 bytes)
+        GOSUB 11000 --> 0x5935 (22837 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
-        GOSUB 13000 --> 0x5B92 (23442 bytes)
+        GOSUB 13000 --> 0x5C1A (23578 bytes)
          GOTO 149   --> 0x2E1F (11807 bytes)
          GOTO 148   --> 0x2B85 (11141 bytes)
          GOTO 148   --> 0x2B85 (11141 bytes)
@@ -1427,67 +1430,68 @@ Tokenization: Third pass for label offsets used in GOTO/GOSUB/RETURN
         GOSUB 5250  --> 0x55EA (21994 bytes)
         GOSUB 5250  --> 0x55EA (21994 bytes)
          GOTO 5252  --> 0x55FF (22015 bytes)
-        GOSUB 32000 --> 0x7356 (29526 bytes)
-        GOSUB 11200 --> 0x5AF7 (23287 bytes)
-         GOTO 11003 --> 0x5972 (22898 bytes)
-        GOSUB 11200 --> 0x5AF7 (23287 bytes)
-         GOTO 11001 --> 0x58F5 (22773 bytes)
-        GOSUB 11100 --> 0x597D (22909 bytes)
-         GOTO 13001 --> 0x5C43 (23619 bytes)
+        GOSUB 31000 --> 0x73DB (29659 bytes)
+        GOSUB 11200 --> 0x5B7F (23423 bytes)
+         GOTO 11003 --> 0x59FA (23034 bytes)
+        GOSUB 11200 --> 0x5B7F (23423 bytes)
+         GOTO 11001 --> 0x597D (22909 bytes)
+        GOSUB 11100 --> 0x5A05 (23045 bytes)
+         GOTO 13001 --> 0x5CCB (23755 bytes)
         GOSUB 142   --> 0x2120 ( 8480 bytes)
         GOSUB 142   --> 0x2120 ( 8480 bytes)
         GOSUB 142   --> 0x2120 ( 8480 bytes)
         GOSUB 145   --> 0x2627 ( 9767 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21020 --> 0x6612 (26130 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
-        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21020 --> 0x669A (26266 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
+        GOSUB 21010 --> 0x65FF (26111 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 109   --> 0x0EF4 ( 3828 bytes)
-         GOTO 25020 --> 0x6A03 (27139 bytes)
-         GOTO 25010 --> 0x68FD (26877 bytes)
+         GOTO 25020 --> 0x6A8B (27275 bytes)
+         GOTO 25010 --> 0x6985 (27013 bytes)
         GOSUB 5250  --> 0x55EA (21994 bytes)
-         GOTO 25050 --> 0x6CA2 (27810 bytes)
-        GOSUB 24000 --> 0x6715 (26389 bytes)
+         GOTO 25050 --> 0x6D2A (27946 bytes)
+        GOSUB 24000 --> 0x679D (26525 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
-        GOSUB 25500 --> 0x6D6F (28015 bytes)
-        GOSUB 25400 --> 0x6E94 (28308 bytes)
-         GOTO 25420 --> 0x6E97 (28311 bytes)
-         GOTO 25420 --> 0x6E97 (28311 bytes)
-         GOTO 25420 --> 0x6E97 (28311 bytes)
+        GOSUB 25500 --> 0x6DF7 (28151 bytes)
+        GOSUB 25400 --> 0x6F1C (28444 bytes)
+         GOTO 25420 --> 0x6F1F (28447 bytes)
+         GOTO 25420 --> 0x6F1F (28447 bytes)
+         GOTO 25420 --> 0x6F1F (28447 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 140   --> 0x1F9E ( 8094 bytes)
         GOSUB 110   --> 0x0F87 ( 3975 bytes)
         GOSUB 142   --> 0x2120 ( 8480 bytes)
         GOSUB 145   --> 0x2627 ( 9767 bytes)
-        GOSUB 13300 --> 0x5CD9 (23769 bytes)
-        GOSUB 13500 --> 0x5DBA (23994 bytes)
+        GOSUB 13300 --> 0x5D61 (23905 bytes)
+        GOSUB 13500 --> 0x5E42 (24130 bytes)
         GOSUB 1000  --> 0x33DE (13278 bytes)
         GOSUB 10000 --> 0x576C (22380 bytes)
-        GOSUB 270   --> 0x3152 (12626 bytes)
-        GOSUB 270   --> 0x3152 (12626 bytes)
-        GOSUB 270   --> 0x3152 (12626 bytes)
-        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 31000 --> 0x73DB (29659 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 270   --> 0x3152 (12626 bytes)
         GOSUB 135   --> 0x1F79 ( 8057 bytes)
@@ -1504,7 +1508,7 @@ Updating jump offsets in IF...THEN...ELSE...ENDIF
 
 Tokenization: Finish
 
-Memory allocation after tokenization 33451:, 004DA4EF 004D2244,start=004D0020
+Memory allocation after tokenization 33684:, 004DA5D8 004D2244,start=004D0020
 
 Memory allocation after tokenization:
 
@@ -1553,68 +1557,68 @@ Table of already allocated long variables or arrays:
 39 (    0,    0)     4 0x11B3 ( 4531 bytes)  + ZONE
 40 (    0,    0)     4 0x11B7 ( 4535 bytes)  + TSETADD
 41 (    0,    0)     4 0x11BB ( 4539 bytes)  + TSETHILEN
-42 (    3,    0)    16 0x11E7 ( 4583 bytes)  + THRE
-43 (    3,    0)    16 0x11F7 ( 4599 bytes)  + GW
-44 (    0,    0)     4 0x1207 ( 4615 bytes)  * BIT2B
-45 (    0,    0)     4 0x120B ( 4619 bytes)  - MBMAX
-46 (    0,    0)     4 0x120F ( 4623 bytes)  - MONMODE
-47 (    0,    0)     4 0x1213 ( 4627 bytes)  - _DTS_
-48 (    0,    0)     4 0x1217 ( 4631 bytes)  - OIN
-49 (    0,    0)     4 0x121B ( 4635 bytes)  - COMMFAILFELAY
-50 (    0,    0)     4 0x121F ( 4639 bytes)  - NFRAG
-51 (    0,    0)     4 0x1223 ( 4643 bytes)  - JJ
-52 (    0,    0)     4 0x1227 ( 4647 bytes)  - MBAX
-53 (    0,    0)     4 0x122B ( 4651 bytes)  - THYST
-54 (    0,    0)     4 0x122F ( 4655 bytes)  - THERMOINTERVAL
-55 (    0,    0)     4 0x1233 ( 4659 bytes)  - CHAN
-56 (    0,    0)     4 0x1237 ( 4663 bytes)  - AILEVEL
-57 (    0,    0)     4 0x123B ( 4667 bytes)  - KH
-58 (    0,    0)     4 0x123F ( 4671 bytes)  - KL
-59 (    0,    0)     4 0x1243 ( 4675 bytes)  - UK
-60 (    0,    0)     4 0x1247 ( 4679 bytes)  - POS
-61 (    0,    0)     4 0x124B ( 4683 bytes)  - MONTHNUMBER
-62 (    0,    0)     4 0x124F ( 4687 bytes)  - DAYOFMONTH
-63 (    0,    0)     4 0x1253 ( 4691 bytes)  - HOUROFDAY
-64 (    0,    0)     4 0x1257 ( 4695 bytes)  - WEEKDAY
-65 (    0,    0)     4 0x125B ( 4699 bytes)  - TIMEZONE
-66 (    0,    0)     4 0x125F ( 4703 bytes)  - NMIN
-67 (    0,    0)     4 0x1263 ( 4707 bytes)  - NHOUR
-68 (    0,    0)     4 0x1267 ( 4711 bytes)  - NWDAY
-69 (    0,    0)     4 0x126B ( 4715 bytes)  - M_ID
-70 (    0,    0)     4 0x126F ( 4719 bytes)  - TIMERTEMP
-71 (    0,    0)     4 0x1273 ( 4723 bytes)  - IJRK
-72 (    0,    0)     4 0x1277 ( 4727 bytes)  - OJRK
-73 (    0,    0)     4 0x127B ( 4731 bytes)  - MBA
-74 (    0,    0)     4 0x127F ( 4735 bytes)  - MLEN
-75 (    0,    0)     4 0x1283 ( 4739 bytes)  - EXPLEN
-76 (    0,    0)     4 0x1287 ( 4743 bytes)  - FBWD
-77 (    0,    0)     4 0x128B ( 4747 bytes)  - INHI
-78 (    0,    0)     4 0x128F ( 4751 bytes)  - INLO
-79 (    0,    0)     4 0x1293 ( 4755 bytes)  - INWD
-80 (    0,    0)     4 0x1297 ( 4759 bytes)  - IHII
-81 (    0,    0)     4 0x129B ( 4763 bytes)  - OUTWD
-82 (    0,    0)     4 0x129F ( 4767 bytes)  - ABIOUT
-83 (    0,    0)     4 0x12A3 ( 4771 bytes)  - OCHG
-84 (    0,    0)     4 0x12A7 ( 4775 bytes)  - OUTLO
-85 (    0,    0)     4 0x12AB ( 4779 bytes)  - OUTHI
-86 (    0,    0)     4 0x12AF ( 4783 bytes)  - OMAX
-87 (    0,    0)     4 0x12B3 ( 4787 bytes)  - Y
-88 (    0,    0)     4 0x13B7 ( 5047 bytes)  - CRC
-89 (    0,    0)     4 0x13BB ( 5051 bytes)  - K
+42 (    3,    0)    16 0x11EF ( 4591 bytes)  + THRE
+43 (    3,    0)    16 0x11FF ( 4607 bytes)  + GW
+44 (    0,    0)     4 0x120F ( 4623 bytes)  * BIT2B
+45 (    0,    0)     4 0x1213 ( 4627 bytes)  - MBMAX
+46 (    0,    0)     4 0x1217 ( 4631 bytes)  - MONMODE
+47 (    0,    0)     4 0x121B ( 4635 bytes)  - _DTS_
+48 (    0,    0)     4 0x121F ( 4639 bytes)  - OIN
+49 (    0,    0)     4 0x1223 ( 4643 bytes)  - COMMFAILFELAY
+50 (    0,    0)     4 0x1227 ( 4647 bytes)  - NFRAG
+51 (    0,    0)     4 0x122B ( 4651 bytes)  - JJ
+52 (    0,    0)     4 0x122F ( 4655 bytes)  - MBAX
+53 (    0,    0)     4 0x1233 ( 4659 bytes)  - THYST
+54 (    0,    0)     4 0x1237 ( 4663 bytes)  - THERMOINTERVAL
+55 (    0,    0)     4 0x123B ( 4667 bytes)  - CHAN
+56 (    0,    0)     4 0x123F ( 4671 bytes)  - AILEVEL
+57 (    0,    0)     4 0x1243 ( 4675 bytes)  - KH
+58 (    0,    0)     4 0x1247 ( 4679 bytes)  - KL
+59 (    0,    0)     4 0x124B ( 4683 bytes)  - UK
+60 (    0,    0)     4 0x124F ( 4687 bytes)  - POS
+61 (    0,    0)     4 0x1253 ( 4691 bytes)  - MONTHNUMBER
+62 (    0,    0)     4 0x1257 ( 4695 bytes)  - DAYOFMONTH
+63 (    0,    0)     4 0x125B ( 4699 bytes)  - HOUROFDAY
+64 (    0,    0)     4 0x125F ( 4703 bytes)  - WEEKDAY
+65 (    0,    0)     4 0x1263 ( 4707 bytes)  - TIMEZONE
+66 (    0,    0)     4 0x1267 ( 4711 bytes)  - NMIN
+67 (    0,    0)     4 0x126B ( 4715 bytes)  - NHOUR
+68 (    0,    0)     4 0x126F ( 4719 bytes)  - NWDAY
+69 (    0,    0)     4 0x1273 ( 4723 bytes)  - M_ID
+70 (    0,    0)     4 0x1277 ( 4727 bytes)  - TIMERTEMP
+71 (    0,    0)     4 0x127B ( 4731 bytes)  - IJRK
+72 (    0,    0)     4 0x127F ( 4735 bytes)  - OJRK
+73 (    0,    0)     4 0x1283 ( 4739 bytes)  - MBA
+74 (    0,    0)     4 0x1287 ( 4743 bytes)  - MLEN
+75 (    0,    0)     4 0x128B ( 4747 bytes)  - EXPLEN
+76 (    0,    0)     4 0x128F ( 4751 bytes)  - FBWD
+77 (    0,    0)     4 0x1293 ( 4755 bytes)  - INHI
+78 (    0,    0)     4 0x1297 ( 4759 bytes)  - INLO
+79 (    0,    0)     4 0x129B ( 4763 bytes)  - INWD
+80 (    0,    0)     4 0x129F ( 4767 bytes)  - IHII
+81 (    0,    0)     4 0x12A3 ( 4771 bytes)  - OUTWD
+82 (    0,    0)     4 0x12A7 ( 4775 bytes)  - ABIOUT
+83 (    0,    0)     4 0x12AB ( 4779 bytes)  - OCHG
+84 (    0,    0)     4 0x12AF ( 4783 bytes)  - OUTLO
+85 (    0,    0)     4 0x12B3 ( 4787 bytes)  - OUTHI
+86 (    0,    0)     4 0x12B7 ( 4791 bytes)  - OMAX
+87 (    0,    0)     4 0x12BB ( 4795 bytes)  - Y
+88 (    0,    0)     4 0x13BF ( 5055 bytes)  - CRC
+89 (    0,    0)     4 0x13C3 ( 5059 bytes)  - K
 90 (    0,    0)     4 0xFFFF (   -1 bytes)  + NV11
 91 (    0,    0)     4 0xFFFB (   -5 bytes)  + NV12
 92 (    0,    0)     4 0xFFF7 (   -9 bytes)  + NV13
 93 (    0,    0)     4 0xFFF3 (  -13 bytes)  + NV14
 94 (    0,    0)     4 0xFFEF (  -17 bytes)  + NV15
-95 (    0,    0)     4 0x13BF ( 5055 bytes)  - TMP
-96 (    0,    0)     4 0x13C3 ( 5059 bytes)  - OMIN
-97 (    0,    0)     4 0x13C7 ( 5063 bytes)  - EXIT
-98 (    0,    0)     4 0x13CB ( 5067 bytes)  - _ERR_
-99 (    0,    0)     4 0x13CF ( 5071 bytes)  - _ERL_
-100 (    0,    0)     4 0x13D3 ( 5075 bytes)  - NUM
-101 (    0,    0)     4 0x13D7 ( 5079 bytes)  - JK
-102 (    0,    0)     4 0x13DB ( 5083 bytes)  - D_ID
-103 (    0,    0)     4 0x13DF ( 5087 bytes)  - TMPSTATUS
+95 (    0,    0)     4 0x13C7 ( 5063 bytes)  - TMP
+96 (    0,    0)     4 0x13CB ( 5067 bytes)  - OMIN
+97 (    0,    0)     4 0x13CF ( 5071 bytes)  - EXIT
+98 (    0,    0)     4 0x13D3 ( 5075 bytes)  - _ERR_
+99 (    0,    0)     4 0x13D7 ( 5079 bytes)  - _ERL_
+100 (    0,    0)     4 0x13DB ( 5083 bytes)  - NUM
+101 (    0,    0)     4 0x13DF ( 5087 bytes)  - JK
+102 (    0,    0)     4 0x13E3 ( 5091 bytes)  - D_ID
+103 (    0,    0)     4 0x13E7 ( 5095 bytes)  - TMPSTATUS
 
 Number of Integer Variables:103
 
@@ -1662,18 +1666,18 @@ Table of already allocated string variables:
 38   31 0x0CD8 ( 3288 bytes)  + USPA$
 39  100 0x0EB7 ( 3767 bytes)  + MBS$
 40  200 0x0F1B ( 3867 bytes)  + MBSL$
-41   10 0x11BF ( 4543 bytes)  + ZONE1NAME$
-42   10 0x11C9 ( 4553 bytes)  + ZONE2NAME$
-43   10 0x11D3 ( 4563 bytes)  + ZONE3NAME$
-44   10 0x11DD ( 4573 bytes)  + ZONE4NAME$
-45  256 0x12B7 ( 4791 bytes)  - TMP$
+41   12 0x11BF ( 4543 bytes)  + ZONE1NAME$
+42   12 0x11CB ( 4555 bytes)  + ZONE2NAME$
+43   12 0x11D7 ( 4567 bytes)  + ZONE3NAME$
+44   12 0x11E3 ( 4579 bytes)  + ZONE4NAME$
+45  256 0x12BF ( 4799 bytes)  - TMP$
 
 Number of String Variables:45
 
 Warning: temporary string size was increased up to 1024 bytes!
 
 Final memory allocation map (area sizes) during run-time for target barionet100:
-- Data area for allocated variables: 0x13E3 ( 5091 bytes)
-- Data area for temporary variables: 0x40A5 (16549 bytes)
-- Tables and tokenized code area   : 0x8B78 (35704 bytes)
+- Data area for allocated variables: 0x13EB ( 5099 bytes)
+- Data area for temporary variables: 0x3FB4 (16308 bytes)
+- Tables and tokenized code area   : 0x8C61 (35937 bytes)
 Program start offet=0x578

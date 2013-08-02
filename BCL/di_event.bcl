@@ -19,7 +19,10 @@
             if and(iostate(350+jj) = 1, iostate(300+jj) = 0) then ' nupuvajutuse algusele reageerime ainult
                 zone=jj-5 '0..3
                 zonehi(zone)=xor(1,zonehi(zone)) ' inversioon. hi tahendab ka led polemist
-                gosub 32000 'teeme kontrollid ja lylitused valjaspool regul tsyklit korra labi! muidu peab moju ootama 30s
+                if zonehi(zone) = 1 then  zonehits(zone)=up(0) 'algusaeg meelde korgendatud temp kohta
+                syslog "inverted zonehi("+str$(zone)+"), value now "+str$(zonehi(zone)),4
+                gosub 31000 'teeme temp kontrollid ja lLED ning relee ylitused valjaspool regul tsyklit korra labi! muidu peab moju ootama 30s
+                syslog "led and cooling switching must be done in appmain",4
             endif
         else
             ichg(0)=0
