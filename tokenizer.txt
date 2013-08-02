@@ -1,4 +1,4 @@
-BARIX BCL Tokenizer, V1.5, 2013/07/30 13:18:22
+BARIX BCL Tokenizer, V1.5, 2013/08/02 13:23:10
 
 Preprocessor: Start
 
@@ -972,6 +972,7 @@ Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
         GOSUB 330
         GOSUB 21000
         GOSUB 20100
+        GOSUB 270
         GOSUB 142
         GOSUB 145
         GOSUB 110
@@ -1099,6 +1100,7 @@ Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
         GOSUB 5250
         GOSUB 5250
          GOTO 5252
+        GOSUB 32000
         GOSUB 11200
          GOTO 11003
         GOSUB 11200
@@ -1159,6 +1161,8 @@ Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
         GOSUB 270
         GOSUB 270
         GOSUB 270
+        GOSUB 270
+        GOSUB 270
         GOSUB 135
         GOSUB 134
         GOSUB 270
@@ -1168,14 +1172,15 @@ Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
 Tokenization: Second pass for main tokenization
 Warning: DIM _TMR_(4) is already fulfiled by tokenizer itself
 Warning: this name is used by default without DIM declaration (MBMAX)
-Label=100,offset=0x743
+Warning: this name is used by default without DIM declaration (MONMODE)
+Warning: this name is used by default without DIM declaration (_DTS_)
+Label=100,offset=0x804
 Warning: this name is used by default without DIM declaration (OIN)
 Warning: this name is used by default without DIM declaration (COMMFAILFELAY)
-Label=109,offset=0xe69
+Label=109,offset=0xef4
 Warning: this name is used by default without DIM declaration (NFRAG)
-Label=110,offset=0xefc
+Label=110,offset=0xf87
 Warning: this name is used by default without DIM declaration (JJ)
-Warning: this name is used by default without DIM declaration (MONMODE)
 Warning: this name is used by default without DIM declaration (MBAX)
 Warning: this name is used by default without DIM declaration (THYST)
 Warning: this name is used by default without DIM declaration (THERMOINTERVAL)
@@ -1183,20 +1188,19 @@ Warning: this name is used by default without DIM declaration (CHAN)
 Warning: this name is used by default without DIM declaration (AILEVEL)
 Warning: this name is used by default without DIM declaration (KH)
 Warning: this name is used by default without DIM declaration (KL)
-Label=115,offset=0x1de9
+Label=115,offset=0x1f05
 Warning: this name is used by default without DIM declaration (UK)
-Label=134,offset=0x1e4d
-Label=135,offset=0x1e5d
+Label=134,offset=0x1f69
+Label=135,offset=0x1f79
 Label=136,offset=0x0
-Label=140,offset=0x1e82
-Label=142,offset=0x2004
-Label=145,offset=0x250b
+Label=140,offset=0x1f9e
+Label=142,offset=0x2120
+Label=145,offset=0x2627
 Warning: this name is used by default without DIM declaration (POS)
 Label=147,offset=0x0
-Label=148,offset=0x2a69
-Label=149,offset=0x2d03
-Label=150,offset=0x2dcd
-Warning: this name is used by default without DIM declaration (_DTS_)
+Label=148,offset=0x2b85
+Label=149,offset=0x2e1f
+Label=150,offset=0x2ee9
 Warning: this name is used by default without DIM declaration (MONTHNUMBER)
 Warning: this name is used by default without DIM declaration (DAYOFMONTH)
 Warning: this name is used by default without DIM declaration (HOUROFDAY)
@@ -1205,12 +1209,12 @@ Warning: this name is used by default without DIM declaration (TIMEZONE)
 Warning: this name is used by default without DIM declaration (NMIN)
 Warning: this name is used by default without DIM declaration (NHOUR)
 Warning: this name is used by default without DIM declaration (NWDAY)
-Label=270,offset=0x3036
+Label=270,offset=0x3152
 Warning: this name is used by default without DIM declaration (M_ID)
 Label=300,offset=0x0
-Label=330,offset=0x31d0
+Label=330,offset=0x32ec
 Warning: this name is used by default without DIM declaration (TIMERTEMP)
-Label=1000,offset=0x32c2
+Label=1000,offset=0x33de
 Warning: this name is used by default without DIM declaration (IJRK)
 Warning: this name is used by default without DIM declaration (OJRK)
 Warning: this name is used by default without DIM declaration (MBA)
@@ -1227,267 +1231,271 @@ Warning: this name is used by default without DIM declaration (ABIOUT)
 Warning: this name is used by default without DIM declaration (OCHG)
 Warning: this name is used by default without DIM declaration (OUTLO)
 Warning: this name is used by default without DIM declaration (OUTHI)
-Label=1020,offset=0x3bc9
+Label=1020,offset=0x3ce5
 Label=1022,offset=0x0
 Warning: this name is used by default without DIM declaration (OMAX)
-Label=1050,offset=0x3d38
+Label=1050,offset=0x3e54
 Label=1100,offset=0x0
-Label=1150,offset=0x3ddb
+Label=1150,offset=0x3ef7
 Warning: this name is used by default without DIM declaration (Y)
-Label=1200,offset=0x3e49
+Label=1200,offset=0x3f65
 Warning: this name is used by default without DIM declaration (TMP$)
 Warning: this name is used by default without DIM declaration (CRC)
-Label=1250,offset=0x3f00
+Label=1250,offset=0x401c
 Warning: this name is used by default without DIM declaration (K)
-Label=1600,offset=0x3f6e
-Label=1700,offset=0x3faf
-Label=1702,offset=0x3fb1
-Label=1705,offset=0x4090
-Label=1800,offset=0x4178
-Label=5000,offset=0x4b28
-Label=5200,offset=0x4bb2
-Label=5250,offset=0x54ce
+Label=1600,offset=0x408a
+Label=1700,offset=0x40cb
+Label=1702,offset=0x40cd
+Label=1705,offset=0x41ac
+Label=1800,offset=0x4294
+Label=5000,offset=0x4c44
+Label=5200,offset=0x4cce
+Label=5250,offset=0x55ea
 Warning: this name is used by default without DIM declaration (TMP)
-Label=5252,offset=0x54e3
-Label=5950,offset=0x551b
+Label=5252,offset=0x55ff
+Label=5950,offset=0x5637
 Warning: this name is used by default without DIM declaration (OMIN)
-Label=9900,offset=0x55a7
-Label=10000,offset=0x5650
-Label=11000,offset=0x578c
-Label=11001,offset=0x57d4
-Label=11003,offset=0x5851
-Label=11100,offset=0x585c
+Label=9900,offset=0x56c3
+Label=10000,offset=0x576c
+Label=11000,offset=0x58ad
+Label=11001,offset=0x58f5
+Label=11003,offset=0x5972
+Label=11100,offset=0x597d
 Warning: this name is used by default without DIM declaration (EXIT)
-Label=11200,offset=0x59d6
-Label=13000,offset=0x5a71
-Label=13001,offset=0x5b22
-Label=13300,offset=0x5bb8
-Label=13500,offset=0x5c99
-Label=15000,offset=0x6022
+Label=11200,offset=0x5af7
+Label=13000,offset=0x5b92
+Label=13001,offset=0x5c43
+Label=13300,offset=0x5cd9
+Label=13500,offset=0x5dba
+Label=15000,offset=0x6143
 Warning: this name is used by default without DIM declaration (_ERR_)
 Warning: this name is used by default without DIM declaration (_ERL_)
-Label=20100,offset=0x6151
+Label=20100,offset=0x6272
 Warning: this name is used by default without DIM declaration (NUM)
-Label=21000,offset=0x62e2
+Label=21000,offset=0x6403
 Warning: this name is used by default without DIM declaration (JK)
-Label=21010,offset=0x6456
-Label=21020,offset=0x64f1
-Label=22000,offset=0x6587
-Label=24000,offset=0x65f4
+Label=21010,offset=0x6577
+Label=21020,offset=0x6612
+Label=22000,offset=0x66a8
+Label=24000,offset=0x6715
 Label=25000,offset=0x0
 Warning: this name is used by default without DIM declaration (D_ID)
-Label=25010,offset=0x67dc
-Label=25020,offset=0x68e2
-Label=25050,offset=0x6b81
-Label=25500,offset=0x6c4e
-Label=25400,offset=0x6d73
-Label=25420,offset=0x6d76
-Label=32000,offset=0x7235
+Label=25010,offset=0x68fd
+Label=25020,offset=0x6a03
+Label=25050,offset=0x6ca2
+Label=25500,offset=0x6d6f
+Label=25400,offset=0x6e94
+Label=25420,offset=0x6e97
+Label=32000,offset=0x7356
 Warning: this name is used by default without DIM declaration (TMPSTATUS)
-Code tokenized, size=0x7f79
+Code tokenized, size=0x82ab
 
 Tokenization: Third pass for label offsets used in GOTO/GOSUB/RETURN
     Statement Label --> Offset in tokenized code
-        GOSUB 15000 --> 0x6022 (24610 bytes)
-        GOSUB 9900  --> 0x55A7 (21927 bytes)
-        GOSUB 110   --> 0x0EFC ( 3836 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 330   --> 0x31D0 (12752 bytes)
-        GOSUB 21000 --> 0x62E2 (25314 bytes)
-        GOSUB 20100 --> 0x6151 (24913 bytes)
-        GOSUB 142   --> 0x2004 ( 8196 bytes)
-        GOSUB 145   --> 0x250B ( 9483 bytes)
-        GOSUB 110   --> 0x0EFC ( 3836 bytes)
-        GOSUB 22000 --> 0x6587 (25991 bytes)
-        GOSUB 150   --> 0x2DCD (11725 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 32000 --> 0x7235 (29237 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 142   --> 0x2004 ( 8196 bytes)
-        GOSUB 145   --> 0x250B ( 9483 bytes)
-        GOSUB 142   --> 0x2004 ( 8196 bytes)
-        GOSUB 145   --> 0x250B ( 9483 bytes)
-        GOSUB 5950  --> 0x551B (21787 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-         GOTO 100   --> 0x0743 ( 1859 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 115   --> 0x1DE9 ( 7657 bytes)
-        GOSUB 115   --> 0x1DE9 ( 7657 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 115   --> 0x1DE9 ( 7657 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 13000 --> 0x5A71 (23153 bytes)
-        GOSUB 13000 --> 0x5A71 (23153 bytes)
-        GOSUB 13000 --> 0x5A71 (23153 bytes)
-        GOSUB 13000 --> 0x5A71 (23153 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 11000 --> 0x578C (22412 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 13000 --> 0x5A71 (23153 bytes)
-         GOTO 149   --> 0x2D03 (11523 bytes)
-         GOTO 148   --> 0x2A69 (10857 bytes)
-         GOTO 148   --> 0x2A69 (10857 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-         GOTO 149   --> 0x2D03 (11523 bytes)
-         GOTO 149   --> 0x2D03 (11523 bytes)
-         GOTO 149   --> 0x2D03 (11523 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 1800  --> 0x4178 (16760 bytes)
-        GOSUB 1200  --> 0x3E49 (15945 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-        GOSUB 1700  --> 0x3FAF (16303 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-         GOTO 1020  --> 0x3BC9 (15305 bytes)
-        GOSUB 1600  --> 0x3F6E (16238 bytes)
-         GOTO 1020  --> 0x3BC9 (15305 bytes)
-        GOSUB 1050  --> 0x3D38 (15672 bytes)
-        GOSUB 1200  --> 0x3E49 (15945 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-        GOSUB 1700  --> 0x3FAF (16303 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-         GOTO 1020  --> 0x3BC9 (15305 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 1250  --> 0x3F00 (16128 bytes)
-         GOTO 1705  --> 0x4090 (16528 bytes)
-         GOTO 1702  --> 0x3FB1 (16305 bytes)
-        GOSUB 1250  --> 0x3F00 (16128 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-        GOSUB 1200  --> 0x3E49 (15945 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-        GOSUB 1700  --> 0x3FAF (16303 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-        GOSUB 1200  --> 0x3E49 (15945 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-        GOSUB 1700  --> 0x3FAF (16303 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-        GOSUB 1200  --> 0x3E49 (15945 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-        GOSUB 1700  --> 0x3FAF (16303 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-        GOSUB 1200  --> 0x3E49 (15945 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-        GOSUB 1700  --> 0x3FAF (16303 bytes)
-        GOSUB 1150  --> 0x3DDB (15835 bytes)
-        GOSUB 5250  --> 0x54CE (21710 bytes)
-        GOSUB 5250  --> 0x54CE (21710 bytes)
-        GOSUB 5250  --> 0x54CE (21710 bytes)
-        GOSUB 5250  --> 0x54CE (21710 bytes)
-        GOSUB 5250  --> 0x54CE (21710 bytes)
-         GOTO 5252  --> 0x54E3 (21731 bytes)
-        GOSUB 11200 --> 0x59D6 (22998 bytes)
-         GOTO 11003 --> 0x5851 (22609 bytes)
-        GOSUB 11200 --> 0x59D6 (22998 bytes)
-         GOTO 11001 --> 0x57D4 (22484 bytes)
-        GOSUB 11100 --> 0x585C (22620 bytes)
-         GOTO 13001 --> 0x5B22 (23330 bytes)
-        GOSUB 142   --> 0x2004 ( 8196 bytes)
-        GOSUB 142   --> 0x2004 ( 8196 bytes)
-        GOSUB 142   --> 0x2004 ( 8196 bytes)
-        GOSUB 145   --> 0x250B ( 9483 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21020 --> 0x64F1 (25841 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 21010 --> 0x6456 (25686 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 109   --> 0x0E69 ( 3689 bytes)
-         GOTO 25020 --> 0x68E2 (26850 bytes)
-         GOTO 25010 --> 0x67DC (26588 bytes)
-        GOSUB 5250  --> 0x54CE (21710 bytes)
-         GOTO 25050 --> 0x6B81 (27521 bytes)
-        GOSUB 24000 --> 0x65F4 (26100 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 25500 --> 0x6C4E (27726 bytes)
-        GOSUB 25400 --> 0x6D73 (28019 bytes)
-         GOTO 25420 --> 0x6D76 (28022 bytes)
-         GOTO 25420 --> 0x6D76 (28022 bytes)
-         GOTO 25420 --> 0x6D76 (28022 bytes)
-        GOSUB 140   --> 0x1E82 ( 7810 bytes)
-        GOSUB 110   --> 0x0EFC ( 3836 bytes)
-        GOSUB 142   --> 0x2004 ( 8196 bytes)
-        GOSUB 145   --> 0x250B ( 9483 bytes)
-        GOSUB 13300 --> 0x5BB8 (23480 bytes)
-        GOSUB 13500 --> 0x5C99 (23705 bytes)
-        GOSUB 1000  --> 0x32C2 (12994 bytes)
-        GOSUB 10000 --> 0x5650 (22096 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 135   --> 0x1E5D ( 7773 bytes)
-        GOSUB 134   --> 0x1E4D ( 7757 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 5200  --> 0x4BB2 (19378 bytes)
-        GOSUB 270   --> 0x3036 (12342 bytes)
-        GOSUB 5000  --> 0x4B28 (19240 bytes) : FUNCTION BIT2B()
+        GOSUB 15000 --> 0x6143 (24899 bytes)
+        GOSUB 9900  --> 0x56C3 (22211 bytes)
+        GOSUB 110   --> 0x0F87 ( 3975 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 330   --> 0x32EC (13036 bytes)
+        GOSUB 21000 --> 0x6403 (25603 bytes)
+        GOSUB 20100 --> 0x6272 (25202 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 142   --> 0x2120 ( 8480 bytes)
+        GOSUB 145   --> 0x2627 ( 9767 bytes)
+        GOSUB 110   --> 0x0F87 ( 3975 bytes)
+        GOSUB 22000 --> 0x66A8 (26280 bytes)
+        GOSUB 150   --> 0x2EE9 (12009 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 32000 --> 0x7356 (29526 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 142   --> 0x2120 ( 8480 bytes)
+        GOSUB 145   --> 0x2627 ( 9767 bytes)
+        GOSUB 142   --> 0x2120 ( 8480 bytes)
+        GOSUB 145   --> 0x2627 ( 9767 bytes)
+        GOSUB 5950  --> 0x5637 (22071 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+         GOTO 100   --> 0x0804 ( 2052 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 115   --> 0x1F05 ( 7941 bytes)
+        GOSUB 115   --> 0x1F05 ( 7941 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 115   --> 0x1F05 ( 7941 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 13000 --> 0x5B92 (23442 bytes)
+        GOSUB 13000 --> 0x5B92 (23442 bytes)
+        GOSUB 13000 --> 0x5B92 (23442 bytes)
+        GOSUB 13000 --> 0x5B92 (23442 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 11000 --> 0x58AD (22701 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 13000 --> 0x5B92 (23442 bytes)
+         GOTO 149   --> 0x2E1F (11807 bytes)
+         GOTO 148   --> 0x2B85 (11141 bytes)
+         GOTO 148   --> 0x2B85 (11141 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+         GOTO 149   --> 0x2E1F (11807 bytes)
+         GOTO 149   --> 0x2E1F (11807 bytes)
+         GOTO 149   --> 0x2E1F (11807 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 1800  --> 0x4294 (17044 bytes)
+        GOSUB 1200  --> 0x3F65 (16229 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+        GOSUB 1700  --> 0x40CB (16587 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+         GOTO 1020  --> 0x3CE5 (15589 bytes)
+        GOSUB 1600  --> 0x408A (16522 bytes)
+         GOTO 1020  --> 0x3CE5 (15589 bytes)
+        GOSUB 1050  --> 0x3E54 (15956 bytes)
+        GOSUB 1200  --> 0x3F65 (16229 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+        GOSUB 1700  --> 0x40CB (16587 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+         GOTO 1020  --> 0x3CE5 (15589 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 1250  --> 0x401C (16412 bytes)
+         GOTO 1705  --> 0x41AC (16812 bytes)
+         GOTO 1702  --> 0x40CD (16589 bytes)
+        GOSUB 1250  --> 0x401C (16412 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+        GOSUB 1200  --> 0x3F65 (16229 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+        GOSUB 1700  --> 0x40CB (16587 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+        GOSUB 1200  --> 0x3F65 (16229 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+        GOSUB 1700  --> 0x40CB (16587 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+        GOSUB 1200  --> 0x3F65 (16229 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+        GOSUB 1700  --> 0x40CB (16587 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+        GOSUB 1200  --> 0x3F65 (16229 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+        GOSUB 1700  --> 0x40CB (16587 bytes)
+        GOSUB 1150  --> 0x3EF7 (16119 bytes)
+        GOSUB 5250  --> 0x55EA (21994 bytes)
+        GOSUB 5250  --> 0x55EA (21994 bytes)
+        GOSUB 5250  --> 0x55EA (21994 bytes)
+        GOSUB 5250  --> 0x55EA (21994 bytes)
+        GOSUB 5250  --> 0x55EA (21994 bytes)
+         GOTO 5252  --> 0x55FF (22015 bytes)
+        GOSUB 32000 --> 0x7356 (29526 bytes)
+        GOSUB 11200 --> 0x5AF7 (23287 bytes)
+         GOTO 11003 --> 0x5972 (22898 bytes)
+        GOSUB 11200 --> 0x5AF7 (23287 bytes)
+         GOTO 11001 --> 0x58F5 (22773 bytes)
+        GOSUB 11100 --> 0x597D (22909 bytes)
+         GOTO 13001 --> 0x5C43 (23619 bytes)
+        GOSUB 142   --> 0x2120 ( 8480 bytes)
+        GOSUB 142   --> 0x2120 ( 8480 bytes)
+        GOSUB 142   --> 0x2120 ( 8480 bytes)
+        GOSUB 145   --> 0x2627 ( 9767 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21020 --> 0x6612 (26130 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 21010 --> 0x6577 (25975 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 109   --> 0x0EF4 ( 3828 bytes)
+         GOTO 25020 --> 0x6A03 (27139 bytes)
+         GOTO 25010 --> 0x68FD (26877 bytes)
+        GOSUB 5250  --> 0x55EA (21994 bytes)
+         GOTO 25050 --> 0x6CA2 (27810 bytes)
+        GOSUB 24000 --> 0x6715 (26389 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 25500 --> 0x6D6F (28015 bytes)
+        GOSUB 25400 --> 0x6E94 (28308 bytes)
+         GOTO 25420 --> 0x6E97 (28311 bytes)
+         GOTO 25420 --> 0x6E97 (28311 bytes)
+         GOTO 25420 --> 0x6E97 (28311 bytes)
+        GOSUB 140   --> 0x1F9E ( 8094 bytes)
+        GOSUB 110   --> 0x0F87 ( 3975 bytes)
+        GOSUB 142   --> 0x2120 ( 8480 bytes)
+        GOSUB 145   --> 0x2627 ( 9767 bytes)
+        GOSUB 13300 --> 0x5CD9 (23769 bytes)
+        GOSUB 13500 --> 0x5DBA (23994 bytes)
+        GOSUB 1000  --> 0x33DE (13278 bytes)
+        GOSUB 10000 --> 0x576C (22380 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 135   --> 0x1F79 ( 8057 bytes)
+        GOSUB 134   --> 0x1F69 ( 8041 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 5200  --> 0x4CCE (19662 bytes)
+        GOSUB 270   --> 0x3152 (12626 bytes)
+        GOSUB 5000  --> 0x4C44 (19524 bytes) : FUNCTION BIT2B()
 
 Tokenization: Fourth pass for checking multiline IF...ENDIF
 
@@ -1496,7 +1504,7 @@ Updating jump offsets in IF...THEN...ELSE...ENDIF
 
 Tokenization: Finish
 
-Memory allocation after tokenization 32633:, 004DA1BD 004D2244,start=004D0020
+Memory allocation after tokenization 33451:, 004DA4EF 004D2244,start=004D0020
 
 Memory allocation after tokenization:
 
@@ -1545,68 +1553,68 @@ Table of already allocated long variables or arrays:
 39 (    0,    0)     4 0x11B3 ( 4531 bytes)  + ZONE
 40 (    0,    0)     4 0x11B7 ( 4535 bytes)  + TSETADD
 41 (    0,    0)     4 0x11BB ( 4539 bytes)  + TSETHILEN
-42 (    3,    0)    16 0x11BF ( 4543 bytes)  + THRE
-43 (    3,    0)    16 0x11CF ( 4559 bytes)  + GW
-44 (    0,    0)     4 0x11DF ( 4575 bytes)  * BIT2B
-45 (    0,    0)     4 0x11E3 ( 4579 bytes)  - MBMAX
-46 (    0,    0)     4 0x11E7 ( 4583 bytes)  - OIN
-47 (    0,    0)     4 0x11EB ( 4587 bytes)  - COMMFAILFELAY
-48 (    0,    0)     4 0x11EF ( 4591 bytes)  - NFRAG
-49 (    0,    0)     4 0x11F3 ( 4595 bytes)  - JJ
-50 (    0,    0)     4 0x11F7 ( 4599 bytes)  - MONMODE
-51 (    0,    0)     4 0x11FB ( 4603 bytes)  - MBAX
-52 (    0,    0)     4 0x11FF ( 4607 bytes)  - THYST
-53 (    0,    0)     4 0x1203 ( 4611 bytes)  - THERMOINTERVAL
-54 (    0,    0)     4 0x1207 ( 4615 bytes)  - CHAN
-55 (    0,    0)     4 0x120B ( 4619 bytes)  - AILEVEL
-56 (    0,    0)     4 0x120F ( 4623 bytes)  - KH
-57 (    0,    0)     4 0x1213 ( 4627 bytes)  - KL
-58 (    0,    0)     4 0x1217 ( 4631 bytes)  - UK
-59 (    0,    0)     4 0x121B ( 4635 bytes)  - POS
-60 (    0,    0)     4 0x121F ( 4639 bytes)  - _DTS_
-61 (    0,    0)     4 0x1223 ( 4643 bytes)  - MONTHNUMBER
-62 (    0,    0)     4 0x1227 ( 4647 bytes)  - DAYOFMONTH
-63 (    0,    0)     4 0x122B ( 4651 bytes)  - HOUROFDAY
-64 (    0,    0)     4 0x122F ( 4655 bytes)  - WEEKDAY
-65 (    0,    0)     4 0x1233 ( 4659 bytes)  - TIMEZONE
-66 (    0,    0)     4 0x1237 ( 4663 bytes)  - NMIN
-67 (    0,    0)     4 0x123B ( 4667 bytes)  - NHOUR
-68 (    0,    0)     4 0x123F ( 4671 bytes)  - NWDAY
-69 (    0,    0)     4 0x1243 ( 4675 bytes)  - M_ID
-70 (    0,    0)     4 0x1247 ( 4679 bytes)  - TIMERTEMP
-71 (    0,    0)     4 0x124B ( 4683 bytes)  - IJRK
-72 (    0,    0)     4 0x124F ( 4687 bytes)  - OJRK
-73 (    0,    0)     4 0x1253 ( 4691 bytes)  - MBA
-74 (    0,    0)     4 0x1257 ( 4695 bytes)  - MLEN
-75 (    0,    0)     4 0x125B ( 4699 bytes)  - EXPLEN
-76 (    0,    0)     4 0x125F ( 4703 bytes)  - FBWD
-77 (    0,    0)     4 0x1263 ( 4707 bytes)  - INHI
-78 (    0,    0)     4 0x1267 ( 4711 bytes)  - INLO
-79 (    0,    0)     4 0x126B ( 4715 bytes)  - INWD
-80 (    0,    0)     4 0x126F ( 4719 bytes)  - IHII
-81 (    0,    0)     4 0x1273 ( 4723 bytes)  - OUTWD
-82 (    0,    0)     4 0x1277 ( 4727 bytes)  - ABIOUT
-83 (    0,    0)     4 0x127B ( 4731 bytes)  - OCHG
-84 (    0,    0)     4 0x127F ( 4735 bytes)  - OUTLO
-85 (    0,    0)     4 0x1283 ( 4739 bytes)  - OUTHI
-86 (    0,    0)     4 0x1287 ( 4743 bytes)  - OMAX
-87 (    0,    0)     4 0x128B ( 4747 bytes)  - Y
-88 (    0,    0)     4 0x138F ( 5007 bytes)  - CRC
-89 (    0,    0)     4 0x1393 ( 5011 bytes)  - K
+42 (    3,    0)    16 0x11E7 ( 4583 bytes)  + THRE
+43 (    3,    0)    16 0x11F7 ( 4599 bytes)  + GW
+44 (    0,    0)     4 0x1207 ( 4615 bytes)  * BIT2B
+45 (    0,    0)     4 0x120B ( 4619 bytes)  - MBMAX
+46 (    0,    0)     4 0x120F ( 4623 bytes)  - MONMODE
+47 (    0,    0)     4 0x1213 ( 4627 bytes)  - _DTS_
+48 (    0,    0)     4 0x1217 ( 4631 bytes)  - OIN
+49 (    0,    0)     4 0x121B ( 4635 bytes)  - COMMFAILFELAY
+50 (    0,    0)     4 0x121F ( 4639 bytes)  - NFRAG
+51 (    0,    0)     4 0x1223 ( 4643 bytes)  - JJ
+52 (    0,    0)     4 0x1227 ( 4647 bytes)  - MBAX
+53 (    0,    0)     4 0x122B ( 4651 bytes)  - THYST
+54 (    0,    0)     4 0x122F ( 4655 bytes)  - THERMOINTERVAL
+55 (    0,    0)     4 0x1233 ( 4659 bytes)  - CHAN
+56 (    0,    0)     4 0x1237 ( 4663 bytes)  - AILEVEL
+57 (    0,    0)     4 0x123B ( 4667 bytes)  - KH
+58 (    0,    0)     4 0x123F ( 4671 bytes)  - KL
+59 (    0,    0)     4 0x1243 ( 4675 bytes)  - UK
+60 (    0,    0)     4 0x1247 ( 4679 bytes)  - POS
+61 (    0,    0)     4 0x124B ( 4683 bytes)  - MONTHNUMBER
+62 (    0,    0)     4 0x124F ( 4687 bytes)  - DAYOFMONTH
+63 (    0,    0)     4 0x1253 ( 4691 bytes)  - HOUROFDAY
+64 (    0,    0)     4 0x1257 ( 4695 bytes)  - WEEKDAY
+65 (    0,    0)     4 0x125B ( 4699 bytes)  - TIMEZONE
+66 (    0,    0)     4 0x125F ( 4703 bytes)  - NMIN
+67 (    0,    0)     4 0x1263 ( 4707 bytes)  - NHOUR
+68 (    0,    0)     4 0x1267 ( 4711 bytes)  - NWDAY
+69 (    0,    0)     4 0x126B ( 4715 bytes)  - M_ID
+70 (    0,    0)     4 0x126F ( 4719 bytes)  - TIMERTEMP
+71 (    0,    0)     4 0x1273 ( 4723 bytes)  - IJRK
+72 (    0,    0)     4 0x1277 ( 4727 bytes)  - OJRK
+73 (    0,    0)     4 0x127B ( 4731 bytes)  - MBA
+74 (    0,    0)     4 0x127F ( 4735 bytes)  - MLEN
+75 (    0,    0)     4 0x1283 ( 4739 bytes)  - EXPLEN
+76 (    0,    0)     4 0x1287 ( 4743 bytes)  - FBWD
+77 (    0,    0)     4 0x128B ( 4747 bytes)  - INHI
+78 (    0,    0)     4 0x128F ( 4751 bytes)  - INLO
+79 (    0,    0)     4 0x1293 ( 4755 bytes)  - INWD
+80 (    0,    0)     4 0x1297 ( 4759 bytes)  - IHII
+81 (    0,    0)     4 0x129B ( 4763 bytes)  - OUTWD
+82 (    0,    0)     4 0x129F ( 4767 bytes)  - ABIOUT
+83 (    0,    0)     4 0x12A3 ( 4771 bytes)  - OCHG
+84 (    0,    0)     4 0x12A7 ( 4775 bytes)  - OUTLO
+85 (    0,    0)     4 0x12AB ( 4779 bytes)  - OUTHI
+86 (    0,    0)     4 0x12AF ( 4783 bytes)  - OMAX
+87 (    0,    0)     4 0x12B3 ( 4787 bytes)  - Y
+88 (    0,    0)     4 0x13B7 ( 5047 bytes)  - CRC
+89 (    0,    0)     4 0x13BB ( 5051 bytes)  - K
 90 (    0,    0)     4 0xFFFF (   -1 bytes)  + NV11
 91 (    0,    0)     4 0xFFFB (   -5 bytes)  + NV12
 92 (    0,    0)     4 0xFFF7 (   -9 bytes)  + NV13
 93 (    0,    0)     4 0xFFF3 (  -13 bytes)  + NV14
 94 (    0,    0)     4 0xFFEF (  -17 bytes)  + NV15
-95 (    0,    0)     4 0x1397 ( 5015 bytes)  - TMP
-96 (    0,    0)     4 0x139B ( 5019 bytes)  - OMIN
-97 (    0,    0)     4 0x139F ( 5023 bytes)  - EXIT
-98 (    0,    0)     4 0x13A3 ( 5027 bytes)  - _ERR_
-99 (    0,    0)     4 0x13A7 ( 5031 bytes)  - _ERL_
-100 (    0,    0)     4 0x13AB ( 5035 bytes)  - NUM
-101 (    0,    0)     4 0x13AF ( 5039 bytes)  - JK
-102 (    0,    0)     4 0x13B3 ( 5043 bytes)  - D_ID
-103 (    0,    0)     4 0x13B7 ( 5047 bytes)  - TMPSTATUS
+95 (    0,    0)     4 0x13BF ( 5055 bytes)  - TMP
+96 (    0,    0)     4 0x13C3 ( 5059 bytes)  - OMIN
+97 (    0,    0)     4 0x13C7 ( 5063 bytes)  - EXIT
+98 (    0,    0)     4 0x13CB ( 5067 bytes)  - _ERR_
+99 (    0,    0)     4 0x13CF ( 5071 bytes)  - _ERL_
+100 (    0,    0)     4 0x13D3 ( 5075 bytes)  - NUM
+101 (    0,    0)     4 0x13D7 ( 5079 bytes)  - JK
+102 (    0,    0)     4 0x13DB ( 5083 bytes)  - D_ID
+103 (    0,    0)     4 0x13DF ( 5087 bytes)  - TMPSTATUS
 
 Number of Integer Variables:103
 
@@ -1654,14 +1662,18 @@ Table of already allocated string variables:
 38   31 0x0CD8 ( 3288 bytes)  + USPA$
 39  100 0x0EB7 ( 3767 bytes)  + MBS$
 40  200 0x0F1B ( 3867 bytes)  + MBSL$
-41  256 0x128F ( 4751 bytes)  - TMP$
+41   10 0x11BF ( 4543 bytes)  + ZONE1NAME$
+42   10 0x11C9 ( 4553 bytes)  + ZONE2NAME$
+43   10 0x11D3 ( 4563 bytes)  + ZONE3NAME$
+44   10 0x11DD ( 4573 bytes)  + ZONE4NAME$
+45  256 0x12B7 ( 4791 bytes)  - TMP$
 
-Number of String Variables:41
+Number of String Variables:45
 
 Warning: temporary string size was increased up to 1024 bytes!
 
 Final memory allocation map (area sizes) during run-time for target barionet100:
-- Data area for allocated variables: 0x13BB ( 5051 bytes)
-- Data area for temporary variables: 0x444B (17483 bytes)
-- Tables and tokenized code area   : 0x87FA (34810 bytes)
-Program start offet=0x558
+- Data area for allocated variables: 0x13E3 ( 5091 bytes)
+- Data area for temporary variables: 0x40A5 (16549 bytes)
+- Tables and tokenized code area   : 0x8B78 (35704 bytes)
+Program start offet=0x578

@@ -1,5 +1,5 @@
   dim APVER$(30) ' application version, hetkel ainult bn100 jaoks!
- APVER$="starman_jahutus 14.06.2013" ' mac 00204AB18657 starmani vent ruumis ukse taga lisakilbis
+ APVER$="starman_jahutus 02.08.2013" ' mac 00204AB18657 starmani vent ruumis ukse taga lisakilbis
  syslog APVER$,1
  
  ' 06.06.2013 fututec2 alusel
@@ -8,6 +8,7 @@
  ' 14.06.2013 silumine, mon udp kaima ajutiselt
  ' 05.07/2013 udp passive chk messages added
  ' 07072013 teeme branchi 20130707, et see seis salvestada
+ ' 02.08.2013 nupuvajutustega seoses led ja cooler kohene lyliotusvajaduse kontroll
  
  ' TODO
  ' lisada in arvestamine ja viimase teate kordusteade vajadusel
@@ -148,6 +149,11 @@
  dim tsetadd 'globaalne lisa 10*degC
  dim tsethilen ' sekundid kaua kestab max tostetud temp
  
+ dim zone1name$(10)
+ dim zone2name$(10)
+ dim zone3name$(10)
+ dim zone4name$(10)
+ 
  dim thre(3) 'dekodeerimisnivood (virtual)kanalitele 1,2,3,4 qai2 ja ai4 alusel
  
  dim gw(3) 'def gw baidid
@@ -253,7 +259,19 @@
  thre(3)=550
  syslog "init: thre() "+str$(thre(0))+" "+str$(thre(1))+" "+str$(thre(2))+" "+str$(thre(3)),4 ' enc levels
  
-  
+ if Monmode = 2 then
+    '[1373047637] PROCESS_SERVICE_CHECK_RESULT;00204ADEADE5;_AegStardist;0;Kontrolleri alglaadimisest on aega: 557.5h|_AegStardist=557.50h
+    ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Uptime;"
+    if up(0)<3600 then
+        ms$=ms$+"1"
+    else
+        ms$=ms$+"0"
+    endif
+    ms$=ms$+";Time from restart: "+str$(up(0))+"s|Uptime="+str$(up(0))+"s\n"
+    gosub 270
+endif
+            
+            
  '  #######################################################################
  '  ################# BASE ####### MAIN: Main program loop ##############
  '  #######################################################################
@@ -279,7 +297,6 @@
  gosub 150 ' count uptime
  
  
- if up(0)%3600 = 0 then ms$=ms$+"ver:1,"+APVER$+"\nAVV:"+APVER$+"\nAVS:0\n" ' igaks juhuks iga tund uuesti mis versioon meil on...
  
  ' ms$ saatmine voi siis kordus viimasele datagrammile kui 7 s jooksul ack pole tulnud. ka ms$ saatmine kordab eelmist, kui vaja!
   if ms$<>"" then 

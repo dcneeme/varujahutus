@@ -99,11 +99,16 @@
  
  for zone=0 to 3 ' tsoonide seadistused
     jj=738+zone:tsensno(zone)=MIDGET(set$,jj-511,1):gosub 21010 'anduri jrk nr 1..4
-    jj=742+2*zone:tsetnorm(zone)=MIDGET(set$,jj-511,1):gosub 21020 ' etteandetemp  ' kuni 749
+    jj=742+2*zone:tsetnorm(zone)=MIDGET(set$,jj-511,2):gosub 21020 ' etteandetemp  ' kuni 749
     jj=754+2*zone:tmax(zone)=MIDGET(set$,jj-511,2):gosub 21020 ' max limit W
     syslog "tsensor for zone "+str$(zone+1)+" is "+str$(tsensno(zone))+", tset "+str$(tsetnorm(zone))+", tmax "+str$(tmax(zone)),4
  next zone
-  
+jj=628:zone1name$=mid$(set$,jj-511,10) 'max 9 ch!
+jj=638:zone2name$=mid$(set$,jj-511,10)
+jj=648:zone3name$=mid$(set$,jj-511,10)
+jj=658:zone4name$=mid$(set$,jj-511,10)
+syslog "zonenames "+zone1name$+", "+zone2name$+", "+zone3name$+", "+zone4name$,4
+ 
  jj=750:thyst=MIDGET(set$,jj-511,1):gosub 21010 ' ddegC
  jj=751:tsetadd=MIDGET(set$,jj-511,1):gosub 21010  ' hi temp increase ddegC
  jj=752:tsethilen=60*MIDGET(set$,jj-511,1):gosub 21010  'max hitime s

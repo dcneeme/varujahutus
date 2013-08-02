@@ -71,7 +71,12 @@
             if MonMode = 2 then 'nagios passive chk
                 if tactual(zone)>tmax(zone) then tmpstatus=2 else if tactual(zone) = 0 then tmpstatus=1 else tmpstatus=0
                 ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";TempZone["+str$(zone+1)+"];"+str$(tmpstatus)
-                ms$=ms$+";Temperature in zone "+str$(zone+1)+": "+sprintf$("%0.1F",tactual(zone))+"degC"
+                ms$=ms$+";Temperature in zone "+str$(zone+1)+" ("
+                if zone = 0 then ms$=ms$+zone1name$
+                if zone = 1 then ms$=ms$+zone2name$
+                if zone = 2 then ms$=ms$+zone3name$
+                if zone = 3 then ms$=ms$+zone4name$
+                ms$=ms$+"): "+sprintf$("%0.1F",tactual(zone))+"degC"
                 ms$=ms$+"|Setpoint="+sprintf$("%0.1F",tset(zone))+"degC Actual="+sprintf$("%0.1F",tactual(zone))+"degC Warning="+sprintf$("%0.1F",tmax(zone))+"degC\n"
                 gosub 270
             endif
@@ -106,7 +111,7 @@
             
             if and(zonehi(zone) = 1, up(0)>zonehits(zone)+tsethilen) then
                 zonehi(zone)=0
-                syslog "appmain: zonehi("+str$(zone+1)+") end due to passed tsethilen of "+str$(tsethilen)+" s",4
+                syslog "appmain: zonehi("+str$(zone)+") end due to passed tsethilen of "+str$(tsethilen)+" s",4
             endif
             
         next zone
@@ -119,17 +124,28 @@
         if MonMode = 1 then 
             ms$=ms$+"RCW:"+str$(cooling(0))+" "+str$(cooling(1))+" "+str$(cooling(2))+" "+str$(cooling(3))+"\nRCS:" ' run cooler signals
             ms$=ms$+str$(tmpstatus)+"\n"   
+            gosub 270
         endif
         if MonMode = 2 then 
             ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";CoolingActivity;"+str$(tmpstatus)
-            ms$=ms$+";Active cooling in zones (1..4): "+str$(cooling(0))+" "+str$(cooling(1))+" "+str$(cooling(2))+" "+str$(cooling(3))
+            if tmpstatus>0 then 'keegi jahutab
+                ms$=ms$+";Cooling currently active cooling in zones (1..4): "+str$(cooling(0))+" "+str$(cooling(1))+" "+str$(cooling(2))+" "+str$(cooling(3))
+            else
+                ms$=ms$+";Currently no cooling activity in any zone"
+            endif
             ms$=ms$+"|Main="+str$(cooling(0))+" OpticsB="+str$(cooling(1))+" OpticsA="+str$(cooling(2))+" Servers="+str$(cooling(3))+"\n"
+            gosub 270
+            
+            tmpstatus=or(zonehi(0), zonehi(1), zonehi(2), zonehi(3))
+            ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";SetpointShift;"+str$(tmpstatus)
+            if tmpstatus>0 then 'keegi jahutab 'nihe
+                ms$=ms$+";Temperature setpoint increased in zones (1..4): "+str$(cooling(0))+" "+str$(cooling(1))+" "+str$(cooling(2))+" "+str$(cooling(3))
+            else
+                ms$=ms$+";Temperature setpoints normal in all zones"
+            endif
+            ms$=ms$+"|Main="+str$(cooling(0))+" OpticsB="+str$(cooling(1))+" OpticsA="+str$(cooling(2))+" Servers="+str$(cooling(3))+"\n"
+            gosub 270
         endif
-        '[1373048188] PROCESS_SERVICE_CHECK_RESULT;00204AB18657;JahutiAktiivsused;1;Jahutite olekud tsoonides 1..4: 1.0 1.0 0.0 1.0|Peajaam=1.00 OptikaTagumine=1.00 OptikaEsimene=0.00 Serverid=1.00
-        
-        'if or(cooling(0), cooling(1), cooling(2), cooling(3)) then ms$=ms$+"1\n" else ms$=ms$+"0\n"    
-        
-        if ms$<>"" then gosub 270 'saadame minema need
                     
     endif
     
@@ -156,7 +172,7 @@
             endif
             if Monmode = 2 then
                 '[1373047637] PROCESS_SERVICE_CHECK_RESULT;00204ADEADE5;_AegStardist;0;Kontrolleri alglaadimisest on aega: 557.5h|_AegStardist=557.50h
-                ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Uptime;0;Time from restart: "+str$(up(0)/3600)+"h|Uptime="+str$(up(0)/3600)+"h\n"
+                ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Uptime;0;Time from restart: "+str$(up(0))+"s|Uptime="+str$(up(0))+"s\n"
             endif
             if ms$<>"" then gosub 270 'saadame minema need
             
