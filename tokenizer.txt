@@ -1,4 +1,4 @@
-BARIX BCL Tokenizer, V1.5, 2013/08/10 13:36:54
+BARIX BCL Tokenizer, V1.5, 2013/08/13 23:06:16
 
 Preprocessor: Start
 
@@ -1290,8 +1290,8 @@ Label=25400,offset=0x6f1f
 Label=25420,offset=0x6f22
 Label=31000,offset=0x73de
 Warning: this name is used by default without DIM declaration (TMPSTATUS)
-Label=32000,offset=0x7e88
-Code tokenized, size=0x841f
+Label=32000,offset=0x7ed3
+Code tokenized, size=0x846a
 
 Tokenization: Third pass for label offsets used in GOTO/GOSUB/RETURN
     Statement Label --> Offset in tokenized code
@@ -1310,7 +1310,7 @@ Tokenization: Third pass for label offsets used in GOTO/GOSUB/RETURN
         GOSUB 150   --> 0x2EEC (12012 bytes)
         GOSUB 270   --> 0x3155 (12629 bytes)
         GOSUB 270   --> 0x3155 (12629 bytes)
-        GOSUB 32000 --> 0x7E88 (32392 bytes)
+        GOSUB 32000 --> 0x7ED3 (32467 bytes)
         GOSUB 270   --> 0x3155 (12629 bytes)
         GOSUB 270   --> 0x3155 (12629 bytes)
         GOSUB 142   --> 0x2123 ( 8483 bytes)
@@ -1508,7 +1508,7 @@ Updating jump offsets in IF...THEN...ELSE...ENDIF
 
 Tokenization: Finish
 
-Memory allocation after tokenization 33823:, 004DA663 004D2244,start=004D0020
+Memory allocation after tokenization 33898:, 004DA6AE 004D2244,start=004D0020
 
 Memory allocation after tokenization:
 
@@ -1680,6 +1680,6 @@ Warning: temporary string size was increased up to 1024 bytes!
 
 Final memory allocation map (area sizes) during run-time for target barionet100:
 - Data area for allocated variables: 0x140B ( 5131 bytes)
-- Data area for temporary variables: 0x3EE1 (16097 bytes)
-- Tables and tokenized code area   : 0x8D14 (36116 bytes)
+- Data area for temporary variables: 0x3E96 (16022 bytes)
+- Tables and tokenized code area   : 0x8D5F (36191 bytes)
 Program start offet=0x58c
