@@ -1,5 +1,5 @@
   dim APVER$(30) ' application version, hetkel ainult bn100 jaoks!
- APVER$="starman_jahutus 10.08.2013" ' mac 00204AB18657 starmani vent ruumis ukse taga lisakilbis
+ APVER$="starman_jahutus 11.11.2013" ' mac 00204AB18657 starmani vent ruumis ukse taga lisakilbis
  syslog APVER$,1
  
  ' 06.06.2013 fututec2 alusel
@@ -10,6 +10,7 @@
  ' 07072013 teeme branchi 20130707, et see seis salvestada
  ' 02.08.2013 nupuvajutustega seoses led ja cooler kohene lylitusvajaduse kontroll. sub 31000 eraldamine ja nupuvajutusel kaivitamine.
  ' 10.08.2013 temp errors filtered up to 5 consecutive reading, then 0
+ ' 11.11.2013 kaks termoandurit juurde ja optrika tsoonid 2 ja 3 omavahel kokku nupuvajutused
  
  ' TODO
  ' lisada in arvestamine ja viimase teate kordusteade vajadusel
