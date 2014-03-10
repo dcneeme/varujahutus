@@ -95,9 +95,11 @@
 	syslog "io "+str$(i)+" input count "+str$(icnt(i))+", output count "+str$(ocnt(i)),4
  next i
  
-  
+ for i=0 to 3 ' virtuaaltemperatuuriandurite liikmed 
+    jj=734+i:virtmem(i)=MIDGET(set$,jj-511,1):gosub 21010:syslog "virtual temp sensor "+str$(i)+" is 60"+str$(virtmem(i)),4
+ next i
  
- for zone=0 to 3 ' tsoonide seadistused
+ for zone=0 to 3 ' tsoonide seadistused 4 tk
     jj=738+zone:tsensno(zone)=MIDGET(set$,jj-511,1):gosub 21010 'anduri jrk nr 1..4
     jj=742+2*zone:tsetnorm(zone)=MIDGET(set$,jj-511,2):gosub 21020 ' etteandetemp  ' kuni 749
     jj=754+2*zone:tmax(zone)=MIDGET(set$,jj-511,2):gosub 21020 ' max limit W
@@ -124,7 +126,7 @@ syslog "zonenames "+zone1name$+", "+zone2name$+", "+zone3name$+", "+zone4name$,4
  
  delay 1000
  
- for i=1 to icnt(1)+icnt(2)+icnt(3) 'modbus
+ for i=1 to icnt(1)+icnt(2) 'modbus laiendusi max 2
 	chan=10+i 'alates 11
 	ChanType[chan]=1 'di alati
 	syslog "rd_stp: mb chan "+str$(chan)+" chantype="+str$(ChanType[chan]),4 

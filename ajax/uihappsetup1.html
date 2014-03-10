@@ -5,13 +5,15 @@
 This application monitors temperatures in four zones and controls cooling devices based on the setup and actual values comparision. The application can be further developed to add new properties if needed.
 <br><br>
 
-<h4>Channel definitions</h4>
-The channels must be configured using various threshold values on the application setup page. All temperatures are entered in units as tenth of Centigrade degree. Once the actual temperature in a zone gets higher than the threshold value, cooling in this zone will be switched on. There must be some hysteresis between switch on and off, to avoid frequent switching. Once the actual zone temperature reaches Warning threshold, the monitored "service" status turns from, normal to warning, thus enabling alarm notification generation by the monitoring system.
+<h4>Zone and sensor definitions</h4>
+The zones must be configured using the threshold and hysteresis values and by selecting the temperature sensors on the application setup page on the left. All temperatures are entered in units as tenth of Centigrade degree. Once the actual temperature in a zone gets higher than the threshold value, cooling in this zone will be switched on. There must be some hysteresis between switch on and off, to avoid frequent switching. Once the actual zone temperature reaches Warning threshold, the monitored "service" status turns from, normal to warning, thus enabling alarm notification generation by the monitoring system.
 <br>
 
 <br>
 <h4>Thermosensors</h4>
-The application supports 4 Dallas DS18B20 temperature sensors on the 1wire bus (J5). The sensors are listed in an order based on their ID. If needed, the ID values can be checked on Settings, TEMP tab.
+The application supports 6 Dallas DS18B20 temperature sensors on the 1wire bus (J5). The sensors are listed in an order based on their ID. If needed, the sensor ID and measured values can be checked on Settings, TEMP tab (refresh the page to see the changes!).
+<br>
+Zones 2 and 3 are in the same room (Optics), where 4 thermosensors are installed in total. These sensors can be paired to form virtual sensors to supply higher temperature from the pair member readings as the actual zone temperature.
 <br>
 
 

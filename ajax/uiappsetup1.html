@@ -30,13 +30,15 @@
 		<tr>
 			<td nowrap>Zone 1</td>
 			<td>
-	            <select size="1" name="B738" style="width: 50px">
+	            <select size="1" name="B738" style="width: 100px">
 					<option value=1&LSetup(3,"%s",738,B,1," selected");> 1 </option>
 					<option value=2&LSetup(3,"%s",738,B,2," selected");> 2 </option>
 					<option value=3&LSetup(3,"%s",738,B,3," selected");> 3 </option>
 					<option value=4&LSetup(3,"%s",738,B,4," selected");> 4 </option>
                     <option value=5&LSetup(3,"%s",738,B,5," selected");> 5 </option>
                     <option value=6&LSetup(3,"%s",738,B,6," selected");> 6 </option>
+                    <option value=7&LSetup(3,"%s",738,B,7," selected");> virtual 1</option>
+                    <option value=8&LSetup(3,"%s",738,B,8," selected");> virtual 2</option>
 				</select>
 			</td>
 			<td>&LBAS(1,"%u",tactual(0));</td>
@@ -52,13 +54,15 @@
 		<tr>
 			<td nowrap>Zone 2</td>
 			<td>
-	            <select size="1" name="B739" style="width: 50px">
+	            <select size="1" name="B739" style="width: 100px">
 					<option value=1&LSetup(3,"%s",739,B,1," selected");> 1 </option>
 					<option value=2&LSetup(3,"%s",739,B,2," selected");> 2 </option>
 					<option value=3&LSetup(3,"%s",739,B,3," selected");> 3 </option>
 					<option value=4&LSetup(3,"%s",739,B,4," selected");> 4 </option>
                     <option value=5&LSetup(3,"%s",739,B,5," selected");> 5 </option>
                     <option value=6&LSetup(3,"%s",739,B,6," selected");> 6 </option>
+                    <option value=7&LSetup(3,"%s",739,B,7," selected");> virtual 1</option>
+                    <option value=8&LSetup(3,"%s",739,B,8," selected");> virtual 2</option>
 				</select>
 			</td>
 			<td>&LBAS(1,"%u",tactual(1));</td>			
@@ -75,13 +79,15 @@
         <tr>
 			<td nowrap>Zone 3</td>
 			<td>
-	            <select size="1" name="B740" style="width: 50px">
+	            <select size="1" name="B740" style="width: 100px">
 					<option value=1&LSetup(3,"%s",740,B,1," selected");> 1 </option>
 					<option value=2&LSetup(3,"%s",740,B,2," selected");> 2 </option>
 					<option value=3&LSetup(3,"%s",740,B,3," selected");> 3 </option>
 					<option value=4&LSetup(3,"%s",740,B,4," selected");> 4 </option>
                     <option value=5&LSetup(3,"%s",740,B,5," selected");> 5 </option>
                     <option value=6&LSetup(3,"%s",740,B,6," selected");> 6 </option>
+                    <option value=7&LSetup(3,"%s",740,B,7," selected");> virtual 1</option>
+                    <option value=8&LSetup(3,"%s",740,B,8," selected");> virtual 2</option>
 				</select>
 			</td>
             <td>&LBAS(1,"%u",tactual(2));</td>
@@ -98,13 +104,15 @@
         <tr>
 			<td nowrap>Zone 4</td>
 			<td>
-	            <select size="1" name="B741" style="width: 50px">
+	            <select size="1" name="B741" style="width: 100px">
 					<option value=1&LSetup(3,"%s",741,B,1," selected");> 1 </option>
 					<option value=2&LSetup(3,"%s",741,B,2," selected");> 2 </option>
 					<option value=3&LSetup(3,"%s",741,B,3," selected");> 3 </option>
 					<option value=4&LSetup(3,"%s",741,B,4," selected");> 4 </option>
                     <option value=5&LSetup(3,"%s",741,B,5," selected");> 5 </option>
                     <option value=6&LSetup(3,"%s",741,B,6," selected");> 6 </option>
+                    <option value=7&LSetup(3,"%s",741,B,7," selected");> virtual 1</option>
+                    <option value=8&LSetup(3,"%s",741,B,8," selected");> virtual 2</option>
 				</select>
 			</td>
                 <td>&LBAS(1,"%u",tactual(3));</td>
@@ -117,26 +125,78 @@
 			
 			<td align="right"><input name="S658" size="10" maxlength="9" value='&LSetup(1,"%s",658,S);' /></td>
 		</tr>
+    </table>
         
-        </table>
-        
-        <table>
+    <table>
         <tr bgcolor=#FFFF00>
+			<td nowrap>Virtual sensor 1 members</td>
+			<td>
+	            <select size="1" name="B734" style="width: 50px">
+					<option value=1&LSetup(3,"%s",734,B,1," selected");> 1 </option>
+					<option value=2&LSetup(3,"%s",734,B,2," selected");> 2 </option>
+					<option value=3&LSetup(3,"%s",734,B,3," selected");> 3 </option>
+					<option value=4&LSetup(3,"%s",734,B,4," selected");> 4 </option>
+                    <option value=5&LSetup(3,"%s",734,B,5," selected");> 5 </option>
+                    <option value=6&LSetup(3,"%s",734,B,6," selected");> 6 </option>
+				</select>
+			</td>
+            <td> &LBAS(1,"%u",tvirt1(1)); ddegC &nbsp;</td>
+            <td>
+	            <select size="1" name="B735" style="width: 50px">
+					<option value=1&LSetup(3,"%s",735,B,1," selected");> 1 </option>
+					<option value=2&LSetup(3,"%s",735,B,2," selected");> 2 </option>
+					<option value=3&LSetup(3,"%s",735,B,3," selected");> 3 </option>
+					<option value=4&LSetup(3,"%s",735,B,4," selected");> 4 </option>
+                    <option value=5&LSetup(3,"%s",735,B,5," selected");> 5 </option>
+                    <option value=6&LSetup(3,"%s",735,B,6," selected");> 6 </option>
+				</select>
+			</td>
+            <td> &LBAS(1,"%u",tvirt1(2)); ddegC</td>
+		</tr>
+        <tr bgcolor=#FFFF00>
+			<td nowrap>Virtual sensor 2 members</td>
+			<td>
+	            <select size="1" name="B736" style="width: 50px">
+					<option value=1&LSetup(3,"%s",736,B,1," selected");> 1 </option>
+					<option value=2&LSetup(3,"%s",736,B,2," selected");> 2 </option>
+					<option value=3&LSetup(3,"%s",736,B,3," selected");> 3 </option>
+					<option value=4&LSetup(3,"%s",736,B,4," selected");> 4 </option>
+                    <option value=5&LSetup(3,"%s",736,B,5," selected");> 5 </option>
+                    <option value=6&LSetup(3,"%s",736,B,6," selected");> 6 </option>
+				</select>
+			</td>
+            <td> &LBAS(1,"%u",tvirt2(1)); ddegC &nbsp;</td>
+            <td>
+	            <select size="1" name="B737" style="width: 50px">
+					<option value=1&LSetup(3,"%s",737,B,1," selected");> 1 </option>
+					<option value=2&LSetup(3,"%s",737,B,2," selected");> 2 </option>
+					<option value=3&LSetup(3,"%s",737,B,3," selected");> 3 </option>
+					<option value=4&LSetup(3,"%s",737,B,4," selected");> 4 </option>
+                    <option value=5&LSetup(3,"%s",737,B,5," selected");> 5 </option>
+                    <option value=6&LSetup(3,"%s",737,B,6," selected");> 6 </option>
+				</select>
+			</td>
+            <td> &LBAS(1,"%u",tvirt2(2)); ddegC</td>
+		</tr>
+    </table>
+    
+    <table>
+        <tr>
 			<td>Global temperature hysteresis ddegC</td>
 			<td nowrap align="left">
                 <input name="B750" size="3" maxlength="3" value='&LSetup(1,"%u",750);'  onChange="ByteCheck(this)" />
 			</td>
-        </tr><tr bgcolor=#FFFF00>
+        </tr><tr>
             <td>Global temperature jump ddegC</td>
 			<td nowrap align="left">
                 <input name="B751" size="3" maxlength="3" value='&LSetup(1,"%u",751);'  onChange="ByteCheck(this)" />
 			</td>
-        </tr><tr bgcolor=#FFFF00>
+        </tr><tr>
             <td nowrap>Max time for increased temperature minutes</td>
 			<td nowrap align="left">
                 <input name="B752" size="3" maxlength="3" value='&LSetup(1,"%u",752);'  onChange="ByteCheck(this)" />
 			</td>
-        </tr><tr bgcolor=#FFFF00>
+        </tr><tr>
             <td nowrap>Temperature checking and cooling control period s</td>
 			<td nowrap align="left">
                 <input name="B753" size="3" maxlength="4" value='&LSetup(1,"%u",753);'  onChange="ByteCheck(this)" />
@@ -183,21 +243,6 @@
 				<input name="S821" size="3" maxlength="4" value='&LSetup(1,"%s",821,S);' />
 			</td>
 		</tr>
-		<tr>
-			<td>IO-3&nbsp;&nbsp;
-				<input name="B719" size="3" maxlength="3" value='&LSetup(1,"%u",719);' onChange="ByteCheck(this)"/> - 
-				<input name="B722" size="3" maxlength="3" value='&LSetup(1,"%u",722);' onChange="ByteCheck(this)"/> &nbsp;&nbsp;
-			</td>
-			<td colspan="2">
-				<input name="B725" size="3" maxlength="3" value='&LSetup(1,"%u",725);' onChange="ByteCheck(this)"/>
-				<input name="B728" size="3" maxlength="3" value='&LSetup(1,"%u",728);' onChange="ByteCheck(this)"/>&nbsp;&nbsp;&LBAS(1,"%u",icnt(3)); &nbsp;&nbsp;&nbsp;&nbsp;
-				<input name="B731" size="3" maxlength="3" value='&LSetup(1,"%u",731);' onChange="ByteCheck(this)"/>
-				<input name="B734" size="3" maxlength="3" value='&LSetup(1,"%u",734);' onChange="ByteCheck(this)"/>&nbsp;&nbsp;&LBAS(1,"%u",ocnt(3));&nbsp;&nbsp;
-				<input name="S826" size="3" maxlength="4" value='&LSetup(1,"%s",826,S);' />
-			</td>
-		</tr>
-		
-		
 		
 		<tr><td colspan="3"><hr></td></tr>
 		

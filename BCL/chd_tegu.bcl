@@ -142,7 +142,7 @@
 
 
 	
-	for chan=11 to 10+icnt(1)+icnt(2)+icnt(3) ' modbus sisendid
+	for chan=11 to 10+icnt(1)+icnt(2) ' modbus sisendid
 		gosub 5250 'leiame kanalinime
 		
 		if or(ChanType[chan] =4, ChanType[chan] =5) then ' counter raw or unit

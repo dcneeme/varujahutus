@@ -55,6 +55,14 @@
     
     
     if up(15)+ThermoInterval < up(0) then ' kaes on aeg temperatuuri moota ja ehk midagi ka lylitada
+        tvirt1(1)=iostate(600+virtmem(0))*5/8
+        tvirt1(2)=iostate(600+virtmem(1))*5/8
+        tvirt2(1)=iostate(600+virtmem(2))*5/8
+        tvirt2(2)=iostate(600+virtmem(3))*5/8
+        tvirt1(0)=tvirt1(1):if tvirt1(2)>tvirt1(0) then tvirt1(0)=tvirt1(2) 'maksimumi leidmine virt 1
+        tvirt2(0)=tvirt2(1):if tvirt2(2)>tvirt2(0) then tvirt2(0)=tvirt2(2) 'maksimumi leidmine virt 2
+        syslog "appmain: tvirt1 members 0 1 2 are "+str$(tvirt1(0))+" "+str$(tvirt1(1))+" "+str$(tvirt1(2))+" ",4 'debug
+        syslog "appmain: tvirt2 members 0 1 2 are "+str$(tvirt2(0))+" "+str$(tvirt2(1))+" "+str$(tvirt2(2))+" ",4 'debug
         gosub 31000 ' siin toimub tegelik lylitamine nii led kui relee. teavitab ka. seda kaivita ka nupu oleku muutusel!
     endif
     

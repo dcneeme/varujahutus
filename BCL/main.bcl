@@ -126,13 +126,13 @@
  dim imask(4) 'laiendustele
  dim ichg(4) 'muudatuste grupisumma ichg(0), mask ichg(1..mbax)
   
- dim omask(4)
- dim eser1(4)
- dim eser2(4)
- dim icnt(4)
- dim ocnt(4)
- dim pref(4)
- dim suff(4)
+ dim omask(2)
+ dim eser1(2)
+ dim eser2(2)
+ dim icnt(2)
+ dim ocnt(2)
+ dim pref(2) 'vist ei kasuta
+ dim suff(2)
  dim mb(10) ' baidid saatmiseks modbusile ja lopus mingid tunnused (9,10)
  dim adata(8) ' siin vist ei kasutagi, x8 analoogsisendid
  dim tmask(8) ' x8 temperatuurisisendite mask, autodiscovery during power on
@@ -141,10 +141,14 @@
  
  dim tset(3) 'etteandetemp 10*degC
  dim tactual(3) 'tegelik temp tsoonides
+ dim tvirt1(2) ' virt temperatuurid, max ja liikmete data 1,2
+ dim tvirt2(2) ' virt temperatuurid, max ja liikmed 1,2
+ dim virtmem(3) 'virt11, virt12, virt21, virt22 aadressid termoanduri aadressidena 600+adr
+ 
  dim terror(3) 'error counter
  dim tactual_last(3) 'previous value to be used if error between 1 to 5. 
  dim tmax(3) ' piirtemperatuur haire tegemiseks
- dim tsensno(3) 'anduri jrk nr tsoonidele
+ dim tsensno(5) 'anduri jrk nr tsoonidele, 6 andurit, neist 4 tsoonis 2 ja 3 ehk optika
  dim tsetnorm(3) ' igale tsoonile individuaalne
  dim zonehi(3) 'tostetud temp olek
  dim zonehits(3) 'zonehi algus, tagastub tsethilen alusel
