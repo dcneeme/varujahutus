@@ -66,7 +66,7 @@
             if len(mval$)>ukk then mval$=mid$(mval$,ukk+1) ' eraldajast kuni lopuni
             
         next uku
-        ms$=ms$+"UTW:"+sprintf$("%lu",traffic(0))+" "+sprintf$("%lu",traffic(1))+" "+sprintf$("%lu",traffic(2))+" "+sprintf$("%lu",traffic(3))+" "+sprintf$("%lu",traffic(4))+"\n" 'vastame
+        ms1$=ms1$+"UTW:"+sprintf$("%lu",traffic(0))+" "+sprintf$("%lu",traffic(1))+" "+sprintf$("%lu",traffic(2))+" "+sprintf$("%lu",traffic(3))+" "+sprintf$("%lu",traffic(4))+"\n" 'vastame
     endif
 
     mreg$="cmd":gosub 13000
@@ -74,7 +74,7 @@
 		if mval$="REBOOT" then mTee$="R" ' korraga mitu cmd ei saa tulla, newstate unique index!
 		if mval$="VARLIST" then mTee$="V" ' listime seadistuse 
 		syslog "sub 142: received cmd "+mval$,3
-		ms$=ms$+mreg$+":"+mval$+"\n" ' tagastame saadud kasu, et pidevalt saatma ei jaaks
+		ms1$=ms1$+mreg$+":"+mval$+"\n" ' tagastame saadud kasu, et pidevalt saatma ei jaaks
 		if mid$(mreg$,1,6)="update" then 
 			msd$="direct update not supported, use rescue mode for bn100"
 			syslog "sub 142: direct update not supported, use rescue mode for bn100",4
@@ -91,7 +91,7 @@
     else    
         mTee$="":syslog "sub 142end: got empty register list from sub 11000:"+list$,5
     endif
-    if ms$<>"" then gosub 270 ' saadame mon
+    if ms1$<>"" then gosub 270 ' saadame mon
     
   return
 

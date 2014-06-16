@@ -26,7 +26,7 @@
 	    syslog "sub 1000: regular modbus communication for mba "+str$(mba)+" mbsta "+str$(mbsta(mba)),5
 		if and(mbsta(mba)<>0, SYSTIME>mbts(mba)+1000) then 
 			mbsta(mba)=2
-			ms$="E"+str$(mba)+"S:"+str$(mbsta(mba))+"\n":gosub 270 'saadame kohe ara, enne kui paraneb
+			ms1$="E"+str$(mba)+"S:"+str$(mbsta(mba))+"\n":gosub 270 'saadame kohe ara, enne kui paraneb
 			gosub 1800:delay 100 'et oleks iseparanev kui mba ei vasta yle 1 s
 		endif
 	   
@@ -199,10 +199,10 @@
 	1020 	
     
 		if mbsta(mba)<>mbsta(0) then 'toimus muutus
-			ms$=ms$+"E"+str$(mba)+"S:"+str$(mbsta(mba))+"\n"
-			if mbsta(mba) = 0 then ms$=ms$+"\nmsd:mba "+str$(mba)+" problem cleared\n":syslog "mba "+str$(mba)+" problem cleared",4
-			if mbsta(mba) = 1 then ms$=ms$+"\nmsd:crc error, mba "+str$(mba)+"\n":syslog "sub 1000: crc error, mba "+str$(mba),4
-			if mbsta(mba) = 2 then ms$=ms$+"\nmsd:no response from mba "+str$(mba)+"\n":syslog "no response from mba "+str$(mba),4			
+			ms1$=ms1$+"E"+str$(mba)+"S:"+str$(mbsta(mba))+"\n"
+			if mbsta(mba) = 0 then ms1$=ms1$+"\nmsd:mba "+str$(mba)+" problem cleared\n":syslog "mba "+str$(mba)+" problem cleared",4
+			if mbsta(mba) = 1 then ms1$=ms1$+"\nmsd:crc error, mba "+str$(mba)+"\n":syslog "sub 1000: crc error, mba "+str$(mba),4
+			if mbsta(mba) = 2 then ms1$=ms1$+"\nmsd:no response from mba "+str$(mba)+"\n":syslog "no response from mba "+str$(mba),4			
 			gosub 109
 		endif
 	1022 'siia jargmise mba jaoks	

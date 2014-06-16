@@ -2,7 +2,7 @@
 
  for jj=0 to 7
 	syslog "sub 112: HW id_"+str$(60000+jj)+" "+str$(iostate(60000+jj)),4
-	ms$=ms$+"HW"+str$(jj)+":"+str$(iostate(60000+jj))+"\n":gosub 109 ' monitooringusse ka
+	ms1$=ms1$+"HW"+str$(jj)+":"+str$(iostate(60000+jj))+"\n":gosub 109 ' monitooringusse ka
  next jj
    
  return

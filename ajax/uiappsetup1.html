@@ -249,34 +249,37 @@
 		
 		
 		<tr bgcolor="#eeeeee">
-		    <td>Monitoring server 1 IP:port</td>    
+		    <td>UniSCADA monitoring server IP:port</td>    
 			<td>
 				<input name="B556" size="3" maxlength="3" value='&LSetup(1,"%u",556);' onChange="IPCheck(this)"><b>.</b>
 				<input name="B557" size="3" maxlength="3" value='&LSetup(1,"%u",557);' onChange="IPCheck(this)"><b>.</b>
 				<input name="B558" size="3" maxlength="3" value='&LSetup(1,"%u",558);' onChange="IPCheck(this)"><b>.</b>
 				<input name="B559" size="3" maxlength="3" value='&LSetup(1,"%u",559);' onChange="IPCheck(this)"></td>
 			<td>:
-				<input name="W564" size="6" maxlength="6" value='&LSetup(1,"%u",564,W);' onChange="PortCheck(this)">
+				44445
 			</td>
 		</tr>
 		
 		<tr bgcolor="#eeeeee">
-		    <td>Monitoring server 2 IP</td>    
+		    <td>Nagios monitoring passive server IP:port</td>    
 			<td nowrap>
 				<input name="B560" size="3" maxlength="3" value='&LSetup(1,"%u",560);' onChange="IPCheck(this)"><b>.</b>
 				<input name="B561" size="3" maxlength="3" value='&LSetup(1,"%u",561);' onChange="IPCheck(this)"><b>.</b>
 				<input name="B562" size="3" maxlength="3" value='&LSetup(1,"%u",562);' onChange="IPCheck(this)"><b>.</b>
 				<input name="B563" size="3" maxlength="3" value='&LSetup(1,"%u",563);' onChange="IPCheck(this)"></td>
-			<td>: &LIO(1,"%u",840);</td>
+			<td>:
+				<input name="W564" size="6" maxlength="6" value='&LSetup(1,"%u",564,W);' onChange="PortCheck(this)">
+			</td>
 		</tr>
 
 		<tr>
-            <td colspan="2">Monitoring message type</td>
+            <td colspan="2">Monitoring message type(s)</td>
             <td colspan="1">
                 <select size="1" name="B584">
                     <option value=0&LSetup(3,"%s",584,B,0," selected");>None </option>
                     <option value=1&LSetup(3,"%s",584,B,1," selected");>UniSCADA</option>
                     <option value=2&LSetup(3,"%s",584,B,2," selected");>Nagios passive</option>
+                    <option value=3&LSetup(3,"%s",584,B,3," selected");>Both ways simult.</option>
                 </select>
             </td>
         </tr>

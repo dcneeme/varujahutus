@@ -1,5 +1,5 @@
   dim APVER$(30) ' application version, hetkel ainult bn100 jaoks!
- APVER$="starman_jahutus 11.11.2013" ' mac 00204AB18657 starmani vent ruumis ukse taga lisakilbis
+ APVER$="starman_jahutus 16.06.2014" ' mac 00204AB18657 starmani vent ruumis ukse taga lisakilbis
  syslog APVER$,1
  
  ' 06.06.2013 fututec2 alusel
@@ -11,6 +11,8 @@
  ' 02.08.2013 nupuvajutustega seoses led ja cooler kohene lylitusvajaduse kontroll. sub 31000 eraldamine ja nupuvajutusel kaivitamine.
  ' 10.08.2013 temp errors filtered up to 5 consecutive reading, then 0
  ' 11.11.2013 kaks termoandurit juurde ja optrika tsoonid 2 ja 3 omavahel kokku nupuvajutused
+ ' 16.06.2014 kahte monitooringusse paralleelne info saatmine. pordid 44445 ja 50000, udp molemad.
+ 
  
  ' TODO
  ' lisada in arvestamine ja viimase teate kordusteade vajadusel
@@ -88,7 +90,8 @@
  dim ser$(50)  ' string to send to com port as 2 / length dep on lcd size
 
  dim mr$(256) ' monitoring read
- dim ms$(350) ' monitoring send
+ dim ms1$(300) ' monitoring send uniscada
+ dim ms2$(350) ' monitoring send
  'dim ms1$(256), ms2$(256), ms3$(256), ms4$(256) ', ms5$(256), ms6$(256), ms7$(256), ms8$(256) ' in alusel valitav kordussaatmine max 256 b korraga 
    ' 8 muutujaga Warning: data area for temporary variables maybe not enough!
  
@@ -184,28 +187,32 @@
  delay 3000   ' et jouaks uut uploadida
 
  
- MonPort=44445 'esialgu, enne veebist lugemist
- COM$="UDP:0.0.0.0:"+str$(MonPort) '  keep monitoring udp port open
+ MonPort1=44445 'esialgu, juba enne veebist lugemist
+ COM$="UDP:0.0.0.0:"+str$(MonPort1) '  keep monitoring udp port open
+ open com$ as 0 'avame mon pordi, udp
+ syslog "init: opened udp port "+sprintf$("%u",MonPort1)+" for UniSCADA",4 ' kasuta sprintf$ str$ ASEMEL 
+ 
+ COM$="UDP:0.0.0.0:"+str$(MonPort2) '  keep monitoring udp port open
  open com$ as 1 'avame mon pordi, udp
- syslog "init: opened udp port "+sprintf$("%u",MonPort)+" to listen monitoring responses",4 ' kasuta sprintf$ str$ ASEMEL 
+ syslog "init: opened udp port "+sprintf$("%u",MonPort2)+" for direct Nagios communication",4 ' kasuta sprintf$ str$ ASEMEL 
  delay 1000
  
  	 
  gosub 110:gosub 270 ' read & send app setup ' aga see voib ara rikkuda esialgse mon ip! 
  
- if MonPort<>44445 then 'monport muutus setupi kaudu!!
-	close 1 'vana yhendus kinni 
-	COM$="UDP:0.0.0.0:"+sprintf$("%u",MonPort) ' keep monitoring udp port open
-	open com$ as 1 'avame mon pordi, udp
-	syslog "init: reopened udp port "+sprintf$("%u",MonPort)+" due to changed monport",4
-	delay 1000
- endif
+ 'if MonPort<>44445 then 'monport muutus setupi kaudu!!
+'	close 1 'vana yhendus kinni 
+'	COM$="UDP:0.0.0.0:"+sprintf$("%u",MonPort) ' keep monitoring udp port open
+'	open com$ as 1 'avame mon pordi, udp
+'	syslog "init: reopened udp port "+sprintf$("%u",MonPort)+" due to changed monport",4
+'	delay 1000
+ 'endif
  
  
  if mbmax>0 then open "COM::2" as 4:syslog "init: modbus activated",4 ' open rs485 serial port on barionet for modbus 19k2 8e1
  
  timer 1,1000 ' iga sekund
- on timer1 gosub 330  'ai lu    gemine ja keskmistamine
+ on timer1 gosub 330  'ai lugemine ja keskmistamine
  
  
  '  ##### initial setup read and sent ####
@@ -251,14 +258,14 @@
 	syslog mip1$+"  OK",4
  else
 	syslog "no response in 3 s for "+mip1$,4
-    mip1$=mip2$ ' asendus
+    mip1$="195.222.15.51" ' asendus
  endif
  	
  if ping(mip2$,3000) > 0 then
 	syslog mip2$+"  OK",4
  else
 	syslog "no response in 3 s for "+mip2$,4
-    mip2$="195.222.15.51"  ' mip1$ ' asendus
+    ' mip2$="195.222.15.51"  ' mip1$ ' asendus
  endif
  
  thre(0)=675 'kuni veebi saab voi iseoppivaks, encoding thresholds chan 1..4. vist ai1, ai2 kaudu kodeering
@@ -267,16 +274,16 @@
  thre(3)=550
  syslog "init: thre() "+str$(thre(0))+" "+str$(thre(1))+" "+str$(thre(2))+" "+str$(thre(3)),4 ' enc levels
  
- if Monmode = 2 then
+ if Monmode >1 then ' nagios passive
     '[1373047637] PROCESS_SERVICE_CHECK_RESULT;00204ADEADE5;_AegStardist;0;Kontrolleri alglaadimisest on aega: 557.5h|_AegStardist=557.50h
-    ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Uptime;"
+    ms2$=ms2$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Uptime;"
     if up(0)<3600 then
-        ms$=ms$+"1"
+        ms2$=ms2$+"1"
     else
-        ms$=ms$+"0"
+        ms2$=ms2$+"0"
     endif
-    ms$=ms$+";Time from restart: "+str$(up(0))+"s|Uptime="+str$(up(0))+"s\n"
-    gosub 270
+    ms2$=ms2$+";Time from restart: "+str$(up(0))+"s|Uptime="+str$(up(0))+"s\n"
+    gosub 275
 endif
             
             
@@ -307,7 +314,7 @@ endif
  
  
  ' ms$ saatmine voi siis kordus viimasele datagrammile kui 7 s jooksul ack pole tulnud. ka ms$ saatmine kordab eelmist, kui vaja!
-  if ms$<>"" then 
+  if ms1$<>"" then 
       gosub 270 ' monitooringuinfo minema 
   else
       if and(oin>0, up(0)>up(4)+7) then gosub 270 ' 7 s jooksul pole ack saabunud ja parajasti muud saata pole. ack saabumine nullistab oin, vt 140
@@ -327,7 +334,7 @@ endif
     if and(up(14)>CommFailDelay, up(0)>up(5)+CommFailDelay) then ' udp saabumisi pole olnud
         syslog "main: GPRS power break due to comm loss longer than "+str$(CommFailDelay)+" s!",4
         up(14)=0 'GprsUptime=0
-        msd$="resetting GPRS device":gosub 270
+        'msd$="resetting GPRS device":gosub 270
         delay 500
         CommBreak=50 ' 5 sek paus AINULT gprs ruuterile... kui juba 2 tundi sideta, siis ka kontrollerile
         'nyyd on vahemalt minuti jooksul side katkenud...
@@ -338,7 +345,7 @@ endif
     'syslog "main: uptimedelay "+str$(UptimeDelay)+", uptime "+str$(up(0))+", lastcommTS "+str$(LastCommTS),4 'ajutine
     if and(up(0)>UptimeDelay, up(0)>up(5)+3*CommFailDelay+120) then '  voib rebooti teha, kolmanda gprs restardi jarel andes enne 120s aega gprs kaivitumiseks
         SYSLOG "GOING TO REBOOT due to comm failure for more than 3 x "+str$(CommFailFelay),1
-        ms$="mst:2\nmsd:rebooting due to commfail\nUPS:2\nUPV:0\n":gosub 270 'see ei lahe ju kuhugi...
+        ms1$="mst:2\nmsd:rebooting due to commfail\nUPS:2\nUPV:0\n":gosub 270 ' uniscada
         DELAY 5000:LOCK 2 ' reboot
     endif
   endif
@@ -409,10 +416,10 @@ endif
 
  109 ' sub send monitoring fragment away only IF bigger than FRAG
      ' syslog "sub 109: len(ms$)="+str$(len(ms$))+" - kui yle 180, saadame ara",4
-	if len(ms$)>170 then ' kuulutame fragmendiks, alla selle nullistame nfrag ega lisa midagi ' 180 andis dim vea ja 170 ka...
-        syslog "sub 109: ms$ pikkus on "+str$(len(ms$))+", saadame fragmendina teele",5
+	if len(ms1$)>170 then ' kuulutame fragmendiks, alla selle nullistame nfrag ega lisa midagi ' 180 andis dim vea ja 170 ka...
+        syslog "sub 109: ms1$ pikkus on "+str$(len(ms1$))+", saadame fragmendina teele",5
         nfrag=nfrag+1 ' selle nullistab iga mittefragment
-        ms$="frag:"+str$(nfrag)+"\n"+ms$  ' fragmendi tunnus
+        ms1$="frag:"+str$(nfrag)+"\n"+ms1$  ' fragmendi tunnus
         gosub 270 ' saatmisel tagastub tyhi ms$ kui nfrag>0
     else
         nfrag=0 ' see on jama, nullistab ka siis kui vaja pole, aga jarjekord tegelikult ei huvita  meid...
@@ -433,9 +440,9 @@ endif
    
     
     
- 134   ms$=ms$+"0\n":gosub 109:return ' lisame 0
- 135   ms$=ms$+"1\n":gosub 109:return ' lisame 1
- 136   ms$=ms$+"2\n":gosub 109:return  'lisame 2
+ 134   ms1$=ms1$+"0\n":gosub 109:return ' lisame 0
+ 135   ms1$=ms1$+"1\n":gosub 109:return ' lisame 1
+ 136   ms1$=ms1$+"2\n":gosub 109:return  'lisame 2
    
    
    
@@ -678,7 +685,7 @@ endif
         mr$="id:"+mac$+"\nS100:bnrescue\n":gosub 142:gosub 145 ' emuleerime kaugkonfi kasu vastuvotmist
     ENDIF
     
-    ms$="ERV:"+str$(_ERR_)+" on line "+str$(_ERL_)+"\nUPS:1\nUPV:0\ncmd:REBOOT\n"
+    ms1$="ERV:"+str$(_ERR_)+" on line "+str$(_ERL_)+"\nUPS:1\nUPV:0\ncmd:REBOOT\n"
 	gosub 270 
     syslog "sent error message to mon_server, going to reboot in 5 seconds",1
     delay 5000
@@ -704,21 +711,21 @@ endif
            return
        endif
 
-       ms$="tok:" 'siia otsa liidame leitud failinimed ilma laiendita, tyhik vahele
+       ms1$="tok:" 'siia otsa liidame leitud failinimed ilma laiendita, tyhik vahele
 
        for num =1 to 7
            seek 6,65536*(num-1)+num:read 6,set$,256 ' read old cob / reusing variable set$ used on sub 110
            for uku=1 to 256
                ukk=instr(-1*uku,set$,".tok") ' jargmise \0 -ni
                if and(ukk>8,ukk>uku) then
-                    ms$=ms$+"WEB"+str$(num)+"_"+mid$(set$,ukk-8,8)+" "
+                    ms1$=ms1$+"WEB"+str$(num)+"_"+mid$(set$,ukk-8,8)+" "
                     uku=ukk
                endif
            next uku
        next num
        close 6
        ' syslog "sub 20100 found tok:"+ms$,3
-       if MonMode = 1 then ms$=ms$+"\n":gosub 270 else ms$="" ' saadame minema
+       ms1$=ms1$+"\n":gosub 270 ' saadame minema
  return
 
 
@@ -764,7 +771,7 @@ endif
 	next jj
 	jj=96:gosub 21010 ' tcp command port timeout
 	
-	ms$=ms$+"S100:"+mid$(set$,101,9)+"\n"  'bcl filename
+	ms1$=ms1$+"S100:"+mid$(set$,101,9)+"\n"  'bcl filename
     gosub 270 ' viimane ei ole kunagi fragment
  return
 
@@ -785,8 +792,8 @@ endif
 				jk=jj-767 'varu app setup
 			endif
 		endif
-	    ms$=ms$+"B"+STR$(JJ)+":"+str$(midget(set$,JK,1))+"\n"  
-	    if MonMode = 1 then GOSUB 109 else ms$="" ' fragment send test - siin kirjutame ka maili sisu jupi porti ja tyhjendame TXT!
+	    ms1$=ms1$+"B"+STR$(JJ)+":"+str$(midget(set$,JK,1))+"\n"  
+	    GOSUB 109 ' fragment send test - siin kirjutame ka maili sisu jupi porti ja tyhjendame TXT!
    RETURN
 
    
@@ -806,7 +813,7 @@ endif
 				jk=jj-767 'varu app setup
 			endif
 		endif
-	    ms$=ms$+"W"+STR$(JJ)+":"+str$(midget(set$,JK,2))+"\n"  
+	    ms1$=ms1$+"W"+STR$(JJ)+":"+str$(midget(set$,JK,2))+"\n"  
 	    if MonMode = 1 then GOSUB 109 ' fragment send test
    RETURN 
    
@@ -816,15 +823,15 @@ endif
  
   22000 ' SUB REBOOT ############################
     SYSLOG "GOING TO REBOOT IN 5 SECONDS",1
-    if MonMode = 1 then ms$="mst:2\nmsd:rebooting due to cmd\ncmd:REBOOT\n":gosub 270
+    ms1$="mst:2\nmsd:rebooting due to cmd\ncmd:REBOOT\n":gosub 270
     DELAY 5000:LOCK 2 'see delay on blokeeriv...
   RETURN
 
 
   
-#include mon_msg.bcl ' sub 24000
+' #include mon_msg.bcl ' sub 24000
   
-#include babup_msg.bcl ' sub 25000
+' #include babup_msg.bcl ' sub 25000
 
 #include babup_read.bcl ' sub 25400
 

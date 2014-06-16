@@ -3,12 +3,12 @@
 
 if mid$(uss$,1,1) = "Z" then 'tsooni haire
     if chd(chan) = 1 then
-        ms$=ms$+uss$+":"+str$(2*chd(chan))+"\n" ' kahekordistame et tsooni haire oleks kriitiline
+        ms1$=ms1$+uss$+":"+str$(2*chd(chan))+"\n" ' kahekordistame et tsooni haire oleks kriitiline
     else
-        ms$=ms$+uss$+":"+str$(chd(chan))+"\n" ' jaab nagu on, 0 voi 2
+        ms1$=ms1$+uss$+":"+str$(chd(chan))+"\n" ' jaab nagu on, 0 voi 2
     endif
 else
-    ms$=ms$+uss$+":"+str$(chd(chan))+"\n" ' jaab nagu on. multivaartusi siin ei saa kasutada!
+    ms1$=ms1$+uss$+":"+str$(chd(chan))+"\n" ' jaab nagu on. multivaartusi siin ei saa kasutada!
 endif
 'tsooni olek mitteok peaks olema kriitiline, seega ka fututecci saadetav? praegu sinna 1. voimendada siin...
 

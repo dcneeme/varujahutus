@@ -75,23 +75,22 @@
             
         if up(8) = 0 then 'esimene  teavitus 30 s peale starti. up(8) on LastUdpSendTS
             syslog "appmain: first regular messaging after reboot, uptime s "+sprintf$("%lu",up(0)),4
-            if ms$<>"" then gosub 270:syslog "appmain: sent/emptied ms$",4
-            if MonMode = 1 then ms$=ms$+"AVV:"+APVER$+"\nAVS:0\nUPV:"+sprintf$("%lu",up(0))+"\nUTW:?\n" ' kysime ka liiklusmahtu
+            if ms1$<>"" then gosub 270:syslog "appmain: sent/emptied ms1$",4
+            ms1$=ms1$+"AVV:"+APVER$+"\nAVS:0\nUPV:"+sprintf$("%lu",up(0))+"\nUTW:?\n" ' kysime ka liiklusmahtu
+            gosub 270
             '[1373047965] PROCESS_SERVICE_CHECK_RESULT;00204AA9B70A;_Versioon;0;Versioon: eccua1301v3 31.01.2013|_Versioon=0
-            if MonMode = 2 then ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Version;0;Application version: "+APVER$+"|Version="+APVER$+"\n"
-            gosub 270  
+            ms2$=ms2$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Version;0;Application version: "+APVER$+"|Version="+APVER$+"\n"
+            gosub 275  
             
         else ' koik jargmised regulaarsed teavitused
             
             
-            if MonMode = 1 then 'uniscada
-                ms$=ms$+"UPV:"+sprintf$("%lu",up(0))+"\nUPS:":if up(0)<3600 then gosub 135 else gosub 134 ' uptime, alla 1 h warning
-            endif
-            if Monmode = 2 then
-                '[1373047637] PROCESS_SERVICE_CHECK_RESULT;00204ADEADE5;_AegStardist;0;Kontrolleri alglaadimisest on aega: 557.5h|_AegStardist=557.50h
-                ms$=ms$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Uptime;0;Time from restart: "+str$(up(0))+"s|Uptime="+str$(up(0))+"s\n"
-            endif
-            if ms$<>"" then gosub 270 'saadame minema need
+            ms1$=ms1$+"UPV:"+sprintf$("%lu",up(0))+"\nUPS:":if up(0)<3600 then gosub 135 else gosub 134 ' uptime, alla 1 h warning
+            if and(or(MonMode = 1, MonMode = 3), ms1$<>"") then gosub 270 'saadame minema 
+            
+            '[1373047637] PROCESS_SERVICE_CHECK_RESULT;00204ADEADE5;_AegStardist;0;Kontrolleri alglaadimisest on aega: 557.5h|_AegStardist=557.50h
+            ms2$=ms2$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Uptime;0;Time from restart: "+str$(up(0))+"s|Uptime="+str$(up(0))+"s\n"
+            if and(or(MonMode = 2, MonMode = 3), ms2$<>"") then gosub 275 'saadame minema need
             
             gosub 5200 ' kanalitele vaartused uuesti igaks juhuks
             ' gosub 25000 ' kanalite / tsoonide regulaarne kordussaatmine babup ja ka udpmon
@@ -110,7 +109,8 @@
  
    
     
-    if ms$<>"" then gosub 270 ' send mon msg 
+    if ms1$<>"" then gosub 270 ' send mon msg uniscada
+    if ms2$<>"" then gosub 275 ' send mon msg nagios
 
 	 'delay 500	 ' 1000 'ajutine    
 return

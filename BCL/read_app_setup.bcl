@@ -17,10 +17,10 @@
  
  
  user$=mid$(set$,512-511,11) ' asukoha nimetus
- ms$=ms$+"S512:"+user$+"\n":gosub 109
+ ms1$=ms1$+"S512:"+user$+"\n":gosub 109
  
  uspa$=mid$(set$,523-511,31) ' user:pass base64
- ms$=ms$+"S523:"+uspa$+"\n":gosub 109
+ ms1$=ms1$+"S523:"+uspa$+"\n":gosub 109
 
  jj=555:CommFailReaction=MIDGET(set$,jj-511,1):gosub 21010
  
@@ -40,10 +40,11 @@
  next jj
  syslog "read_setup: mip2$ "+mip2$,4
  
-  jj=564:MonPort=MIDGET(set$,jj-511,2)
-  if MonPort =0 then MonPort=44445
-  gosub 21020 'itvilla mon
-
+  MonPort1=44445 'uniscada
+  jj=564:MonPort2=MIDGET(set$,jj-511,2)
+  'if MonPort =0 then MonPort=44445
+  gosub 21020 ' starman nagios 50000
+  
  
  jj=566:CommFailDelay=60*MIDGET(set$,jj-511,1):gosub 21010 ' sisestada minutites, kasutada sekundites
  if CommFailDelay<  180 then CommFailDelay=180
@@ -63,7 +64,7 @@
  gosub 21020 ' basen port, vaikimisi 80
  
      
- ms$=ms$+"AVV:"+APVER$+"\nAVS:0\n":gosub 109  ' versioon, kas paarilist on vaja? voi votab mst?
+ ms1$=ms1$+"AVV:"+APVER$+"\nAVS:0\n":gosub 109  ' versioon, kas paarilist on vaja? voi votab mst?
  
  
  
@@ -157,13 +158,13 @@ syslog "zonenames "+zone1name$+", "+zone2name$+", "+zone3name$+", "+zone4name$,4
     jj=768+4*chan
 	' tuleb monitooringusse saata S7xx muidu ei saa kaugelt muuta
 	kh=MIDGET(set$,jj-767,2) 'hi word in setup, counter storage
-	ms$=ms$+"S"+str$(jj)+":"+str$(kh)+"\n":gosub 109 ' hi word to monitoring
+	ms1$=ms1$+"S"+str$(jj)+":"+str$(kh)+"\n":gosub 109 ' hi word to monitoring
 	
 	' if chan<4 then thre(chan)=kh 'nivood di sisendite dekodeerimiseks kui analoogkooder - ei funka, ajutiselt main algusesse
  	
 	jj=770+4*chan ' lo byte
 	kl=MIDGET(set$,jj-767,2) ' lo word in setup, counter storage
-	ms$=ms$+"S"+str$(jj)+":"+str$(kl)+"\n":gosub 109 ' lo word to monitoring
+	ms1$=ms1$+"S"+str$(jj)+":"+str$(kl)+"\n":gosub 109 ' lo word to monitoring
 	
 	' ki=65536*MIDGET(set$,jj-767,2)+MIDGET(set$,jj-765,2) ' saved value 32 bit
 	ki=65536*kh+kl ' 32bit counter value that is currently saved
@@ -192,7 +193,7 @@ syslog "zonenames "+zone1name$+", "+zone2name$+", "+zone3name$+", "+zone4name$,4
 	jj=816+5*(i-1):pref(i)=asc(mid$(set$,jj-767,1)) ' algustahe num vaste, nt Z
 	mbchfrom(i)=val(mid$(set$,jj-767+1,2)) 'numbriosa algus, jargmised siit edasi
 	syslog "read_app_setup: mba "+str$(i)+", mbchfrom "+str$(mbchfrom(i)),4
-	ms$=ms$+"S"+str$(816+5*(i-1))+":"+mid$(set$,jj-767,4)+"\n":gosub 109  ' kanalite nimed monitooringusse et edaspidi kaugelt muuta saaks
+	ms1$=ms1$+"S"+str$(816+5*(i-1))+":"+mid$(set$,jj-767,4)+"\n":gosub 109  ' kanalite nimed monitooringusse et edaspidi kaugelt muuta saaks
 			
 	
 	for jj=0 to icnt(i)-1 ' selle mba kanalinimed
@@ -209,7 +210,7 @@ syslog "zonenames "+zone1name$+", "+zone2name$+", "+zone3name$+", "+zone4name$,4
 	uss$=mid$(set$,862-767+5*(chan-9),5) 'kanali nimi
 	gosub 115 '  nime numbrilise vaste 4 byte uss$ alusel
 	
-	ms$=ms$+"S"+str$(862+5*(chan-9))+":"+uss$+"\n":gosub 109  ' kanalinimi monitooringusse
+	ms1$=ms1$+"S"+str$(862+5*(chan-9))+":"+uss$+"\n":gosub 109  ' kanalinimi monitooringusse
 	syslog "rd_stp: S"+str$(862+5*(chan-9))+":"+uss$,4 ' ajutine
 	
 	syslog "chan "+str$(chan)+":"+uss$+" "+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4 'ajutine 
@@ -228,7 +229,7 @@ syslog "zonenames "+zone1name$+", "+zone2name$+", "+zone3name$+", "+zone4name$,4
  
  
  site$=mid$(set$,1000-767,11) ' asukoha nimetus max 22 char
- ms$=ms$+"S1000:"+site$+"\n":gosub 109
+ ms1$=ms1$+"S1000:"+site$+"\n":gosub 109
  
  for jj=858 to 861 ' alternative def gw / gprs , index 1..4
     SecondGW[jj-857]=MIDGET(set$,jj-767,1):gosub 21010
@@ -245,7 +246,7 @@ syslog "zonenames "+zone1name$+", "+zone2name$+", "+zone3name$+", "+zone4name$,4
  SYSLOG "AppSetup READ", 2
 
 	
- if ms$<>"" then gosub 270 ' saadame ara mis veel saatmata 
+ if ms1$<>"" then gosub 270 ' saadame ara mis veel saatmata 
 
  return ' sub 110 end (setup read)
 

@@ -113,21 +113,21 @@
         'reboot kaivitada hiljem eraldi kui vaja!
 
         syslog "sub 145: got unknown command "+mreg$+":"+mval$,2 ' kustutada vaja et ei jaaks seda jura igavesti tulema
-        ms$=ms$+"ERS:1\nERV:invalid command "+mreg$+":"+mval$+"\n"
+        ms1$=ms1$+"ERS:1\nERV:invalid command "+mreg$+":"+mval$+"\n"
 		' vastame alati ka saadud cmd-ga et uuesti ei saadetaks ja tsyklisse ei jaaks
  149    '' nfrag=99
     endif ' done with this one setup value, multiple cmd impossible due to sqlite unique index
-    ms$=ms$+mreg$+":"+mval$+"\n" ' lisame selle registri tagasisaadetavasse vastusesse
-    syslog "sub 145: done so far "+ms$,4
+    ms1$=ms1$+mreg$+":"+mval$+"\n" ' lisame selle registri tagasisaadetavasse vastusesse
+    syslog "sub 145: done so far "+ms1$,4
     
  next pos   ' koik list$ registreid toodeldud
 
   if mediatype(3)>0 then write 3,set$,256:Close 3:syslog "sub 145: setup changed&saved!",1   ' will be saved to eeprom if set$ was modified
   'korraga saab salvestada vaid yhe veerandi!
   delay 100 ' salvestamiseks aega - igaks juhuks
-  'SAADAME kohe tagasi portsu mille salvestasime muutujasse ms$, ilma taieliku listinguta S kaudu
+  'SAADAME kohe tagasi portsu mille salvestasime muutujasse ms1$, ilma taieliku listinguta S kaudu
   
-  if len(ms$)>0 then gosub 270 else syslog "sub 145: did nothing...",4 ' send ms$, content to be deleted from newstate
+  if len(ms1$)>0 then gosub 270 else syslog "sub 145: did nothing...",4 ' send ms$, content to be deleted from newstate
   
   if mTee$="W" then mTee$="V"  ' uus setup lugemine vaja, sh ka system muutujatele! ja mon serverile saatmine
  return ' sub 145 lopp

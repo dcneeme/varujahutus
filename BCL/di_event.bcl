@@ -3,7 +3,7 @@
  ' korduvajutus tyhistab tostetud etteande!  tset(zone) = tsetnorm(zone) + tsetadd  (viimane on globaalne)
  ' zone olek on zonehi()  1 voi 0
         
-    ms$="" ' igaks juhuks tyhjaks mon string
+    ms1$="" ' igaks juhuks tyhjaks mon string
     
     ' vanad sisendite olekud meelde ja uued sisse
     
