@@ -1,5 +1,5 @@
   dim APVER$(30) ' application version, hetkel ainult bn100 jaoks!
- APVER$="starman_jahutus 16.06.2014" ' mac 00204AB18657 starmani vent ruumis ukse taga lisakilbis
+ APVER$="starman_jahutus 08.08.2014" ' mac 00204AB18657 starmani vent ruumis ukse taga lisakilbis
  syslog APVER$,1
  
  ' 06.06.2013 fututec2 alusel
@@ -12,10 +12,12 @@
  ' 10.08.2013 temp errors filtered up to 5 consecutive reading, then 0
  ' 11.11.2013 kaks termoandurit juurde ja optrika tsoonid 2 ja 3 omavahel kokku nupuvajutused
  ' 16.06.2014 kahte monitooringusse paralleelne info saatmine. pordid 44445 ja 50000, udp molemad.
- 
+ ' 08.08.2014 uptime piirang maha, sub13500 kasutus valja (TEHA=C)
  
  ' TODO
- ' lisada in arvestamine ja viimase teate kordusteade vajadusel
+ ' arvestada soojuspumpade olekuid varujahutuse kaivitamisel. blokeerida kui vaja! 
+ ' kas mb korraldused sp suunas siit voi keldri kontrolleri kaudu? vist on siit kindlam... aga modbus tcp tegemine basicus...
+ 
  
 #include define.bcl - muutujad registrite kaudu
 
@@ -189,11 +191,11 @@
  
  MonPort1=44445 'esialgu, juba enne veebist lugemist
  COM$="UDP:0.0.0.0:"+str$(MonPort1) '  keep monitoring udp port open
- open com$ as 0 'avame mon pordi, udp
+ open com$ as 0 'avame mon pordi, udp, uniscada
  syslog "init: opened udp port "+sprintf$("%u",MonPort1)+" for UniSCADA",4 ' kasuta sprintf$ str$ ASEMEL 
  
  COM$="UDP:0.0.0.0:"+str$(MonPort2) '  keep monitoring udp port open
- open com$ as 1 'avame mon pordi, udp
+ open com$ as 1 'avame mon pordi, udp, nagios starman
  syslog "init: opened udp port "+sprintf$("%u",MonPort2)+" for direct Nagios communication",4 ' kasuta sprintf$ str$ ASEMEL 
  delay 1000
  
@@ -274,7 +276,7 @@
  thre(3)=550
  syslog "init: thre() "+str$(thre(0))+" "+str$(thre(1))+" "+str$(thre(2))+" "+str$(thre(3)),4 ' enc levels
  
- if Monmode >1 then ' nagios passive
+ 'if Monmode >1 then ' nagios passive
     '[1373047637] PROCESS_SERVICE_CHECK_RESULT;00204ADEADE5;_AegStardist;0;Kontrolleri alglaadimisest on aega: 557.5h|_AegStardist=557.50h
     ms2$=ms2$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Uptime;"
     if up(0)<3600 then
@@ -284,7 +286,7 @@
     endif
     ms2$=ms2$+";Time from restart: "+str$(up(0))+"s|Uptime="+str$(up(0))+"s\n"
     gosub 275
-endif
+' endif
             
             
  '  #######################################################################
@@ -388,16 +390,16 @@ endif
   gosub 5950  'kuu alguse kontroll ja traffic() reset
 
   
- if up(0)> 1000000 then ' reboodime igaks juhuks iga 12 pv tagant
-     syslog "uptime 1Ms, going to reboot in 60 s!",1
-     msd$="going to reboot due 1Ms uptime\n":mst$="1"
-     gosub 270 'saatmine
-     delay 2000
-     CommBreak=20 '2 s gprs toite pausi
-     syslog "comm break started, delay 60 s before barionet reboot!",1
-     delay 60000 'anname gprs seadmele aega startida
-     lock 2 'reboot
- endif
+ ' if up(0)> 1000000 then ' reboodime igaks juhuks iga 12 pv tagant - mis jama?
+ '    syslog "uptime 1Ms, going to reboot in 60 s!",1
+ '    msd$="going to reboot due 1Ms uptime\n":mst$="1"
+ '    gosub 270 'saatmine
+ '    delay 2000
+ '    CommBreak=20 '2 s gprs toite pausi
+ '    syslog "comm break started, delay 60 s before barionet reboot!",1
+ '    delay 60000 'anname gprs seadmele aega startida
+ '    lock 2 'reboot
+ ' endif
         
         
   ' syslog "zonehi states "+str$(zonehi(0))+" "+str$(zonehi(1))+" "+str$(zonehi(2))+" "+str$(zonehi(3))+", tset "+str$(tset(0))+" "+str$(tset(1))+" "+str$(tset(2))+" "+str$(tset(3)),4     
@@ -669,7 +671,7 @@ endif
 
 
 
-#include save_counters.bcl ' sub 13300
+'#include save_counters.bcl ' sub 13300
 
 
  
@@ -814,7 +816,7 @@ endif
 			endif
 		endif
 	    ms1$=ms1$+"W"+STR$(JJ)+":"+str$(midget(set$,JK,2))+"\n"  
-	    if MonMode = 1 then GOSUB 109 ' fragment send test
+	    GOSUB 109 ' fragment send test
    RETURN 
    
    
@@ -833,7 +835,7 @@ endif
   
 ' #include babup_msg.bcl ' sub 25000
 
-#include babup_read.bcl ' sub 25400
+' #include babup_read.bcl ' sub 25400
 
 
 ' #include base64enc.bcl ' sub 26000

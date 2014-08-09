@@ -4,12 +4,11 @@
     
     ms1$="in:"+sprintf$("%lu",m_id)+"\nid:"+mac$+"\n"+ms1$  ' lisame in ja id 
     
-    WRITE 1,ms1$,0,mip1$,MonPort1:UP(4)=UP(0)
-	 ' udp korral saadetavate baitide arv kolmandaks parameetriks? voi saadab 0 koik?
-    syslog "sub 270: sent to "+mip1$+":"+sprintf$("%u",MonPort)+": "+ms1$,4
-    
-    traffic(1)=traffic(1)+len(ms1$) ' valjuv udp liiklus
-    
+    if or(MonMode = 1, MonMode = 3) then
+        WRITE 0,ms1$,0,mip1$,MonPort1:UP(4)=UP(0)
+        syslog "sub 270: sent to "+mip1$+":"+sprintf$("%u",MonPort1)+": "+ms1$,4
+        traffic(1)=traffic(1)+len(ms1$) ' valjuv udp liiklus
+    endif
     ms1$=""
     
  	MonComm=1:CommLed=1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
@@ -21,11 +20,11 @@
     
     if mediatype(1)<>7 then syslog "sub 270: no udp port opened, cannot send!!!",2:ms2$="":return
     
-    WRITE 1,ms2$,0,mip2$,MonPort2:UP(4)=UP(0)
-	syslog "sub 275: sent to "+mip2$+":"+sprintf$("%u",MonPort)+": "+ms2$,4
-    
-    traffic(1)=traffic(1)+len(ms2$) ' valjuv udp liiklus
-    
+    if or(MonMode = 2, MonMode = 3) then
+        WRITE 1,ms2$,0,mip2$,MonPort2:UP(4)=UP(0)
+        syslog "sub 275: sent to "+mip2$+":"+sprintf$("%u",MonPort2)+": "+ms2$,4
+        traffic(1)=traffic(1)+len(ms2$) ' valjuv udp liiklus
+    endif
     ms2$=""
     
  	MonComm=1:CommLed=1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140

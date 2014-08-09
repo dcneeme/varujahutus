@@ -1,4 +1,4 @@
-BARIX BCL Tokenizer, V1.5, 2014/03/10 17:27:11
+BARIX BCL Tokenizer, V1.5, 2014/08/09 12:51:33
 
 Preprocessor: Start
 
@@ -18,10 +18,6 @@ Preprocessor: First pass for collecting code by #include
 - Source file is included in target BAS file: <./BCL/crontabreset.bcl>
 - Source file is included in target BAS file: <./BCL/di_event.bcl>
 - Source file is included in target BAS file: <./BCL/getmonvalue.bcl>
-- Source file is included in target BAS file: <./BCL/save_counters.bcl>
-- Source file is included in target BAS file: <./BCL/mon_msg.bcl>
-- Source file is included in target BAS file: <./BCL/babup_msg.bcl>
-- Source file is included in target BAS file: <./BCL/babup_read.bcl>
 - Source file is included in target BAS file: <./BCL/thermo.bcl>
 - Source file is included in target BAS file: <./BCL/appmain.bcl>
 
@@ -42,27 +38,6 @@ Preprocessor: Second pass for replacement of macros by #define
   - Macro SYSTIME in pos [36-42] ->             mbsta(mba)=0:mbts(mba)=SYSTIME 'edu korral ts meelde
   <-             mbsta(mba)=0:mbts(mba)=SYSTIME 'edu korral ts meelde
   ->             mbsta(mba)=0:mbts(mba)=_TMR_(0)  'edu korral ts meelde
-  - Macro SYSTIME in pos [11-17] ->     ts(2)=SYSTIME ' take SYSTIME timestamp 
-  <-     ts(2)=SYSTIME ' take SYSTIME timestamp 
-  ->     ts(2)=_TMR_(0)  ' take SYSTIME timestamp 
-  - Macro SYSTIME in pos [28-34] ->     ts(2)=_TMR_(0)  ' take SYSTIME timestamp 
-  <-     ts(2)=_TMR_(0)  ' take SYSTIME timestamp 
-  ->     ts(2)=_TMR_(0)  ' take _TMR_(0)  timestamp 
-  - Macro SYSTIME in pos [24-30] ->         if ts(2)+3000 <SYSTIME then 
-  <-         if ts(2)+3000 <SYSTIME then 
-  ->         if ts(2)+3000 <_TMR_(0)  then 
-  - Macro SYSTIME in pos [9-15] -> 		ts(2)=SYSTIME 'viimane info saabumine meelde
-  <- 		ts(2)=SYSTIME 'viimane info saabumine meelde
-  -> 		ts(2)=_TMR_(0)  'viimane info saabumine meelde
-  - Macro SYSTIME in pos [20-26] -> 			if ts(1)+1000 > SYSTIME then ' kuni sekund lubame info saabumises pausi, ts(2) siin uuendatud
-  <- 			if ts(1)+1000 > SYSTIME then ' kuni sekund lubame info saabumises pausi, ts(2) siin uuendatud
-  -> 			if ts(1)+1000 > _TMR_(0)  then ' kuni sekund lubame info saabumises pausi, ts(2) siin uuendatud
-  - Macro SYSTIME in pos [20-26] -> 			if ts(2)+4500 > SYSTIME then ' ootame veel
-  <- 			if ts(2)+4500 > SYSTIME then ' ootame veel
-  -> 			if ts(2)+4500 > _TMR_(0)  then ' ootame veel
-  - Macro SYSTIME in pos [19-25] -> 	if ts(2)+10000 < SYSTIME then ' igaks juhuks handle 0 sulgemine
-  <- 	if ts(2)+10000 < SYSTIME then ' igaks juhuks handle 0 sulgemine
-  -> 	if ts(2)+10000 < _TMR_(0)  then ' igaks juhuks handle 0 sulgemine
 - SecondTS --> ts(9)  
   - Macro SecondTS in pos [7-14] ->   'if SecondTS>0 then ' varu gw peal 'siin vorrelda B12... ja SecondGW vaartusi! loe ka system setup sisse osaliselt!
   <-   'if SecondTS>0 then ' varu gw peal 'siin vorrelda B12... ja SecondGW vaartusi! loe ka system setup sisse osaliselt!
@@ -86,9 +61,9 @@ Preprocessor: Second pass for replacement of macros by #define
   - Macro CommBreak= in pos [9-18] ->         CommBreak=50 ' 5 sek paus AINULT gprs ruuterile... kui juba 2 tundi sideta, siis ka kontrollerile
   <-         CommBreak=50 ' 5 sek paus AINULT gprs ruuterile... kui juba 2 tundi sideta, siis ka kontrollerile
   ->         ioctl 1, 50 ' 5 sek paus AINULT gprs ruuterile... kui juba 2 tundi sideta, siis ka kontrollerile
-  - Macro CommBreak= in pos [6-15] ->      CommBreak=20 '2 s gprs toite pausi
-  <-      CommBreak=20 '2 s gprs toite pausi
-  ->      ioctl 1, 20 '2 s gprs toite pausi
+  - Macro CommBreak= in pos [7-16] ->  '    CommBreak=20 '2 s gprs toite pausi
+  <-  '    CommBreak=20 '2 s gprs toite pausi
+  ->  '    ioctl 1, 20 '2 s gprs toite pausi
 - CommBreak --> iostate(1)
 - CommLed= --> ioctl 103, 
   - Macro CommLed= in pos [2-9] ->  CommLed=1 'algseisus side puudumine, las poleb
@@ -100,12 +75,9 @@ Preprocessor: Second pass for replacement of macros by #define
   - Macro CommLed= in pos [13-20] ->  	MonComm=1:CommLed=1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
   <-  	MonComm=1:CommLed=1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
   ->  	MonComm=1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
-  - Macro CommLed= in pos [12-19] -> 	BupComm=1:CommLed=1 'LED jaoks yks osa infost
-  <- 	BupComm=1:CommLed=1 'LED jaoks yks osa infost
-  -> 	BupComm=1:ioctl 103, 1 'LED jaoks yks osa infost
-  - Macro CommLed= in pos [3-10] -> 		CommLed=0 'LED kustutamine babup teate poolest, ei huvita kas parool oli oige vms
-  <- 		CommLed=0 'LED kustutamine babup teate poolest, ei huvita kas parool oli oige vms
-  -> 		ioctl 103, 0 'LED kustutamine babup teate poolest, ei huvita kas parool oli oige vms
+  - Macro CommLed= in pos [13-20] ->  	MonComm=1:CommLed=1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+  <-  	MonComm=1:CommLed=1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+  ->  	MonComm=1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
   - Macro CommLed= in pos [7-14] ->     ' CommLed=BupComm ' CommLed=or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
   <-     ' CommLed=BupComm ' CommLed=or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
   ->     ' ioctl 103, BupComm ' CommLed=or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
@@ -117,6 +89,9 @@ Preprocessor: Second pass for replacement of macros by #define
   - Macro MonComm= in pos [13-20] ->  'BupComm=1:MonComm=1:
   <-  'BupComm=1:MonComm=1:
   ->  'BupComm=1:ioctl 326,  1:
+  - Macro MonComm= in pos [3-10] ->  	MonComm=1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+  <-  	MonComm=1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+  ->  	ioctl 326,  1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
   - Macro MonComm= in pos [3-10] ->  	MonComm=1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
   <-  	MonComm=1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
   ->  	ioctl 326,  1:ioctl 103, 1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
@@ -134,12 +109,6 @@ Preprocessor: Second pass for replacement of macros by #define
   - Macro BupComm= in pos [3-10] ->  'BupComm=1:ioctl 326,  1:
   <-  'BupComm=1:ioctl 326,  1:
   ->  'ioctl 327,  1:ioctl 326,  1:
-  - Macro BupComm= in pos [2-9] -> 	BupComm=1:ioctl 103, 1 'LED jaoks yks osa infost
-  <- 	BupComm=1:ioctl 103, 1 'LED jaoks yks osa infost
-  -> 	ioctl 327,  1:ioctl 103, 1 'LED jaoks yks osa infost
-  - Macro BupComm= in pos [4-11] -> 			BupComm=0 'jaab 1, kui ei olnud 200 ok
-  <- 			BupComm=0 'jaab 1, kui ei olnud 200 ok
-  -> 			ioctl 327,  0 'jaab 1, kui ei olnud 200 ok
 - BupComm --> iostate(327)
   - Macro BupComm in pos [53-59] -> 		", moncomm "+str$(iostate(326))+", bupcomm "+str$(BupComm),5 ' ajutine
   <- 		", moncomm "+str$(iostate(326))+", bupcomm "+str$(BupComm),5 ' ajutine
@@ -269,48 +238,6 @@ Preprocessor: Second pass for replacement of macros by #define
   - Macro ChanType[] in pos [14-25] ->         ' if ChanType[jj] = 1 then 'DI PEAB olema setupist pandud / ei ole oluline
   <-         ' if ChanType[jj] = 1 then 'DI PEAB olema setupist pandud / ei ole oluline
   ->         ' if iostate(700+jj)  = 1 then 'DI PEAB olema setupist pandud / ei ole oluline
-  - Macro ChanType[] in pos [86-99] -> 		' syslog sub$+"chan="+str$(chan)+", chn(chan)="+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4
-  <- 		' syslog sub$+"chan="+str$(chan)+", chn(chan)="+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4
-  -> 		' syslog sub$+"chan="+str$(chan)+", chn(chan)="+str$(chn(chan))+", chantype="+str$(iostate(700+chan) ),4
-  - Macro ChanType[] in pos [10-23] -> 		if and(ChanType[chan]>0, chn(chan)>0) then ' kanal aktiivne ja nimi olemas
-  <- 		if and(ChanType[chan]>0, chn(chan)>0) then ' kanal aktiivne ja nimi olemas
-  -> 		if and(iostate(700+chan) >0, chn(chan)>0) then ' kanal aktiivne ja nimi olemas
-  - Macro ChanType[] in pos [11-24] -> 			if and(ChanType[chan] = 6, chd(chan)>999) then goto 25050 ' seda temperatuuri ei saada, vigane tulemus #########################
-  <- 			if and(ChanType[chan] = 6, chd(chan)>999) then goto 25050 ' seda temperatuuri ei saada, vigane tulemus #########################
-  -> 			if and(iostate(700+chan)  = 6, chd(chan)>999) then goto 25050 ' seda temperatuuri ei saada, vigane tulemus #########################
-  - Macro ChanType[] in pos [10-23] -> 			if or(ChanType[chan] =2, ChanType[chan] =6) then ' ai voi termo
-  <- 			if or(ChanType[chan] =2, ChanType[chan] =6) then ' ai voi termo
-  -> 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
-  - Macro ChanType[] in pos [33-46] -> 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
-  <- 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
-  -> 			if or(iostate(700+chan)  =2, iostate(700+chan)  =6) then ' ai voi termo
-  - Macro ChanType[] in pos [8-21] -> 				if ChanType[chan] =2 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.2F",chd(chan)),5 'ai
-  <- 				if ChanType[chan] =2 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.2F",chd(chan)),5 'ai
-  -> 				if iostate(700+chan)  =2 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.2F",chd(chan)),5 'ai
-  - Macro ChanType[] in pos [8-21] -> 				if ChanType[chan] =6 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.1F",chd(chan)),5 'termo, nait olgu alla 100deg
-  <- 				if ChanType[chan] =6 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.1F",chd(chan)),5 'termo, nait olgu alla 100deg
-  -> 				if iostate(700+chan)  =6 then syslog sub$+"channel "+uss$+":"+sprintf$("%l.1F",chd(chan)),5 'termo, nait olgu alla 100deg
-  - Macro ChanType[] in pos [10-23] -> 			if or(ChanType[chan] =2, ChanType[chan] =6) then ' ai voi termo
-  <- 			if or(ChanType[chan] =2, ChanType[chan] =6) then ' ai voi termo
-  -> 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
-  - Macro ChanType[] in pos [33-46] -> 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
-  <- 			if or(iostate(700+chan)  =2, ChanType[chan] =6) then ' ai voi termo
-  -> 			if or(iostate(700+chan)  =2, iostate(700+chan)  =6) then ' ai voi termo
-  - Macro ChanType[] in pos [8-21] -> 				if ChanType[chan] =2 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.2F",chd(chan)) 'ai
-  <- 				if ChanType[chan] =2 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.2F",chd(chan)) 'ai
-  -> 				if iostate(700+chan)  =2 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.2F",chd(chan)) 'ai
-  - Macro ChanType[] in pos [8-21] -> 				if ChanType[chan] =6 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.1F",chd(chan)) ' temp norm nait olemas
-  <- 				if ChanType[chan] =6 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.1F",chd(chan)) ' temp norm nait olemas
-  -> 				if iostate(700+chan)  =6 then TXT$=TXT$+"\n}\ndoubleValue: "+sprintf$("%l.1F",chd(chan)) ' temp norm nait olemas
-  - Macro ChanType[] in pos [11-24] -> 				if or(ChanType[chan] =4, ChanType[chan] =5) then ' raw or unit counter
-  <- 				if or(ChanType[chan] =4, ChanType[chan] =5) then ' raw or unit counter
-  -> 				if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' raw or unit counter
-  - Macro ChanType[] in pos [34-47] -> 				if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' raw or unit counter
-  <- 				if or(iostate(700+chan)  =4, ChanType[chan] =5) then ' raw or unit counter
-  -> 				if or(iostate(700+chan)  =4, iostate(700+chan)  =5) then ' raw or unit counter
-  - Macro ChanType[] in pos [132-145] -> 			syslog sub$+"chan "+str$(chan)+" skipped from message due to missing name or type, chn() "+str$(chn(chan))+", chantype[] "+str$(ChanType[chan]),5 'ajutine
-  <- 			syslog sub$+"chan "+str$(chan)+" skipped from message due to missing name or type, chn() "+str$(chn(chan))+", chantype[] "+str$(ChanType[chan]),5 'ajutine
-  -> 			syslog sub$+"chan "+str$(chan)+" skipped from message due to missing name or type, chn() "+str$(chn(chan))+", chantype[] "+str$(iostate(700+chan) ),5 'ajutine
 - StpAddr= --> ioctl 791,  
   - Macro StpAddr= in pos [4-11] -> 			StpAddr=FlashAddr+1 
   <- 			StpAddr=FlashAddr+1 
@@ -601,18 +528,6 @@ Preprocessor: Second pass for replacement of macros by #define
   - Macro Data1IP[] in pos [89-98] -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4])+" no response in 3 s",4
   <- 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4])+" no response in 3 s",4
   -> 	syslog str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(iostate(822+4))+" no response in 3 s",4
-  - Macro Data1IP[] in pos [13-22] -> 		web$=str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
-  <- 		web$=str$(Data1IP[1])+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
-  -> 		web$=str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
-  - Macro Data1IP[] in pos [38-47] -> 		web$=str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
-  <- 		web$=str$(iostate(822+1))+"."+str$(Data1IP[2])+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
-  -> 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
-  - Macro Data1IP[] in pos [63-72] -> 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
-  <- 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(Data1IP[3])+"."+str$(Data1IP[4]) ' 
-  -> 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4]) ' 
-  - Macro Data1IP[] in pos [88-97] -> 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4]) ' 
-  <- 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(Data1IP[4]) ' 
-  -> 		web$=str$(iostate(822+1))+"."+str$(iostate(822+2))+"."+str$(iostate(822+3))+"."+str$(iostate(822+4)) ' 
 - Data2IP[]= --> ioctl 826+, 
   - Macro Data2IP[]= in pos [5-20] ->     Data2IP[jj-571]=MIDGET(set$,jj-511,1):gosub 21010 
   <-     Data2IP[jj-571]=MIDGET(set$,jj-511,1):gosub 21010 
@@ -654,18 +569,6 @@ Preprocessor: Second pass for replacement of macros by #define
   - Macro Data2IP[] in pos [89-98] -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4])+" no response in 3 s",4
   <- 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4])+" no response in 3 s",4
   -> 	syslog str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(iostate(826+4))+" no response in 3 s",4
-  - Macro Data2IP[] in pos [13-22] -> 		web$=str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
-  <- 		web$=str$(Data2IP[1])+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
-  -> 		web$=str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
-  - Macro Data2IP[] in pos [38-47] -> 		web$=str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
-  <- 		web$=str$(iostate(826+1))+"."+str$(Data2IP[2])+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
-  -> 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
-  - Macro Data2IP[] in pos [63-72] -> 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
-  <- 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(Data2IP[3])+"."+str$(Data2IP[4]) ' 
-  -> 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4]) ' 
-  - Macro Data2IP[] in pos [88-97] -> 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4]) ' 
-  <- 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(Data2IP[4]) ' 
-  -> 		web$=str$(iostate(826+1))+"."+str$(iostate(826+2))+"."+str$(iostate(826+3))+"."+str$(iostate(826+4)) ' 
 - Mon1IP[]= --> ioctl 830+, 
   - Macro Mon1IP[]= in pos [5-19] ->     Mon1IP[jj-555]=MIDGET(set$,jj-511,1):gosub 21010
   <-     Mon1IP[jj-555]=MIDGET(set$,jj-511,1):gosub 21010
@@ -677,18 +580,6 @@ Preprocessor: Second pass for replacement of macros by #define
   - Macro Mon1IP[] in pos [19-32] -> 	mip2$=mip2$+str$(Mon1IP[jj-555])
   <- 	mip2$=mip2$+str$(Mon1IP[jj-555])
   -> 	mip2$=mip2$+str$(iostate(830+jj-555))
-  - Macro Mon1IP[] in pos [22-30] ->     web$=mip1$ 'str$(Mon1IP[1])+"."+str$(Mon1IP[2])+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
-  <-     web$=mip1$ 'str$(Mon1IP[1])+"."+str$(Mon1IP[2])+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
-  ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(Mon1IP[2])+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
-  - Macro Mon1IP[] in pos [47-55] ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(Mon1IP[2])+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
-  <-     web$=mip1$ 'str$(iostate(830+1))+"."+str$(Mon1IP[2])+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
-  ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
-  - Macro Mon1IP[] in pos [72-80] ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
-  <-     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(Mon1IP[3])+"."+str$(Mon1IP[4]) ' 
-  ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(iostate(830+3))+"."+str$(Mon1IP[4]) ' 
-  - Macro Mon1IP[] in pos [97-105] ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(iostate(830+3))+"."+str$(Mon1IP[4]) ' 
-  <-     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(iostate(830+3))+"."+str$(Mon1IP[4]) ' 
-  ->     web$=mip1$ 'str$(iostate(830+1))+"."+str$(iostate(830+2))+"."+str$(iostate(830+3))+"."+str$(iostate(830+4)) ' 
 - Mon2IP[]= --> ioctl 834+, 
   - Macro Mon2IP[]= in pos [5-19] ->     Mon2IP[jj-559]=MIDGET(set$,jj-511,1):gosub 21010 
   <-     Mon2IP[jj-559]=MIDGET(set$,jj-511,1):gosub 21010 
@@ -705,50 +596,6 @@ Preprocessor: Second pass for replacement of macros by #define
   - Macro DataPort in pos [5-12] ->  if DataPort =0 then ioctl 839, 80
   <-  if DataPort =0 then ioctl 839, 80
   ->  if iostate(839) =0 then ioctl 839, 80
-  - Macro DataPort in pos [39-46] -> 	' COM$="TCN:"+web$+":"+sprintf$("%u",DataPort) ' non-blocking open, checking connected below
-  <- 	' COM$="TCN:"+web$+":"+sprintf$("%u",DataPort) ' non-blocking open, checking connected below
-  -> 	' COM$="TCN:"+web$+":"+sprintf$("%u",iostate(839)) ' non-blocking open, checking connected below
-  - Macro DataPort in pos [37-44] -> 	COM$="TCP:"+web$+":"+sprintf$("%u",DataPort) ' blocking open, checking connected below
-  <- 	COM$="TCP:"+web$+":"+sprintf$("%u",DataPort) ' blocking open, checking connected below
-  -> 	COM$="TCP:"+web$+":"+sprintf$("%u",iostate(839)) ' blocking open, checking connected below
-  - Macro DataPort in pos [59-66] -> 	' WRITE 0,ss$,0 ' tcp korral adr ja porti ei anna! ,web$,DataPort:UP(4)=UP(0)' 
-  <- 	' WRITE 0,ss$,0 ' tcp korral adr ja porti ei anna! ,web$,DataPort:UP(4)=UP(0)' 
-  -> 	' WRITE 0,ss$,0 ' tcp korral adr ja porti ei anna! ,web$,iostate(839):UP(4)=UP(0)' 
-- MonPort= --> ioctl 840, 
-  - Macro MonPort= in pos [2-9] ->  MonPort=44445 'esialgu, enne veebist lugemist
-  <-  MonPort=44445 'esialgu, enne veebist lugemist
-  ->  ioctl 840, 44445 'esialgu, enne veebist lugemist
-  - Macro MonPort= in pos [10-17] ->   jj=564:MonPort=MIDGET(set$,jj-511,2)
-  <-   jj=564:MonPort=MIDGET(set$,jj-511,2)
-  ->   jj=564:ioctl 840, MIDGET(set$,jj-511,2)
-  - Macro MonPort= in pos [22-29] ->   if MonPort =0 then MonPort=44445
-  <-   if MonPort =0 then MonPort=44445
-  ->   if MonPort =0 then ioctl 840, 44445
-- MonPort --> iostate(840)
-  - Macro MonPort in pos [27-33] ->  COM$="UDP:0.0.0.0:"+str$(MonPort) '  keep monitoring udp port open
-  <-  COM$="UDP:0.0.0.0:"+str$(MonPort) '  keep monitoring udp port open
-  ->  COM$="UDP:0.0.0.0:"+str$(iostate(840)) '  keep monitoring udp port open
-  - Macro MonPort in pos [48-54] ->  syslog "init: opened udp port "+sprintf$("%u",MonPort)+" to listen monitoring responses",4 ' kasuta sprintf$ str$ ASEMEL 
-  <-  syslog "init: opened udp port "+sprintf$("%u",MonPort)+" to listen monitoring responses",4 ' kasuta sprintf$ str$ ASEMEL 
-  ->  syslog "init: opened udp port "+sprintf$("%u",iostate(840))+" to listen monitoring responses",4 ' kasuta sprintf$ str$ ASEMEL 
-  - Macro MonPort in pos [5-11] ->  if MonPort<>44445 then 'monport muutus setupi kaudu!!
-  <-  if MonPort<>44445 then 'monport muutus setupi kaudu!!
-  ->  if iostate(840)<>44445 then 'monport muutus setupi kaudu!!
-  - Macro MonPort in pos [36-42] -> 	COM$="UDP:0.0.0.0:"+sprintf$("%u",MonPort) ' keep monitoring udp port open
-  <- 	COM$="UDP:0.0.0.0:"+sprintf$("%u",MonPort) ' keep monitoring udp port open
-  -> 	COM$="UDP:0.0.0.0:"+sprintf$("%u",iostate(840)) ' keep monitoring udp port open
-  - Macro MonPort in pos [50-56] -> 	syslog "init: reopened udp port "+sprintf$("%u",MonPort)+" due to changed monport",4
-  <- 	syslog "init: reopened udp port "+sprintf$("%u",MonPort)+" due to changed monport",4
-  -> 	syslog "init: reopened udp port "+sprintf$("%u",iostate(840))+" due to changed monport",4
-  - Macro MonPort in pos [6-12] ->   if MonPort =0 then ioctl 840, 44445
-  <-   if MonPort =0 then ioctl 840, 44445
-  ->   if iostate(840) =0 then ioctl 840, 44445
-  - Macro MonPort in pos [24-30] ->     WRITE 1,ms$,0,web$,MonPort:UP(4)=UP(0)
-  <-     WRITE 1,ms$,0,web$,MonPort:UP(4)=UP(0)
-  ->     WRITE 1,ms$,0,web$,iostate(840):UP(4)=UP(0)
-  - Macro MonPort in pos [55-61] ->     syslog "sub 270: sent to "+web$+":"+sprintf$("%u",MonPort)+": "+ms$,4
-  <-     syslog "sub 270: sent to "+web$+":"+sprintf$("%u",MonPort)+": "+ms$,4
-  ->     syslog "sub 270: sent to "+web$+":"+sprintf$("%u",iostate(840))+": "+ms$,4
 - DataInterval= --> ioctl 841, 
   - Macro DataInterval= in pos [9-21] ->  jj=764:DataInterval=MIDGET(set$,jj-511,2):gosub 21020 ' max data intervall
   <-  jj=764:DataInterval=MIDGET(set$,jj-511,2):gosub 21020 ' max data intervall
@@ -917,15 +764,6 @@ Preprocessor: Second pass for replacement of macros by #define
   <-   if and(iostate(850+1) = gw(0), iostate(850+2) = gw(1), iostate(850+3) = gw(2), SecondGW[4] = gw(3)) then '  kehtiv def gw on varuaadress!
   ->   if and(iostate(850+1) = gw(0), iostate(850+2) = gw(1), iostate(850+3) = gw(2), iostate(850+4) = gw(3)) then '  kehtiv def gw on varuaadress!
 - ReturnCode= --> ioctl 883, 
-  - Macro ReturnCode= in pos [6-16] -> 					ReturnCode=0
-  <- 					ReturnCode=0
-  -> 					ioctl 883, 0
-  - Macro ReturnCode= in pos [6-16] -> 					ReturnCode=1 ' invalid id in ack
-  <- 					ReturnCode=1 ' invalid id in ack
-  -> 					ioctl 883, 1 ' invalid id in ack
-  - Macro ReturnCode= in pos [5-15] -> 				ReturnCode=1
-  <- 				ReturnCode=1
-  -> 				ioctl 883, 1
 - ReturnCode --> iostate(883)
 - InOldWd[]= --> ioctl 940+,
   - Macro InOldWd[]= in pos [4-16] -> 			InOldWd[mba]=InWd ' vana meelde
@@ -973,7 +811,7 @@ Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
         GOSUB 330
         GOSUB 21000
         GOSUB 20100
-        GOSUB 270
+        GOSUB 275
         GOSUB 142
         GOSUB 145
         GOSUB 110
@@ -983,13 +821,11 @@ Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
         GOSUB 270
         GOSUB 32000
         GOSUB 270
-        GOSUB 270
         GOSUB 142
         GOSUB 145
         GOSUB 142
         GOSUB 145
         GOSUB 5950
-        GOSUB 270
          GOTO 100
         GOSUB 270
         GOSUB 109
@@ -1110,8 +946,6 @@ Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
         GOSUB 11100
          GOTO 13001
         GOSUB 142
-        GOSUB 142
-        GOSUB 142
         GOSUB 145
         GOSUB 270
         GOSUB 270
@@ -1139,51 +973,43 @@ Tokenization: First pass for labels used in GOTO/GOSUB/RETURN
         GOSUB 109
         GOSUB 109
         GOSUB 270
-        GOSUB 109
-         GOTO 25020
-         GOTO 25010
-        GOSUB 5250
-         GOTO 25050
-        GOSUB 24000
         GOSUB 270
-        GOSUB 25500
-        GOSUB 25400
-         GOTO 25420
-         GOTO 25420
-         GOTO 25420
+        GOSUB 275
         GOSUB 270
-        GOSUB 270
-        GOSUB 270
-        GOSUB 270
+        GOSUB 275
+        GOSUB 275
         GOSUB 140
         GOSUB 110
         GOSUB 142
         GOSUB 145
-        GOSUB 13300
-        GOSUB 13500
         GOSUB 1000
         GOSUB 10000
         GOSUB 31000
         GOSUB 270
         GOSUB 270
+        GOSUB 275
         GOSUB 135
         GOSUB 134
         GOSUB 270
+        GOSUB 275
         GOSUB 5200
         GOSUB 270
+        GOSUB 275
 
 Tokenization: Second pass for main tokenization
 Warning: DIM _TMR_(4) is already fulfiled by tokenizer itself
+Warning: this name is used by default without DIM declaration (MONPORT1)
+Warning: this name is used by default without DIM declaration (MONPORT2)
 Warning: this name is used by default without DIM declaration (MBMAX)
-Warning: this name is used by default without DIM declaration (MONMODE)
 Warning: this name is used by default without DIM declaration (_DTS_)
-Label=100,offset=0x80c
+Label=100,offset=0x7cc
 Warning: this name is used by default without DIM declaration (OIN)
 Warning: this name is used by default without DIM declaration (COMMFAILFELAY)
-Label=109,offset=0xefc
+Label=109,offset=0xdea
 Warning: this name is used by default without DIM declaration (NFRAG)
-Label=110,offset=0xf8f
+Label=110,offset=0xe7e
 Warning: this name is used by default without DIM declaration (JJ)
+Warning: this name is used by default without DIM declaration (MONMODE)
 Warning: this name is used by default without DIM declaration (MBAX)
 Warning: this name is used by default without DIM declaration (THYST)
 Warning: this name is used by default without DIM declaration (THERMOINTERVAL)
@@ -1191,19 +1017,19 @@ Warning: this name is used by default without DIM declaration (CHAN)
 Warning: this name is used by default without DIM declaration (AILEVEL)
 Warning: this name is used by default without DIM declaration (KH)
 Warning: this name is used by default without DIM declaration (KL)
-Label=115,offset=0x1f68
+Label=115,offset=0x1e48
 Warning: this name is used by default without DIM declaration (UK)
-Label=134,offset=0x1fcc
-Label=135,offset=0x1fdc
+Label=134,offset=0x1eac
+Label=135,offset=0x1ebc
 Label=136,offset=0x0
-Label=140,offset=0x2001
-Label=142,offset=0x2183
-Label=145,offset=0x268a
+Label=140,offset=0x1ee1
+Label=142,offset=0x2063
+Label=145,offset=0x256a
 Warning: this name is used by default without DIM declaration (POS)
 Label=147,offset=0x0
-Label=148,offset=0x2be8
-Label=149,offset=0x2e82
-Label=150,offset=0x2f4c
+Label=148,offset=0x2ac8
+Label=149,offset=0x2d62
+Label=150,offset=0x2e2c
 Warning: this name is used by default without DIM declaration (MONTHNUMBER)
 Warning: this name is used by default without DIM declaration (DAYOFMONTH)
 Warning: this name is used by default without DIM declaration (HOUROFDAY)
@@ -1212,12 +1038,13 @@ Warning: this name is used by default without DIM declaration (TIMEZONE)
 Warning: this name is used by default without DIM declaration (NMIN)
 Warning: this name is used by default without DIM declaration (NHOUR)
 Warning: this name is used by default without DIM declaration (NWDAY)
-Label=270,offset=0x31b5
+Label=270,offset=0x3095
 Warning: this name is used by default without DIM declaration (M_ID)
+Label=275,offset=0x318c
 Label=300,offset=0x0
-Label=330,offset=0x334f
+Label=330,offset=0x32a6
 Warning: this name is used by default without DIM declaration (TIMERTEMP)
-Label=1000,offset=0x3441
+Label=1000,offset=0x3398
 Warning: this name is used by default without DIM declaration (IJRK)
 Warning: this name is used by default without DIM declaration (OJRK)
 Warning: this name is used by default without DIM declaration (MBA)
@@ -1234,274 +1061,249 @@ Warning: this name is used by default without DIM declaration (ABIOUT)
 Warning: this name is used by default without DIM declaration (OCHG)
 Warning: this name is used by default without DIM declaration (OUTLO)
 Warning: this name is used by default without DIM declaration (OUTHI)
-Label=1020,offset=0x3d48
+Label=1020,offset=0x3c9f
 Label=1022,offset=0x0
 Warning: this name is used by default without DIM declaration (OMAX)
-Label=1050,offset=0x3eb7
+Label=1050,offset=0x3e0e
 Label=1100,offset=0x0
-Label=1150,offset=0x3f5a
+Label=1150,offset=0x3eb1
 Warning: this name is used by default without DIM declaration (Y)
-Label=1200,offset=0x3fc8
+Label=1200,offset=0x3f1f
 Warning: this name is used by default without DIM declaration (TMP$)
 Warning: this name is used by default without DIM declaration (CRC)
-Label=1250,offset=0x407f
+Label=1250,offset=0x3fd6
 Warning: this name is used by default without DIM declaration (K)
-Label=1600,offset=0x40ed
-Label=1700,offset=0x412e
-Label=1702,offset=0x4130
-Label=1705,offset=0x420f
-Label=1800,offset=0x42f7
-Label=5000,offset=0x4ca7
-Label=5200,offset=0x4d31
-Label=5250,offset=0x5646
+Label=1600,offset=0x4044
+Label=1700,offset=0x4085
+Label=1702,offset=0x4087
+Label=1705,offset=0x4166
+Label=1800,offset=0x424e
+Label=5000,offset=0x4bfe
+Label=5200,offset=0x4c88
+Label=5250,offset=0x559d
 Warning: this name is used by default without DIM declaration (TMP)
-Label=5252,offset=0x565b
-Label=5950,offset=0x5693
+Label=5252,offset=0x55b2
+Label=5950,offset=0x55ea
 Warning: this name is used by default without DIM declaration (OMIN)
-Label=9900,offset=0x571f
-Label=10000,offset=0x57c8
-Label=11000,offset=0x5991
-Label=11001,offset=0x59d9
-Label=11003,offset=0x5a56
-Label=11100,offset=0x5a61
+Label=9900,offset=0x5676
+Label=10000,offset=0x571f
+Label=11000,offset=0x58e8
+Label=11001,offset=0x5930
+Label=11003,offset=0x59ad
+Label=11100,offset=0x59b8
 Warning: this name is used by default without DIM declaration (EXIT)
-Label=11200,offset=0x5bdb
-Label=13000,offset=0x5c76
-Label=13001,offset=0x5d27
-Label=13300,offset=0x5dbd
-Label=13500,offset=0x5e9e
-Label=15000,offset=0x6227
+Label=11200,offset=0x5b32
+Label=13000,offset=0x5bcd
+Label=13001,offset=0x5c7e
+Label=15000,offset=0x5d1a
 Warning: this name is used by default without DIM declaration (_ERR_)
 Warning: this name is used by default without DIM declaration (_ERL_)
-Label=20100,offset=0x6356
+Label=20100,offset=0x5e49
 Warning: this name is used by default without DIM declaration (NUM)
-Label=21000,offset=0x64e7
+Label=21000,offset=0x5fca
 Warning: this name is used by default without DIM declaration (JK)
-Label=21010,offset=0x665b
-Label=21020,offset=0x66f6
-Label=22000,offset=0x678c
-Label=24000,offset=0x67f9
-Label=25000,offset=0x0
-Warning: this name is used by default without DIM declaration (D_ID)
-Label=25010,offset=0x69e1
-Label=25020,offset=0x6ae7
-Label=25050,offset=0x6d86
-Label=25500,offset=0x6e53
-Label=25400,offset=0x6f78
-Label=25420,offset=0x6f7b
-Label=31000,offset=0x7437
+Label=21010,offset=0x613e
+Label=21020,offset=0x61c9
+Label=22000,offset=0x6257
+Label=31000,offset=0x62c5
 Warning: this name is used by default without DIM declaration (TMPSTATUS)
-Label=32000,offset=0x7fd7
-Code tokenized, size=0x86c8
+Label=32000,offset=0x6e46
+Code tokenized, size=0x745e
 
 Tokenization: Third pass for label offsets used in GOTO/GOSUB/RETURN
     Statement Label --> Offset in tokenized code
-        GOSUB 15000 --> 0x6227 (25127 bytes)
-        GOSUB 9900  --> 0x571F (22303 bytes)
-        GOSUB 110   --> 0x0F8F ( 3983 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 330   --> 0x334F (13135 bytes)
-        GOSUB 21000 --> 0x64E7 (25831 bytes)
-        GOSUB 20100 --> 0x6356 (25430 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 142   --> 0x2183 ( 8579 bytes)
-        GOSUB 145   --> 0x268A ( 9866 bytes)
-        GOSUB 110   --> 0x0F8F ( 3983 bytes)
-        GOSUB 22000 --> 0x678C (26508 bytes)
-        GOSUB 150   --> 0x2F4C (12108 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 32000 --> 0x7FD7 (32727 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 142   --> 0x2183 ( 8579 bytes)
-        GOSUB 145   --> 0x268A ( 9866 bytes)
-        GOSUB 142   --> 0x2183 ( 8579 bytes)
-        GOSUB 145   --> 0x268A ( 9866 bytes)
-        GOSUB 5950  --> 0x5693 (22163 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-         GOTO 100   --> 0x080C ( 2060 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 115   --> 0x1F68 ( 8040 bytes)
-        GOSUB 115   --> 0x1F68 ( 8040 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 115   --> 0x1F68 ( 8040 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 13000 --> 0x5C76 (23670 bytes)
-        GOSUB 13000 --> 0x5C76 (23670 bytes)
-        GOSUB 13000 --> 0x5C76 (23670 bytes)
-        GOSUB 13000 --> 0x5C76 (23670 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 11000 --> 0x5991 (22929 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 13000 --> 0x5C76 (23670 bytes)
-         GOTO 149   --> 0x2E82 (11906 bytes)
-         GOTO 148   --> 0x2BE8 (11240 bytes)
-         GOTO 148   --> 0x2BE8 (11240 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-         GOTO 149   --> 0x2E82 (11906 bytes)
-         GOTO 149   --> 0x2E82 (11906 bytes)
-         GOTO 149   --> 0x2E82 (11906 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 1800  --> 0x42F7 (17143 bytes)
-        GOSUB 1200  --> 0x3FC8 (16328 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-        GOSUB 1700  --> 0x412E (16686 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-         GOTO 1020  --> 0x3D48 (15688 bytes)
-        GOSUB 1600  --> 0x40ED (16621 bytes)
-         GOTO 1020  --> 0x3D48 (15688 bytes)
-        GOSUB 1050  --> 0x3EB7 (16055 bytes)
-        GOSUB 1200  --> 0x3FC8 (16328 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-        GOSUB 1700  --> 0x412E (16686 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-         GOTO 1020  --> 0x3D48 (15688 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 1250  --> 0x407F (16511 bytes)
-         GOTO 1705  --> 0x420F (16911 bytes)
-         GOTO 1702  --> 0x4130 (16688 bytes)
-        GOSUB 1250  --> 0x407F (16511 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-        GOSUB 1200  --> 0x3FC8 (16328 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-        GOSUB 1700  --> 0x412E (16686 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-        GOSUB 1200  --> 0x3FC8 (16328 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-        GOSUB 1700  --> 0x412E (16686 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-        GOSUB 1200  --> 0x3FC8 (16328 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-        GOSUB 1700  --> 0x412E (16686 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-        GOSUB 1200  --> 0x3FC8 (16328 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-        GOSUB 1700  --> 0x412E (16686 bytes)
-        GOSUB 1150  --> 0x3F5A (16218 bytes)
-        GOSUB 5250  --> 0x5646 (22086 bytes)
-        GOSUB 5250  --> 0x5646 (22086 bytes)
-        GOSUB 5250  --> 0x5646 (22086 bytes)
-        GOSUB 5250  --> 0x5646 (22086 bytes)
-        GOSUB 5250  --> 0x5646 (22086 bytes)
-         GOTO 5252  --> 0x565B (22107 bytes)
-        GOSUB 31000 --> 0x7437 (29751 bytes)
-        GOSUB 11200 --> 0x5BDB (23515 bytes)
-         GOTO 11003 --> 0x5A56 (23126 bytes)
-        GOSUB 11200 --> 0x5BDB (23515 bytes)
-         GOTO 11001 --> 0x59D9 (23001 bytes)
-        GOSUB 11100 --> 0x5A61 (23137 bytes)
-         GOTO 13001 --> 0x5D27 (23847 bytes)
-        GOSUB 142   --> 0x2183 ( 8579 bytes)
-        GOSUB 142   --> 0x2183 ( 8579 bytes)
-        GOSUB 142   --> 0x2183 ( 8579 bytes)
-        GOSUB 145   --> 0x268A ( 9866 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21020 --> 0x66F6 (26358 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 21010 --> 0x665B (26203 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 109   --> 0x0EFC ( 3836 bytes)
-         GOTO 25020 --> 0x6AE7 (27367 bytes)
-         GOTO 25010 --> 0x69E1 (27105 bytes)
-        GOSUB 5250  --> 0x5646 (22086 bytes)
-         GOTO 25050 --> 0x6D86 (28038 bytes)
-        GOSUB 24000 --> 0x67F9 (26617 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 25500 --> 0x6E53 (28243 bytes)
-        GOSUB 25400 --> 0x6F78 (28536 bytes)
-         GOTO 25420 --> 0x6F7B (28539 bytes)
-         GOTO 25420 --> 0x6F7B (28539 bytes)
-         GOTO 25420 --> 0x6F7B (28539 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 140   --> 0x2001 ( 8193 bytes)
-        GOSUB 110   --> 0x0F8F ( 3983 bytes)
-        GOSUB 142   --> 0x2183 ( 8579 bytes)
-        GOSUB 145   --> 0x268A ( 9866 bytes)
-        GOSUB 13300 --> 0x5DBD (23997 bytes)
-        GOSUB 13500 --> 0x5E9E (24222 bytes)
-        GOSUB 1000  --> 0x3441 (13377 bytes)
-        GOSUB 10000 --> 0x57C8 (22472 bytes)
-        GOSUB 31000 --> 0x7437 (29751 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 135   --> 0x1FDC ( 8156 bytes)
-        GOSUB 134   --> 0x1FCC ( 8140 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 5200  --> 0x4D31 (19761 bytes)
-        GOSUB 270   --> 0x31B5 (12725 bytes)
-        GOSUB 5000  --> 0x4CA7 (19623 bytes) : FUNCTION BIT2B()
+        GOSUB 15000 --> 0x5D1A (23834 bytes)
+        GOSUB 9900  --> 0x5676 (22134 bytes)
+        GOSUB 110   --> 0x0E7E ( 3710 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 330   --> 0x32A6 (12966 bytes)
+        GOSUB 21000 --> 0x5FCA (24522 bytes)
+        GOSUB 20100 --> 0x5E49 (24137 bytes)
+        GOSUB 275   --> 0x318C (12684 bytes)
+        GOSUB 142   --> 0x2063 ( 8291 bytes)
+        GOSUB 145   --> 0x256A ( 9578 bytes)
+        GOSUB 110   --> 0x0E7E ( 3710 bytes)
+        GOSUB 22000 --> 0x6257 (25175 bytes)
+        GOSUB 150   --> 0x2E2C (11820 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 32000 --> 0x6E46 (28230 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 142   --> 0x2063 ( 8291 bytes)
+        GOSUB 145   --> 0x256A ( 9578 bytes)
+        GOSUB 142   --> 0x2063 ( 8291 bytes)
+        GOSUB 145   --> 0x256A ( 9578 bytes)
+        GOSUB 5950  --> 0x55EA (21994 bytes)
+         GOTO 100   --> 0x07CC ( 1996 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 115   --> 0x1E48 ( 7752 bytes)
+        GOSUB 115   --> 0x1E48 ( 7752 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 115   --> 0x1E48 ( 7752 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 13000 --> 0x5BCD (23501 bytes)
+        GOSUB 13000 --> 0x5BCD (23501 bytes)
+        GOSUB 13000 --> 0x5BCD (23501 bytes)
+        GOSUB 13000 --> 0x5BCD (23501 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 11000 --> 0x58E8 (22760 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 13000 --> 0x5BCD (23501 bytes)
+         GOTO 149   --> 0x2D62 (11618 bytes)
+         GOTO 148   --> 0x2AC8 (10952 bytes)
+         GOTO 148   --> 0x2AC8 (10952 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+         GOTO 149   --> 0x2D62 (11618 bytes)
+         GOTO 149   --> 0x2D62 (11618 bytes)
+         GOTO 149   --> 0x2D62 (11618 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 1800  --> 0x424E (16974 bytes)
+        GOSUB 1200  --> 0x3F1F (16159 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+        GOSUB 1700  --> 0x4085 (16517 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+         GOTO 1020  --> 0x3C9F (15519 bytes)
+        GOSUB 1600  --> 0x4044 (16452 bytes)
+         GOTO 1020  --> 0x3C9F (15519 bytes)
+        GOSUB 1050  --> 0x3E0E (15886 bytes)
+        GOSUB 1200  --> 0x3F1F (16159 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+        GOSUB 1700  --> 0x4085 (16517 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+         GOTO 1020  --> 0x3C9F (15519 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 1250  --> 0x3FD6 (16342 bytes)
+         GOTO 1705  --> 0x4166 (16742 bytes)
+         GOTO 1702  --> 0x4087 (16519 bytes)
+        GOSUB 1250  --> 0x3FD6 (16342 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+        GOSUB 1200  --> 0x3F1F (16159 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+        GOSUB 1700  --> 0x4085 (16517 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+        GOSUB 1200  --> 0x3F1F (16159 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+        GOSUB 1700  --> 0x4085 (16517 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+        GOSUB 1200  --> 0x3F1F (16159 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+        GOSUB 1700  --> 0x4085 (16517 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+        GOSUB 1200  --> 0x3F1F (16159 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+        GOSUB 1700  --> 0x4085 (16517 bytes)
+        GOSUB 1150  --> 0x3EB1 (16049 bytes)
+        GOSUB 5250  --> 0x559D (21917 bytes)
+        GOSUB 5250  --> 0x559D (21917 bytes)
+        GOSUB 5250  --> 0x559D (21917 bytes)
+        GOSUB 5250  --> 0x559D (21917 bytes)
+        GOSUB 5250  --> 0x559D (21917 bytes)
+         GOTO 5252  --> 0x55B2 (21938 bytes)
+        GOSUB 31000 --> 0x62C5 (25285 bytes)
+        GOSUB 11200 --> 0x5B32 (23346 bytes)
+         GOTO 11003 --> 0x59AD (22957 bytes)
+        GOSUB 11200 --> 0x5B32 (23346 bytes)
+         GOTO 11001 --> 0x5930 (22832 bytes)
+        GOSUB 11100 --> 0x59B8 (22968 bytes)
+         GOTO 13001 --> 0x5C7E (23678 bytes)
+        GOSUB 142   --> 0x2063 ( 8291 bytes)
+        GOSUB 145   --> 0x256A ( 9578 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21020 --> 0x61C9 (25033 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 21010 --> 0x613E (24894 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 109   --> 0x0DEA ( 3562 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 275   --> 0x318C (12684 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 275   --> 0x318C (12684 bytes)
+        GOSUB 275   --> 0x318C (12684 bytes)
+        GOSUB 140   --> 0x1EE1 ( 7905 bytes)
+        GOSUB 110   --> 0x0E7E ( 3710 bytes)
+        GOSUB 142   --> 0x2063 ( 8291 bytes)
+        GOSUB 145   --> 0x256A ( 9578 bytes)
+        GOSUB 1000  --> 0x3398 (13208 bytes)
+        GOSUB 10000 --> 0x571F (22303 bytes)
+        GOSUB 31000 --> 0x62C5 (25285 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 275   --> 0x318C (12684 bytes)
+        GOSUB 135   --> 0x1EBC ( 7868 bytes)
+        GOSUB 134   --> 0x1EAC ( 7852 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 275   --> 0x318C (12684 bytes)
+        GOSUB 5200  --> 0x4C88 (19592 bytes)
+        GOSUB 270   --> 0x3095 (12437 bytes)
+        GOSUB 275   --> 0x318C (12684 bytes)
+        GOSUB 5000  --> 0x4BFE (19454 bytes) : FUNCTION BIT2B()
 
 Tokenization: Fourth pass for checking multiline IF...ENDIF
 
@@ -1510,7 +1312,7 @@ Updating jump offsets in IF...THEN...ELSE...ENDIF
 
 Tokenization: Finish
 
-Memory allocation after tokenization 34504:, 004DA90C 004D2244,start=004D0020
+Memory allocation after tokenization 29790:, 004D96A2 004D2244,start=004D0020
 
 Memory allocation after tokenization:
 
@@ -1529,105 +1331,106 @@ Table of already allocated long variables or arrays:
  9 (   15,    0)    64 0x035A (  858 bytes)  + UP
 10 (    9,    0)    40 0x039A (  922 bytes)  + TS
 11 (    4,    0)    20 0x0894 ( 2196 bytes)  + TRAFFIC
-12 (    7,    0)    32 0x0CAD ( 3245 bytes)  + DEL
-13 (   50,    0)   204 0x0CF7 ( 3319 bytes)  + CHN
-14 (   50,    0)   204 0x0DC3 ( 3523 bytes)  + CHD
-15 (    4,    0)    20 0x0E8F ( 3727 bytes)  + MBSTA
-16 (    4,    0)    20 0x0EA3 ( 3747 bytes)  + MBTS
-17 (    4,    0)    20 0x0FE3 ( 4067 bytes)  + IMASK
-18 (    4,    0)    20 0x0FF7 ( 4087 bytes)  + ICHG
-19 (    2,    0)    12 0x100B ( 4107 bytes)  + OMASK
-20 (    2,    0)    12 0x1017 ( 4119 bytes)  + ESER1
-21 (    2,    0)    12 0x1023 ( 4131 bytes)  + ESER2
-22 (    2,    0)    12 0x102F ( 4143 bytes)  + ICNT
-23 (    2,    0)    12 0x103B ( 4155 bytes)  + OCNT
-24 (    2,    0)    12 0x1047 ( 4167 bytes)  + PREF
-25 (    2,    0)    12 0x1053 ( 4179 bytes)  + SUFF
-26 (   10,    0)    44 0x105F ( 4191 bytes)  + MB
-27 (    8,    0)    36 0x108B ( 4235 bytes)  + ADATA
-28 (    8,    0)    36 0x10AF ( 4271 bytes)  + TMASK
-29 (    4,    0)    20 0x10D3 ( 4307 bytes)  + MBCHFROM
-30 (    4,    0)    20 0x10E7 ( 4327 bytes)  + EXTENSIONTYPE
-31 (    3,    0)    16 0x10FB ( 4347 bytes)  + TSET
-32 (    3,    0)    16 0x110B ( 4363 bytes)  + TACTUAL
-33 (    2,    0)    12 0x111B ( 4379 bytes)  + TVIRT1
-34 (    2,    0)    12 0x1127 ( 4391 bytes)  + TVIRT2
-35 (    3,    0)    16 0x1133 ( 4403 bytes)  + VIRTMEM
-36 (    3,    0)    16 0x1143 ( 4419 bytes)  + TERROR
-37 (    3,    0)    16 0x1153 ( 4435 bytes)  + TACTUAL_LAST
-38 (    3,    0)    16 0x1163 ( 4451 bytes)  + TMAX
-39 (    5,    0)    24 0x1173 ( 4467 bytes)  + TSENSNO
-40 (    3,    0)    16 0x118B ( 4491 bytes)  + TSETNORM
-41 (    3,    0)    16 0x119B ( 4507 bytes)  + ZONEHI
-42 (    3,    0)    16 0x11AB ( 4523 bytes)  + ZONEHITS
-43 (    3,    0)    16 0x11BB ( 4539 bytes)  + COOLING
-44 (    0,    0)     4 0x11CB ( 4555 bytes)  + ZONE
-45 (    0,    0)     4 0x11CF ( 4559 bytes)  + TSETADD
-46 (    0,    0)     4 0x11D3 ( 4563 bytes)  + TSETHILEN
-47 (    3,    0)    16 0x1207 ( 4615 bytes)  + THRE
-48 (    3,    0)    16 0x1217 ( 4631 bytes)  + GW
-49 (    0,    0)     4 0x1227 ( 4647 bytes)  * BIT2B
-50 (    0,    0)     4 0x122B ( 4651 bytes)  - MBMAX
-51 (    0,    0)     4 0x122F ( 4655 bytes)  - MONMODE
-52 (    0,    0)     4 0x1233 ( 4659 bytes)  - _DTS_
-53 (    0,    0)     4 0x1237 ( 4663 bytes)  - OIN
-54 (    0,    0)     4 0x123B ( 4667 bytes)  - COMMFAILFELAY
-55 (    0,    0)     4 0x123F ( 4671 bytes)  - NFRAG
-56 (    0,    0)     4 0x1243 ( 4675 bytes)  - JJ
-57 (    0,    0)     4 0x1247 ( 4679 bytes)  - MBAX
-58 (    0,    0)     4 0x124B ( 4683 bytes)  - THYST
-59 (    0,    0)     4 0x124F ( 4687 bytes)  - THERMOINTERVAL
-60 (    0,    0)     4 0x1253 ( 4691 bytes)  - CHAN
-61 (    0,    0)     4 0x1257 ( 4695 bytes)  - AILEVEL
-62 (    0,    0)     4 0x125B ( 4699 bytes)  - KH
-63 (    0,    0)     4 0x125F ( 4703 bytes)  - KL
-64 (    0,    0)     4 0x1263 ( 4707 bytes)  - UK
-65 (    0,    0)     4 0x1267 ( 4711 bytes)  - POS
-66 (    0,    0)     4 0x126B ( 4715 bytes)  - MONTHNUMBER
-67 (    0,    0)     4 0x126F ( 4719 bytes)  - DAYOFMONTH
-68 (    0,    0)     4 0x1273 ( 4723 bytes)  - HOUROFDAY
-69 (    0,    0)     4 0x1277 ( 4727 bytes)  - WEEKDAY
-70 (    0,    0)     4 0x127B ( 4731 bytes)  - TIMEZONE
-71 (    0,    0)     4 0x127F ( 4735 bytes)  - NMIN
-72 (    0,    0)     4 0x1283 ( 4739 bytes)  - NHOUR
-73 (    0,    0)     4 0x1287 ( 4743 bytes)  - NWDAY
-74 (    0,    0)     4 0x128B ( 4747 bytes)  - M_ID
-75 (    0,    0)     4 0x128F ( 4751 bytes)  - TIMERTEMP
-76 (    0,    0)     4 0x1293 ( 4755 bytes)  - IJRK
-77 (    0,    0)     4 0x1297 ( 4759 bytes)  - OJRK
-78 (    0,    0)     4 0x129B ( 4763 bytes)  - MBA
-79 (    0,    0)     4 0x129F ( 4767 bytes)  - MLEN
-80 (    0,    0)     4 0x12A3 ( 4771 bytes)  - EXPLEN
-81 (    0,    0)     4 0x12A7 ( 4775 bytes)  - FBWD
-82 (    0,    0)     4 0x12AB ( 4779 bytes)  - INHI
-83 (    0,    0)     4 0x12AF ( 4783 bytes)  - INLO
-84 (    0,    0)     4 0x12B3 ( 4787 bytes)  - INWD
-85 (    0,    0)     4 0x12B7 ( 4791 bytes)  - IHII
-86 (    0,    0)     4 0x12BB ( 4795 bytes)  - OUTWD
-87 (    0,    0)     4 0x12BF ( 4799 bytes)  - ABIOUT
-88 (    0,    0)     4 0x12C3 ( 4803 bytes)  - OCHG
-89 (    0,    0)     4 0x12C7 ( 4807 bytes)  - OUTLO
-90 (    0,    0)     4 0x12CB ( 4811 bytes)  - OUTHI
-91 (    0,    0)     4 0x12CF ( 4815 bytes)  - OMAX
-92 (    0,    0)     4 0x12D3 ( 4819 bytes)  - Y
-93 (    0,    0)     4 0x13D7 ( 5079 bytes)  - CRC
-94 (    0,    0)     4 0x13DB ( 5083 bytes)  - K
-95 (    0,    0)     4 0xFFFF (   -1 bytes)  + NV11
-96 (    0,    0)     4 0xFFFB (   -5 bytes)  + NV12
-97 (    0,    0)     4 0xFFF7 (   -9 bytes)  + NV13
-98 (    0,    0)     4 0xFFF3 (  -13 bytes)  + NV14
-99 (    0,    0)     4 0xFFEF (  -17 bytes)  + NV15
-100 (    0,    0)     4 0x13DF ( 5087 bytes)  - TMP
-101 (    0,    0)     4 0x13E3 ( 5091 bytes)  - OMIN
-102 (    0,    0)     4 0x13E7 ( 5095 bytes)  - EXIT
-103 (    0,    0)     4 0x13EB ( 5099 bytes)  - _ERR_
-104 (    0,    0)     4 0x13EF ( 5103 bytes)  - _ERL_
-105 (    0,    0)     4 0x13F3 ( 5107 bytes)  - NUM
-106 (    0,    0)     4 0x13F7 ( 5111 bytes)  - JK
-107 (    0,    0)     4 0x13FB ( 5115 bytes)  - D_ID
-108 (    0,    0)     4 0x13FF ( 5119 bytes)  - TMPSTATUS
+12 (    7,    0)    32 0x0DD9 ( 3545 bytes)  + DEL
+13 (   50,    0)   204 0x0E23 ( 3619 bytes)  + CHN
+14 (   50,    0)   204 0x0EEF ( 3823 bytes)  + CHD
+15 (    4,    0)    20 0x0FBB ( 4027 bytes)  + MBSTA
+16 (    4,    0)    20 0x0FCF ( 4047 bytes)  + MBTS
+17 (    4,    0)    20 0x110F ( 4367 bytes)  + IMASK
+18 (    4,    0)    20 0x1123 ( 4387 bytes)  + ICHG
+19 (    2,    0)    12 0x1137 ( 4407 bytes)  + OMASK
+20 (    2,    0)    12 0x1143 ( 4419 bytes)  + ESER1
+21 (    2,    0)    12 0x114F ( 4431 bytes)  + ESER2
+22 (    2,    0)    12 0x115B ( 4443 bytes)  + ICNT
+23 (    2,    0)    12 0x1167 ( 4455 bytes)  + OCNT
+24 (    2,    0)    12 0x1173 ( 4467 bytes)  + PREF
+25 (    2,    0)    12 0x117F ( 4479 bytes)  + SUFF
+26 (   10,    0)    44 0x118B ( 4491 bytes)  + MB
+27 (    8,    0)    36 0x11B7 ( 4535 bytes)  + ADATA
+28 (    8,    0)    36 0x11DB ( 4571 bytes)  + TMASK
+29 (    4,    0)    20 0x11FF ( 4607 bytes)  + MBCHFROM
+30 (    4,    0)    20 0x1213 ( 4627 bytes)  + EXTENSIONTYPE
+31 (    3,    0)    16 0x1227 ( 4647 bytes)  + TSET
+32 (    3,    0)    16 0x1237 ( 4663 bytes)  + TACTUAL
+33 (    2,    0)    12 0x1247 ( 4679 bytes)  + TVIRT1
+34 (    2,    0)    12 0x1253 ( 4691 bytes)  + TVIRT2
+35 (    3,    0)    16 0x125F ( 4703 bytes)  + VIRTMEM
+36 (    3,    0)    16 0x126F ( 4719 bytes)  + TERROR
+37 (    3,    0)    16 0x127F ( 4735 bytes)  + TACTUAL_LAST
+38 (    3,    0)    16 0x128F ( 4751 bytes)  + TMAX
+39 (    5,    0)    24 0x129F ( 4767 bytes)  + TSENSNO
+40 (    3,    0)    16 0x12B7 ( 4791 bytes)  + TSETNORM
+41 (    3,    0)    16 0x12C7 ( 4807 bytes)  + ZONEHI
+42 (    3,    0)    16 0x12D7 ( 4823 bytes)  + ZONEHITS
+43 (    3,    0)    16 0x12E7 ( 4839 bytes)  + COOLING
+44 (    0,    0)     4 0x12F7 ( 4855 bytes)  + ZONE
+45 (    0,    0)     4 0x12FB ( 4859 bytes)  + TSETADD
+46 (    0,    0)     4 0x12FF ( 4863 bytes)  + TSETHILEN
+47 (    3,    0)    16 0x1333 ( 4915 bytes)  + THRE
+48 (    3,    0)    16 0x1343 ( 4931 bytes)  + GW
+49 (    0,    0)     4 0x1353 ( 4947 bytes)  * BIT2B
+50 (    0,    0)     4 0x1357 ( 4951 bytes)  - MONPORT1
+51 (    0,    0)     4 0x135B ( 4955 bytes)  - MONPORT2
+52 (    0,    0)     4 0x135F ( 4959 bytes)  - MBMAX
+53 (    0,    0)     4 0x1363 ( 4963 bytes)  - _DTS_
+54 (    0,    0)     4 0x1367 ( 4967 bytes)  - OIN
+55 (    0,    0)     4 0x136B ( 4971 bytes)  - COMMFAILFELAY
+56 (    0,    0)     4 0x136F ( 4975 bytes)  - NFRAG
+57 (    0,    0)     4 0x1373 ( 4979 bytes)  - JJ
+58 (    0,    0)     4 0x1377 ( 4983 bytes)  - MONMODE
+59 (    0,    0)     4 0x137B ( 4987 bytes)  - MBAX
+60 (    0,    0)     4 0x137F ( 4991 bytes)  - THYST
+61 (    0,    0)     4 0x1383 ( 4995 bytes)  - THERMOINTERVAL
+62 (    0,    0)     4 0x1387 ( 4999 bytes)  - CHAN
+63 (    0,    0)     4 0x138B ( 5003 bytes)  - AILEVEL
+64 (    0,    0)     4 0x138F ( 5007 bytes)  - KH
+65 (    0,    0)     4 0x1393 ( 5011 bytes)  - KL
+66 (    0,    0)     4 0x1397 ( 5015 bytes)  - UK
+67 (    0,    0)     4 0x139B ( 5019 bytes)  - POS
+68 (    0,    0)     4 0x139F ( 5023 bytes)  - MONTHNUMBER
+69 (    0,    0)     4 0x13A3 ( 5027 bytes)  - DAYOFMONTH
+70 (    0,    0)     4 0x13A7 ( 5031 bytes)  - HOUROFDAY
+71 (    0,    0)     4 0x13AB ( 5035 bytes)  - WEEKDAY
+72 (    0,    0)     4 0x13AF ( 5039 bytes)  - TIMEZONE
+73 (    0,    0)     4 0x13B3 ( 5043 bytes)  - NMIN
+74 (    0,    0)     4 0x13B7 ( 5047 bytes)  - NHOUR
+75 (    0,    0)     4 0x13BB ( 5051 bytes)  - NWDAY
+76 (    0,    0)     4 0x13BF ( 5055 bytes)  - M_ID
+77 (    0,    0)     4 0x13C3 ( 5059 bytes)  - TIMERTEMP
+78 (    0,    0)     4 0x13C7 ( 5063 bytes)  - IJRK
+79 (    0,    0)     4 0x13CB ( 5067 bytes)  - OJRK
+80 (    0,    0)     4 0x13CF ( 5071 bytes)  - MBA
+81 (    0,    0)     4 0x13D3 ( 5075 bytes)  - MLEN
+82 (    0,    0)     4 0x13D7 ( 5079 bytes)  - EXPLEN
+83 (    0,    0)     4 0x13DB ( 5083 bytes)  - FBWD
+84 (    0,    0)     4 0x13DF ( 5087 bytes)  - INHI
+85 (    0,    0)     4 0x13E3 ( 5091 bytes)  - INLO
+86 (    0,    0)     4 0x13E7 ( 5095 bytes)  - INWD
+87 (    0,    0)     4 0x13EB ( 5099 bytes)  - IHII
+88 (    0,    0)     4 0x13EF ( 5103 bytes)  - OUTWD
+89 (    0,    0)     4 0x13F3 ( 5107 bytes)  - ABIOUT
+90 (    0,    0)     4 0x13F7 ( 5111 bytes)  - OCHG
+91 (    0,    0)     4 0x13FB ( 5115 bytes)  - OUTLO
+92 (    0,    0)     4 0x13FF ( 5119 bytes)  - OUTHI
+93 (    0,    0)     4 0x1403 ( 5123 bytes)  - OMAX
+94 (    0,    0)     4 0x1407 ( 5127 bytes)  - Y
+95 (    0,    0)     4 0x150B ( 5387 bytes)  - CRC
+96 (    0,    0)     4 0x150F ( 5391 bytes)  - K
+97 (    0,    0)     4 0xFFFF (   -1 bytes)  + NV11
+98 (    0,    0)     4 0xFFFB (   -5 bytes)  + NV12
+99 (    0,    0)     4 0xFFF7 (   -9 bytes)  + NV13
+100 (    0,    0)     4 0xFFF3 (  -13 bytes)  + NV14
+101 (    0,    0)     4 0xFFEF (  -17 bytes)  + NV15
+102 (    0,    0)     4 0x1513 ( 5395 bytes)  - TMP
+103 (    0,    0)     4 0x1517 ( 5399 bytes)  - OMIN
+104 (    0,    0)     4 0x151B ( 5403 bytes)  - EXIT
+105 (    0,    0)     4 0x151F ( 5407 bytes)  - _ERR_
+106 (    0,    0)     4 0x1523 ( 5411 bytes)  - _ERL_
+107 (    0,    0)     4 0x1527 ( 5415 bytes)  - NUM
+108 (    0,    0)     4 0x152B ( 5419 bytes)  - JK
+109 (    0,    0)     4 0x152F ( 5423 bytes)  - TMPSTATUS
 
-Number of Integer Variables:108
+Number of Integer Variables:109
 
 Table of already allocated string variables:
 ----------------------------------------------------------------
@@ -1659,32 +1462,33 @@ Table of already allocated string variables:
 24  100 0x090C ( 2316 bytes)  + SR$
 25   50 0x0970 ( 2416 bytes)  + SER$
 26  256 0x09A2 ( 2466 bytes)  + MR$
-27  350 0x0AA2 ( 2722 bytes)  + MS$
-28   53 0x0C00 ( 3072 bytes)  + SVREG$
-29   10 0x0C35 ( 3125 bytes)  + MATS$
-30   20 0x0C3F ( 3135 bytes)  + IP$
-31   20 0x0C53 ( 3155 bytes)  + MIP1$
-32   20 0x0C67 ( 3175 bytes)  + MIP2$
-33   10 0x0C7B ( 3195 bytes)  + MTEE$
-34   10 0x0C85 ( 3205 bytes)  + TEHA$
-35   10 0x0C8F ( 3215 bytes)  + EVNT$
-36   20 0x0C99 ( 3225 bytes)  + KORR$
-37   11 0x0CCD ( 3277 bytes)  + USER$
-38   31 0x0CD8 ( 3288 bytes)  + USPA$
-39  100 0x0EB7 ( 3767 bytes)  + MBS$
-40  200 0x0F1B ( 3867 bytes)  + MBSL$
-41   12 0x11D7 ( 4567 bytes)  + ZONE1NAME$
-42   12 0x11E3 ( 4579 bytes)  + ZONE2NAME$
-43   12 0x11EF ( 4591 bytes)  + ZONE3NAME$
-44   12 0x11FB ( 4603 bytes)  + ZONE4NAME$
-45  256 0x12D7 ( 4823 bytes)  - TMP$
+27  300 0x0AA2 ( 2722 bytes)  + MS1$
+28  350 0x0BCE ( 3022 bytes)  + MS2$
+29   53 0x0D2C ( 3372 bytes)  + SVREG$
+30   10 0x0D61 ( 3425 bytes)  + MATS$
+31   20 0x0D6B ( 3435 bytes)  + IP$
+32   20 0x0D7F ( 3455 bytes)  + MIP1$
+33   20 0x0D93 ( 3475 bytes)  + MIP2$
+34   10 0x0DA7 ( 3495 bytes)  + MTEE$
+35   10 0x0DB1 ( 3505 bytes)  + TEHA$
+36   10 0x0DBB ( 3515 bytes)  + EVNT$
+37   20 0x0DC5 ( 3525 bytes)  + KORR$
+38   11 0x0DF9 ( 3577 bytes)  + USER$
+39   31 0x0E04 ( 3588 bytes)  + USPA$
+40  100 0x0FE3 ( 4067 bytes)  + MBS$
+41  200 0x1047 ( 4167 bytes)  + MBSL$
+42   12 0x1303 ( 4867 bytes)  + ZONE1NAME$
+43   12 0x130F ( 4879 bytes)  + ZONE2NAME$
+44   12 0x131B ( 4891 bytes)  + ZONE3NAME$
+45   12 0x1327 ( 4903 bytes)  + ZONE4NAME$
+46  256 0x140B ( 5131 bytes)  - TMP$
 
-Number of String Variables:45
+Number of String Variables:46
 
 Warning: temporary string size was increased up to 1024 bytes!
 
 Final memory allocation map (area sizes) during run-time for target barionet100:
-- Data area for allocated variables: 0x1403 ( 5123 bytes)
-- Data area for temporary variables: 0x3C0C (15372 bytes)
-- Tables and tokenized code area   : 0x8FF1 (36849 bytes)
-Program start offet=0x5aa
+- Data area for allocated variables: 0x1533 ( 5427 bytes)
+- Data area for temporary variables: 0x4D21 (19745 bytes)
+- Tables and tokenized code area   : 0x7DAC (32172 bytes)
+Program start offet=0x5bc

@@ -104,8 +104,8 @@
 #define DataPort= ioctl 839, ' 2 baiti basen serveri port
 #define DataPort iostate(839)
 
-#define MonPort= ioctl 840, ' 2 baiti basen server
-#define MonPort iostate(840)
+'#define MonPort= ioctl 840, ' 2 baiti basen server
+'#define MonPort iostate(840)
 
 #define DataInterval= ioctl 841, ' data saatmise max periood s
 #define DataInterval iostate(841)

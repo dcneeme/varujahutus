@@ -13,9 +13,9 @@
 		mr$="id:"+mac$+"\nS100:bnrescue\n":mTEE$="I":gosub 142:gosub 145:delay 5000:lock 2 
 	endif
 
-    if TEHA$ = "SC" then TEHA$="":gosub 13300 ' save all counters
+    'if TEHA$ = "SC" then TEHA$="":gosub 13300 ' save all counters
     
-	if mid$(TEHA$,1,1) = "C" then syslog "appmain: saving counter, TEHA$ "+TEHA$,4:gosub 13500:TEHA$="" ' save counter
+	'if mid$(TEHA$,1,1) = "C" then syslog "appmain: saving counter, TEHA$ "+TEHA$,4:gosub 13500:TEHA$="" ' save counter
     
     ' CommLed=BupComm ' CommLed=or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
 	'aga udpmon vastused lahevad vahel kaduma ja jaab peale... kahes suunas korraga suhtlemise koosmoju?
@@ -86,11 +86,11 @@
             
             
             ms1$=ms1$+"UPV:"+sprintf$("%lu",up(0))+"\nUPS:":if up(0)<3600 then gosub 135 else gosub 134 ' uptime, alla 1 h warning
-            if and(or(MonMode = 1, MonMode = 3), ms1$<>"") then gosub 270 'saadame minema 
+            gosub 270 'saadame minema kui MonMode oige vt sub 275
             
             '[1373047637] PROCESS_SERVICE_CHECK_RESULT;00204ADEADE5;_AegStardist;0;Kontrolleri alglaadimisest on aega: 557.5h|_AegStardist=557.50h
             ms2$=ms2$+"["+str$(_DTS_)+"] PROCESS_SERVICE_CHECK_RESULT;"+mac$+";Uptime;0;Time from restart: "+str$(up(0))+"s|Uptime="+str$(up(0))+"s\n"
-            if and(or(MonMode = 2, MonMode = 3), ms2$<>"") then gosub 275 'saadame minema need
+            gosub 275 'saadame minema need
             
             gosub 5200 ' kanalitele vaartused uuesti igaks juhuks
             ' gosub 25000 ' kanalite / tsoonide regulaarne kordussaatmine babup ja ka udpmon
@@ -103,11 +103,7 @@
   
 	
 
-	if ts(2)+10000 < SYSTIME then ' igaks juhuks handle 0 sulgemine
-		if mediatype(0)<>0 then syslog "appmain: closing due to mediatype(0)="+str$(mediatype(0))+" for too long",4:close 0,10
-	endif
- 
-   
+	   
     
     if ms1$<>"" then gosub 270 ' send mon msg uniscada
     if ms2$<>"" then gosub 275 ' send mon msg nagios

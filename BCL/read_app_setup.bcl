@@ -72,7 +72,7 @@
  jj=580:VoltLoLimit=MIDGET(set$,jj-511,2):gosub 21020 
  jj=582:VoltHiLimit=MIDGET(set$,jj-511,2):gosub 21020
  
- jj=584:MonMode=MIDGET(set$,jj-511,1):gosub 21010 ' 1 uniscada, 2 mnagios passive
+ jj=584:MonMode=MIDGET(set$,jj-511,1):gosub 21010 ' 1 uniscada, 2 nagios passive
  
  jj=716:mbmax=MIDGET(set$,jj-511,1):gosub 21010 ' io laienduste arv
  if mbmax>3 then mbax=3 'rohkem ei saa praegu olla
