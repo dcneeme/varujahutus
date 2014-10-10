@@ -16,7 +16,7 @@
   return
 
   
-  275 ' sent to Nagios
+  275 ' sent to starman Nagios directly
     
     if mediatype(1)<>7 then syslog "sub 270: no udp port opened, cannot send!!!",2:ms2$="":return
     
