@@ -194,6 +194,7 @@
  open com$ as 0 'avame mon pordi, udp, uniscada
  syslog "init: opened udp port "+sprintf$("%u",MonPort1)+" for UniSCADA",4 ' kasuta sprintf$ str$ ASEMEL 
  
+ MonPort2=50000 ' enne setupi lugemist!
  COM$="UDP:0.0.0.0:"+str$(MonPort2) '  keep monitoring udp port open
  open com$ as 1 'avame mon pordi, udp, nagios starman
  syslog "init: opened udp port "+sprintf$("%u",MonPort2)+" for direct Nagios communication",4 ' kasuta sprintf$ str$ ASEMEL 
@@ -346,7 +347,7 @@
   if and(2,CommFailReaction) = 2 then ' reboot sidekatkestuse korral on lubatud, 3 x pikem katkestus vajalik kui gprs resetiks!
     'syslog "main: uptimedelay "+str$(UptimeDelay)+", uptime "+str$(up(0))+", lastcommTS "+str$(LastCommTS),4 'ajutine
     if and(up(0)>UptimeDelay, up(0)>up(5)+3*CommFailDelay+120) then '  voib rebooti teha, kolmanda gprs restardi jarel andes enne 120s aega gprs kaivitumiseks
-        SYSLOG "GOING TO REBOOT due to comm failure for more than 3 x "+str$(CommFailFelay),1
+        SYSLOG "GOING TO REBOOT due to comm failure for more than 3 x "+str$(CommFailDelay),1
         ms1$="mst:2\nmsd:rebooting due to commfail\nUPS:2\nUPV:0\n":gosub 270 ' uniscada
         DELAY 5000:LOCK 2 ' reboot
     endif
