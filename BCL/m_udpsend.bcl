@@ -18,11 +18,11 @@
   
   275 ' sent to starman Nagios directly
     
-    if mediatype(1)<>7 then syslog "sub 270: no udp port opened, cannot send!!!",2:ms2$="":return
+    if mediatype(1)<>7 then syslog "sub 270: no udp port for nagios direct opened, cannot send!!!",2:ms2$="":return
     
     if or(MonMode = 2, MonMode = 3) then
         WRITE 1,ms2$,0,mip2$,MonPort2:UP(4)=UP(0)
-        syslog "sub 275: sent to "+mip2$+":"+sprintf$("%u",MonPort2)+": "+ms2$,4
+        syslog "sub 275: sent to "+mip2$+":"+sprintf$("%u",MonPort2)+": "+ms2$,5
         traffic(1)=traffic(1)+len(ms2$) ' valjuv udp liiklus
     endif
     ms2$=""

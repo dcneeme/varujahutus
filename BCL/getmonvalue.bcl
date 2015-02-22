@@ -1,28 +1,29 @@
  ' getmonvalue.bcl   - get value from reg:value pair from the monitoring server response
 
- 13000 ' sub get register value mval$ from input mr$ based on register name mreg$
-    ' otsitava reg nimi olgu mreg$, sisendi nimi mr$, eraldaja koolon, tulemus mval$
+ 13000 ' sub get register value mval$ from input mr13000$ based on register name mreg$
+    ' otsitava reg nimi olgu mreg$, sisendi nimi mr13000$, eraldaja koolon, tulemus mval$
     ' syslog "sub 13000: otsime "+mreg$+":",4
     ' kui vastavust ei leita, on MonParseJama = 1, sest ka mval$="" on lubatud
     ' abimuutujad uku ja ukk on yhiskasutuses sub 12000!
     
     if mreg$ = "" then syslog "sub 13000: invalid mreg$ "+mreg$+":"+mval$,4:return
-	'MonParseJama=1: 'ei kasuta
+	if mr13000$ = "" then syslog "sub 13000: invalid (empty) mr13000$ ",4:return
+    
     mval$=""
     ukk=0
 
-    uku=instr(1,mr$,mreg$+":") ' otsime reg asukohta koos kooloniga, seega teksti sees koolon on lubatud!
-    if uku=0 then syslog "sub 13000: key "+mreg$+" not found",5:return else syslog "sub 13000: key found uku:"+str$(uku),5 
+    uku=instr(1,mr13000$,mreg$+":") ' otsime reg asukohta koos kooloniga, seega teksti sees koolon on lubatud!
+    if uku=0 then syslog "sub 13000: key "+mreg$+" not found",4:return else syslog "sub 13000: key found uku:"+str$(uku),5 ' ##### 
 
-   13001   if mid$(mr$,uku+ukk,1) =chr$(10) then ' leidsime reavahetuse voi realopu peale regnime ja separaatorit
-               mval$=mid$(mr$,uku+len(mreg$)+1,ukk-len(mreg$)-1) ' arvesta reg$ ja eraldaja pikkust
+   13001   if mid$(mr13000$,uku+ukk,1) = chr$(10) then ' leidsime reavahetuse voi realopu peale regnime ja separaatorit
+               mval$=mid$(mr13000$,uku+len(mreg$)+1,ukk-len(mreg$)-1) ' arvesta reg$ ja eraldaja pikkust
                if uku>0 then
                  ' MonParseJama=0 
                   syslog "sub 13000: got "+mreg$+":"+mval$,5
                   return
                endif
            else
-               if ukk<len(mr$)-uku then
+               if ukk<len(mr13000$)-uku then
                    ukk=ukk+1
                    goto 13001 'otsime edasi suurema uku abil
                endif

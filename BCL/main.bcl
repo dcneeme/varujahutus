@@ -1,5 +1,5 @@
   dim APVER$(30) ' application version, hetkel ainult bn100 jaoks!
- APVER$="starman_jahutus 08.08.2014" ' mac 00204AB18657 starmani vent ruumis ukse taga lisakilbis
+ APVER$="starman_jahutus 22.02.2015" ' mac 00204AB18657 starmani vent ruumis ukse taga lisakilbis
  syslog APVER$,1
  
  ' 06.06.2013 fututec2 alusel
@@ -13,6 +13,7 @@
  ' 11.11.2013 kaks termoandurit juurde ja optrika tsoonid 2 ja 3 omavahel kokku nupuvajutused
  ' 16.06.2014 kahte monitooringusse paralleelne info saatmine. pordid 44445 ja 50000, udp molemad.
  ' 08.08.2014 uptime piirang maha, sub13500 kasutus valja (TEHA=C)
+ ' 22.02.12015 lisatud tsoonilubade kuulamine keldri kontrollerist udp port 44444. ack saatmine voiks ka olla.
  
  ' TODO
  ' arvestada soojuspumpade olekuid varujahutuse kaivitamisel. blokeerida kui vaja! 
@@ -92,8 +93,10 @@
  dim ser$(50)  ' string to send to com port as 2 / length dep on lcd size
 
  dim mr$(256) ' monitoring read
+ dim mr13000$(128) ' energymetering host read
  dim ms1$(300) ' monitoring send uniscada
  dim ms2$(350) ' monitoring send
+ dim ms3$(20) ' ack to cellar host
  'dim ms1$(256), ms2$(256), ms3$(256), ms4$(256) ', ms5$(256), ms6$(256), ms7$(256), ms8$(256) ' in alusel valitav kordussaatmine max 256 b korraga 
    ' 8 muutujaga Warning: data area for temporary variables maybe not enough!
  
@@ -103,6 +106,8 @@
  dim ip$(20) ' oma aadress LAN peal, dhcp juhtudeks hea teada
  dim mip1$(20) ' monitoring server ip
  dim mip2$(20) ' monitoring server ip
+ dim mip3$(20) ' keldri kontrolleri ip$
+ dim MonMac3$(20) ' keldri kontrolleri mac
    
  dim mTee$(10) ' mida vaja teha monitooringus
  dim TEHA$(10) ' mida vaja teha rakenduses
@@ -157,7 +162,8 @@
  dim tsetnorm(3) ' igale tsoonile individuaalne
  dim zonehi(3) 'tostetud temp olek
  dim zonehits(3) 'zonehi algus, tagastub tsethilen alusel
- dim cooling(3) 'jahutuse luba
+ dim cooling(3) 'jahutuse luba temp alusel
+ dim coolenable(3) 'jahutuse luba keldri kontrollerist
  dim zone 'tsooni id 0..3 vastab 1..4
  dim tsetadd 'globaalne lisa 10*degC
  dim tsethilen ' sekundid kaua kestab max tostetud temp
@@ -200,6 +206,11 @@
  syslog "init: opened udp port "+sprintf$("%u",MonPort2)+" for direct Nagios communication",4 ' kasuta sprintf$ str$ ASEMEL 
  delay 1000
  
+ MonPort3=44444 ' enne setupi lugemist!
+ COM$="UDP:0.0.0.0:"+str$(MonPort3) '  keep monitoring udp port open
+ open com$ as 2 'avame mon pordi, udp, keldri kontrollerist udp info
+ syslog "init: opened udp port "+sprintf$("%u",MonPort3)+" for energy metering communication",4 ' dc6888
+ delay 1000
  	 
  gosub 110:gosub 270 ' read & send app setup ' aga see voib ara rikkuda esialgse mon ip! 
  
@@ -452,6 +463,8 @@
 #include udpreceive.bcl ' sub 140 get udp
  
 
+#include udpreceive2.bcl ' sub 10140 get udp from cellar
+
 
 
 
@@ -508,6 +521,9 @@
 
 
 #include m_udpsend.bcl ' mon udp send sub 270
+
+
+#include m_udpsend2.bcl ' mon udp send sub 10270, send udp ack to the cellar
 
 
 

@@ -13,14 +13,8 @@
 		mr$="id:"+mac$+"\nS100:bnrescue\n":mTEE$="I":gosub 142:gosub 145:delay 5000:lock 2 
 	endif
 
-    'if TEHA$ = "SC" then TEHA$="":gosub 13300 ' save all counters
+    gosub 10140 'energy metering controller data check from buffer
     
-	'if mid$(TEHA$,1,1) = "C" then syslog "appmain: saving counter, TEHA$ "+TEHA$,4:gosub 13500:TEHA$="" ' save counter
-    
-    ' CommLed=BupComm ' CommLed=or(MonComm, BupComm) ' punane led kuni molemad on mingi vastuse saanud
-	'aga udpmon vastused lahevad vahel kaduma ja jaab peale... kahes suunas korraga suhtlemise koosmoju?
-	'syslog "appmain: inword "+sprintf$("%x04",bit2B(311+icnt(1),311+icnt(1)+icnt(2)))+" "+sprintf$("%x02",bit2B(311,311+icnt(1)))+" "+sprintf$("%x02",bit2B(351,358))+", moncomm "+str$(MonComm)+", bupcomm "+str$(BupComm),4 ' ajutine abi
-	
     
 	if mbmax>0 then gosub 1000 ' di modbus laiendustest
 	

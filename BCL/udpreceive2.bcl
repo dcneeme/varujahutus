@@ -1,0 +1,55 @@
+ ' receive udp data from energy metering controller on handle 2
+ 
+ 10140 ' handling incoming udp
+    if lastlen(2)<0 then ' uus udp info on saabunud
+		'syslog "sub 140: new data in buffer 2",4 'ajutine
+        if RMTHOST$(2)=mip3$ then ' from correct controller
+            read 2,mr3$,0 ' :UP(5)=UP(0) ' SAVING LAST MSG TIME IN UPSECONDS
+            ' syslog "sub 10140: got UDP from cellar: "+mr3$,4 'ajutine
+            if len(mr3$)>16 then syslog "sub 10140: got UDP from cellar: "+mr3$,4 
+            
+            gosub 10142 'processing the received data ########################
+            
+        else
+            syslog "sub 10140: data in buffer from wrong host "+RMTHOST$(2),4
+            read 2,mr3$,0
+            traffic(0)=traffic(0)+len(mr3$) 'saabuva udp loendus
+            syslog "sub 10140: data from wrong server:"+mr3$,4 'saadud infot ei kasuta!
+        endif
+        traffic(0)=traffic(0)+len(mr3$)
+	endif
+	
+ return
+
+
+ 10142 ' sub process udp data from cellar
+    syslog "sub 10142: processing UDP data from cellar, mr3$="+mr3$,4
+    mr13000$=mr3$ 'udp sisend tootlemiseks
+    
+    mreg$="id":gosub 13000  ' otsime saadute hulgast id - ta PEAB mr$ sees esinema!
+    if mval$<>MonMac3$ then syslog "sub 10142: got illegal id "+mval$+" instead of "+MonMac3$,4:return
+
+
+	'koigepealt cmd jm otsing ning siis setup kontroll
+    
+    mreg$="CEW":gosub 13000 'tsoonide jahutusluba keldrist
+    if mval$<>"" then ' 
+        syslog "sub 10142: found key "+mreg$+", cooling enable",4
+        for uku=0 to 3
+            ukk=instr(1,mval$," ") 'eraldaja asukoht 
+            jj=val(mid$(mval$,1,ukk-1))
+            if coolenable(uku) <> jj then
+                syslog "sub 10142: coolenable("+str$(uku)+") change, was "+str$(coolenable(uku))+", now "+str$(jj),4
+                coolenable(uku)=jj
+                if jj = 1 then syslog "zone "+str$(uku)+" cooling enabled",4 else syslog "zone "+str$(uku)+" cooling disabled",4
+            endif
+            if len(mval$)>ukk then mval$=mid$(mval$,ukk+1) ' eraldajast kuni lopuni
+            
+        next uku
+        ms3$=""
+    endif
+
+    gosub 10270 ' saadame ack keldri kontrollerile
+    
+  return
+

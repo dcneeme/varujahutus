@@ -5,20 +5,6 @@ time /t
 
 rem using library modules
 
-echo # arranging 9 backup files...
-del main9.bas
-rename main8.bas main9.bas
-rename main7.bas main8.bas
-rename main6.bas main7.bas
-rename main5.bas main6.bas
-rename main4.bas main5.bas
-rename main3.bas main4.bas
-rename main2.bas main3.bas
-rename main1.bas main2.bas
-copy main.bas main1.bas
-echo done
-..\226\sleep 1
-
 
 echo # Tokenizing BCL...
 del tokenizer.txt
@@ -60,7 +46,7 @@ if errorlevel 1 goto quit3
 
 echo "DONE OK, rebooting barionet..."
 
-e:\Programs\wgetwin\wget.exe -o wget.log 10.0.0.13:8080/basic.cgi?R
+e:\Programs\wgetwin\wget.exe -o wget.log 10.0.0.13/basic.cgi?R
 del basic.cgi*
 
 time /t

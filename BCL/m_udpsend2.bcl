@@ -1,0 +1,18 @@
+' vastamiseks tsoonilubade infole keldri kontrollerist pordil 44444
+
+ 10270 ' m_udpsend.bcl - send ack to dc6888  handle 2
+ 
+    if mediatype(2)<>7 then syslog "sub 10270: no udp port opened, cannot send!!!",2:ms1$="":return
+    
+    ms3$="\nid:"+MonMac3$+"\n" ' keldri kontrollerile ack, ainult id
+    
+    ' if or(MonMode = 1, MonMode = 3) then
+    WRITE 2,ms3$,0,mip3$,MonPort3 ' :UP(4)=UP(0)
+    syslog "sub 10270: sent to "+mip3$+":"+sprintf$("%u",MonPort3)+": "+ms3$,4
+    traffic(1)=traffic(1)+len(ms1$) ' valjuv udp liiklus
+    ' endif
+    ms3$=""
+    
+ 	' MonComm=1:CommLed=1 ' commled ka sest appmain harva ' ioctl 864,1 ' saatmise lipp las poleb kuni oige id-ga vastus saabub sub 140
+    
+ return

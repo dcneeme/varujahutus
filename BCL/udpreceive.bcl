@@ -1,4 +1,3 @@
- 'fututec versioon. heikki versioonis TEHA kasutusel jms erinevusi
  140 ' handling incoming udp with subroutines  140, 142, 145, 11000, 11100, 11200, 12000
   ' set the flag about udp in buffer and let main loop to handle
  
@@ -32,7 +31,8 @@
 
   142 ' sub process udp data in udpr$  ### seda kaivitab mTee="I" main kaudu #####
     syslog "sub 142: processing UDP data, mr$="+mr$,4
-
+    mr13000$=mr$ 'udp sisend tootlemiseks
+    
     if mTee$="I" then mTee$=""  ' muid variante ei riku ja et ei jaaks I tsyklisse main abil
     mreg$="id":gosub 13000  ' otsime saadute hulgast id - ta PEAB mr$ sees esinema!
     if mval$<>mac$ then syslog "sub 142: got illegal id "+mval$+" instead of "+mac$,4:return

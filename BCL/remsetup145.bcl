@@ -12,13 +12,14 @@
  ' syslog "sub 145: mediatypes for handles 3 and 6 are "+str$(mediatype(3))+" "+str$(mediatype(6)),4:delay 1000
  if mediatype(3)>0 then close 3 ' igaks juhuks
 
-
+ mr13000$=mr$ 'udp sisend tootlemiseks
  RegPos=1    ' registrite joru index, korraga voime saada erinevaid registreid nii setup kui app, teeme setup yhekorraga
  for pos=1 to RegNum ' len(listp$) ' see jamas ' pointer registritejorus
     RegLen=midget(listp$,pos,1)
     mreg$=mid$(list$,RegPos,RegLen)
 
     if len(mreg$)>1 then
+        
         gosub 13000:syslog "sub 145: proccesing list_pos "+str$(pos)+" from total "+str$(RegNum)+", pair "+mreg$+":"+mval$,4 ' processing this value
     else
         ' syslog "sub 145 - empty mreg$? list_pos "+str$(pos),4

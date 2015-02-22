@@ -141,3 +141,8 @@
 #define OutOldWd[#1]= ioctl 950+#1,
 #define OutOldWd[#1] iostate(950+#1)
 
+' 997..999 ehk reg998..1000 olgu 3 registrit toiteolekute kohta, bitmap, mida ka vent saab lugeda.
+' pysivat yhendust ara sinna hoia, barionet lubab korraga yhte modbustcp yhendust!
+' toiteolekud 997:  kasutus2 kasutus1 pinge vool. iga grupp 4 bitti, 1 hex symbol. 1 2 3 voi ka 7 kui vaja, gene?
+' tarbimispiirangud 998: varujah vent kond, 0 on luba, 1..7 piirangutase. tasemed arvutab kokku keldri kontroller.
+' 999 reserv

@@ -148,100 +148,15 @@ syslog "zonenames "+zone1name$+", "+zone2name$+", "+zone3name$+", "+zone4name$,4
  READ 5, set$  ' read all app parameters / 256 tk alates 512
  Close 5
  
- ' syslog "stp 768 algus stringina:"+MID$(set$,1,2),4
- ' syslog "stp 768 algus num:"+str$(MIDGET(set$,1,2)),4
- 
- mr$="" 
- for chan=0 to 7 ' counters di 1..8
-    i=65536*iostate(402+2*chan)+iostate(401+2*chan) ' current counter
-	' syslog "sub 110: chk counter "+str$(chan+1)+", current value="+sprintf$("%lu",i)),4 ' jamab??
-    jj=768+4*chan
-	' tuleb monitooringusse saata S7xx muidu ei saa kaugelt muuta
-	kh=MIDGET(set$,jj-767,2) 'hi word in setup, counter storage
-	ms1$=ms1$+"S"+str$(jj)+":"+str$(kh)+"\n":gosub 109 ' hi word to monitoring
-	
-	' if chan<4 then thre(chan)=kh 'nivood di sisendite dekodeerimiseks kui analoogkooder - ei funka, ajutiselt main algusesse
- 	
-	jj=770+4*chan ' lo byte
-	kl=MIDGET(set$,jj-767,2) ' lo word in setup, counter storage
-	ms1$=ms1$+"S"+str$(jj)+":"+str$(kl)+"\n":gosub 109 ' lo word to monitoring
-	
-	' ki=65536*MIDGET(set$,jj-767,2)+MIDGET(set$,jj-765,2) ' saved value 32 bit
-	ki=65536*kh+kl ' 32bit counter value that is currently saved
-	
-	syslog "saved value for counter "+str$(chan+1)+"="+sprintf$("%lu",ki),4
-
-	if i<ki then ' salvestunud number suurem kui jooksev, suurendame loendit salvestunu vorra
-		ioctl 401+2*chan,(ki+i)%65536 ' LSW  see enne vist! muidu rikub teise!
-		ioctl 402+2*chan,(ki+i)/65536 ' MSW
-		'ioctl 401+2*chan,(ki+i)%65536 ' LSW
-		syslog "counter "+str$(chan+1)+" increased to "+str$((ki+i)/65536)+", lo "+str$((ki+i)%65536),4
-		syslog "restored counter "+str$(chan+1)+" to 32b value "+sprintf$("%lu",ki+i),4
-	else ' taastame jooksva seisu salvestunud ki alusel midagi muutmata
-		ioctl 401+2*chan,(ki)%65536 ' LSW
-		ioctl 402+2*chan,(ki)/65536 ' MSW
-		' ioctl 401+2*chan,(ki)%65536 ' LSW
-		syslog "counter "+str$(chan+1)+" restored to hi "+str$((ki)/65536)+", lo "+str$((ki)%65536),4
-		syslog "restored counter "+str$(chan+1)+" to 32b value "+sprintf$("%lu",ki),4
-	endif ' loenditaastamise lopp
-	' kusagil tuleks ka serverist taastamine teha Sxxx:? nagu tooajaloendiga pumplas...
- next chan
- 
- chan = 10 'modbus algab chan 11
- for i=1 to mbmax 'laiendused
-    
-	jj=816+5*(i-1):pref(i)=asc(mid$(set$,jj-767,1)) ' algustahe num vaste, nt Z
-	mbchfrom(i)=val(mid$(set$,jj-767+1,2)) 'numbriosa algus, jargmised siit edasi
-	syslog "read_app_setup: mba "+str$(i)+", mbchfrom "+str$(mbchfrom(i)),4
-	ms1$=ms1$+"S"+str$(816+5*(i-1))+":"+mid$(set$,jj-767,4)+"\n":gosub 109  ' kanalite nimed monitooringusse et edaspidi kaugelt muuta saaks
-			
-	
-	for jj=0 to icnt(i)-1 ' selle mba kanalinimed
-		chan=chan+1 ' jargmine , esimene oli 11
-		uss$=chr$(pref(i))+sprintf$("%02u",mbchfrom(i)+jj)+"S" ' chr$(suff(i))  ' mid$(set$,588-511+5*(chan-1),5) ' nimed selle mba kanalitele
-		gosub 115 '  nime numbriline vaste chn(chan) 4 byte uss$ ja chan alusel
-		syslog "rd_stp: mb chan "+str$(chan)+", chname "+uss$+" chantype="+str$(ChanType[chan])+", jj "+str$(jj),4 
-	next jj
- next i
- ailevel=chan+1 'temp andurite jaos chan vaartus meelde siit jargmine chan
- 
- 
- for chan=9 to 10 ' abi ai1,ai3 baasil
-	uss$=mid$(set$,862-767+5*(chan-9),5) 'kanali nimi
-	gosub 115 '  nime numbrilise vaste 4 byte uss$ alusel
-	
-	ms1$=ms1$+"S"+str$(862+5*(chan-9))+":"+uss$+"\n":gosub 109  ' kanalinimi monitooringusse
-	syslog "rd_stp: S"+str$(862+5*(chan-9))+":"+uss$,4 ' ajutine
-	
-	syslog "chan "+str$(chan)+":"+uss$+" "+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4 'ajutine 
- next chan
- 
- 
- 'temperatuuriandurite nimed
- for i=0 to 5
-	chan=ailevel+i 'ailevel voeti modbus osa lopust
-	ChanType[chan]=6 ' temp
-	uss$=mid$(set$,872-767+5*i,5) '
-	gosub 115 '  nime numbrilise vaste 4 byte uss$ alusel
-
-	syslog "temp chan "+str$(chan)+":"+uss$+" "+str$(chn(chan))+", chantype="+str$(ChanType[chan]),4  
- next i
- 
- 
- site$=mid$(set$,1000-767,11) ' asukoha nimetus max 22 char
- ms1$=ms1$+"S1000:"+site$+"\n":gosub 109
- 
- for jj=858 to 861 ' alternative def gw / gprs , index 1..4
-    SecondGW[jj-857]=MIDGET(set$,jj-767,1):gosub 21010
+ mip3$="" 
+ for jj=768 to 771 ' mon3ip
+    mip3$=mip3$+str$(midget(set$,jj-767,1)):gosub 21010 
+	if jj<771 then mip3$=mip3$+"."
  next jj
+ MonPort3=44444
+ MonMac3$="000101000002"
+ syslog "read_app_setup: energy controller mac "+MonMac3$+", ip "+mip3$+", UDP port fixed to "+str$(MonPort3),4 
  
- for jj=912 to 915 ' primary def gw for restoring , index 1..4
-    PrimGW[jj-911]=MIDGET(set$,jj-767,1):gosub 21010
- next jj
- 
- 
- traffic(4)=10000000 'elisa bytes hoiatuspiir, 12500000 emt jaoks
-   	syslog "traffic warning on "+sprintf$("%lu",traffic(4))+" bytes",4
     
  SYSLOG "AppSetup READ", 2
 
